@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Live News & Audio Anchor</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #f1f5f9;
+      color: #1e293b;
+      padding: 18px 12px 60px 12px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: #0f172a;
+    }
+
+    header p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    .audio-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .audio-status-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .audio-status {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #1e40af;
+    }
+
+    .voice-picker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #3b82f6;
+    }
+
+    .voice-select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #93c5fd;
+      background: #ffffff;
+      font-size: 0.82rem;
+      outline: none;
+      max-width: 210px;
+      color: #1e293b;
+    }
+
+    .audio-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-audio {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-stop {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .controls-panel {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      min-width: 80px;
+      color: #334155;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .btn-chip {
+      padding: 7px 14px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #475569;
+      cursor: pointer;
+    }
+
+    .btn-chip.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .search-box {
+      display: flex;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .search-box button {
+      padding: 10px 18px;
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #f1f5f9;
+    }
+
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background: #e2e8f0;
+    }
+
+    .card-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .source-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #2563eb;
+      text-transform: uppercase;
+    }
+
+    .card-date {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    .card-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: #475569;
+      line-height: 1.45;
+      margin-bottom: 12px;
+      flex: 1;
+    }
+
+    .card-footer {
+      border-top: 1px solid #f8fafc;
+      padding-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .read-more {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .btn-card-listen {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .status-msg {
+      text-align: center;
+      padding: 40px 10px;
+      color: #64748b;
+      font-size: 0.95rem;
+      grid-column: 1 / -1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>World Live News & Audio Anchor</h1>
+    <p>Real-time world news with studio-quality English voice summaries</p>
+  </header>
+
+  <div class="audio-bar">
+    <div class="audio-status-wrap">
+      <span class="audio-status" id="audioStatus">🎙 Audio Reader: Ready</span>
+      <div class="voice-picker-wrap">
+        <label for="voiceSelect">Anchor Voice:</label>
+        <select id="voiceSelect" class="voice-select"></select>
+      </div>
+    </div>
+    <div class="audio-btns">
+      <button class="btn-audio" onclick="readAllTopNews()">🔊 Listen to Brief</button>
+      <button class="btn-stop" onclick="stopAudio()">⏹ Stop</button>
+    </div>
+  </div>
+
+  <div class="controls-panel">
+    <div class="control-row">
+      <span class="control-label">Category:</span>
+      <div class="btn-group" id="categoryGroup">
+        <button class="btn-chip active" data-cat="all">All World News</button>
+        <button class="btn-chip" data-cat="general">General</button>
+        <button class="btn-chip" data-cat="technology">Technology</button>
+        <button class="btn-chip" data-cat="business">Business</button>
+        <button class="btn-chip" data-cat="sports">Sports</button>
+        <button class="btn-chip" data-cat="entertainment">Entertainment</button>
+        <button class="btn-chip" data-cat="science">Science</button>
+        <button class="btn-chip" data-cat="health">Health</button>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search world topics (e.g. AI, Space, Economy)...">
+      <button onclick="triggerSearch()">Search</button>
+    </div>
+  </div>
+
+  <div class="news-grid" id="newsGrid">
+    <div class="status-msg">Loading latest global headlines...</div>
+  </div>
+</div>
+
+<script>
+  let activeCategory = 'all';
+  let fetchedArticles = [];
+
+  const synth = window.speechSynthesis;
+  let englishVoices = [];
+  let selectedVoice = null;
+
+  function loadVoices() {
+    if (!synth) return;
+    const allVoices = synth.getVoices();
+    englishVoices = allVoices.filter(v => v.lang.startsWith('en'));
+    if (englishVoices.length === 0) return;
+
+    const selectEl = document.getElementById('voiceSelect');
+    selectEl.innerHTML = '';
+
+    const qualityKeywords = ['Google', 'Natural', 'Online', 'Siri', 'Samantha', 'Premium'];
+    englishVoices.sort((a, b) => {
+      const aScore = qualityKeywords.some(k => a.name.includes(k)) ? 1 : 0;
+      const bScore = qualityKeywords.some(k => b.name.includes(k)) ? 1 : 0;
+      return bScore - aScore;
+    });
+
+    englishVoices.forEach((voice, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = `${voice.name} (${voice.lang})`;
+      selectEl.appendChild(option);
+    });
+
+    selectedVoice = englishVoices[0];
+    selectEl.value = 0;
+    selectEl.onchange = (e) => {
+      selectedVoice = englishVoices[e.target.value];
+    };
+  }
+
+  loadVoices();
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+
+  function stopAudio() {
+    if (synth) {
+      synth.cancel();
+      document.getElementById('audioStatus').innerText = "🎙 Audio Reader: Stopped";
+    }
+  }
+
+  function cleanText(txt) {
+    if (!txt) return "";
+    return txt.replace(/https?:\/\/\S+/gi, '').replace(/<[^>]*>/g, '').replace(/\[\+\d+\s+chars\]/g, '').trim();
+  }
+
+  function speakText(text, statusMessage) {
+    if (!('speechSynthesis' in window)) {
+      alert("Voice playback is not supported on this browser.");
+      return;
+    }
+    stopAudio();
+
+    const utterance = new SpeechSynthesisUtterance(cleanText(text));
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice.lang;
+    } else {
+      utterance.lang = 'en-US';
+    }
+
+    utterance.rate = 0.95;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => {
+      document.getElementById('audioStatus').innerText = statusMessage || "🔊 Playing summary...";
+    };
+    utterance.onend = () => {
+      document.getElementById('audioStatus').innerText = "🎙 Audio Reader: Ready";
+    };
+    utterance.onerror = () => {
+      document.getElementById('audioStatus').innerText = "🎙 Audio Reader: Ready";
+    };
+
+    synth.speak(utterance);
+  }
+
+  function readAllTopNews() {
+    if (!fetchedArticles.length) {
+      alert("No news available to read.");
+      return;
+    }
+    let summaryText = "Here is your world news bulletin. ";
+    fetchedArticles.slice(0, 5).forEach((art, index) => {
+      summaryText += `Headline ${index + 1}: ${art.title}. Summary: ${art.description || ''}. `;
+    });
+    summaryText += "This is the end of the bulletin.";
+    speakText(summaryText, "🔊 Reading 5-headline bulletin...");
+  }
+
+  function readSingleArticle(index) {
+    const art = fetchedArticles[index];
+    if (!art) return;
+    speakText(`${art.title}. Summary: ${art.description || ''}`, `🔊 Reading headline...`);
+  }
+
+  // Calls the serverless backend function inside /api/news.js
+  async function fetchNews(query = '') {
+    stopAudio();
+    const grid = document.getElementById('newsGrid');
+    grid.innerHTML = '<div class="status-msg">Fetching fresh world updates...</div>';
+
+    let url = `/api/news?category=${activeCategory}`;
+    if (query) {
+      url += `&q=${encodeURIComponent(query)}`;
+    }
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.status !== "ok" || !data.articles || data.articles.length === 0) {
+        grid.innerHTML = `<div class="status-msg">${data.message || 'No articles found for this selection.'}</div>`;
+        fetchedArticles = [];
+        return;
+      }
+
+      fetchedArticles = data.articles.filter(a => a.title && !a.title.includes('[Removed]'));
+
+      grid.innerHTML = '';
+      fetchedArticles.forEach((article, idx) => {
+        const dateStr = article.publishedAt 
+          ? new Date(article.publishedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) 
+          : '';
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          ${article.urlToImage ? `<img src="${article.urlToImage}" alt="Thumbnail" onerror="this.style.display='none'">` : ''}
+          <div class="card-body">
+            <div class="card-meta">
+              <span class="source-tag">${article.source?.name || 'World News'}</span>
+              <span class="card-date">${dateStr}</span>
+            </div>
+            <h2 class="card-title">${article.title}</h2>
+            <p class="card-desc">${article.description || 'Click the link below to read full coverage.'}</p>
+            <div class="card-footer">
+              <button class="btn-card-listen" onclick="readSingleArticle(${idx})">🔊 Listen</button>
+              <a href="${article.url}" class="read-more" target="_blank" rel="noopener noreferrer">Read &rarr;</a>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    } catch (err) {
+      grid.innerHTML = '<div class="status-msg" style="color: #ef4444;">Unable to load news. Check your connection or API key.</div>';
+    }
+  }
+
+  document.getElementById('categoryGroup').addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+      document.querySelectorAll('#categoryGroup button').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      activeCategory = e.target.dataset.cat;
+      document.getElementById('searchInput').value = '';
+      fetchNews();
+    }
+  });
+
+  function triggerSearch() {
+    const query = document.getElementById('searchInput').value.trim();
+    if (query) fetchNews(query);
+  }
+
+  document.getElementById('searchInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') triggerSearch();
+  });
+
+  fetchNews();
+</script>
+</body>
+        </html>
+        
