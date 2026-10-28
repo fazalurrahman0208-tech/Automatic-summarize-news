@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World Live News & AI Audio Anchor | NLP Summarizer</title>
+  <title>World & India Live News | Multi-Channel Audio Reader</title>
   <style>
     :root {
       --bg: #f1f5f9;
@@ -14,12 +14,11 @@
       --text-muted: #64748b;
       --border: #e2e8f0;
       --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --audio-bg: rgba(255, 255, 255, 0.94);
+      --primary-soft: rgba(37, 99, 235, 0.1);
+      --accent-india: #ea580c;
+      --audio-bg: rgba(255, 255, 255, 0.95);
       --audio-border: #bfdbfe;
-      --teleprompter-bg: #eff6ff;
       --danger: #ef4444;
-      --success: #16a34a;
       --card-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
     }
 
@@ -32,10 +31,9 @@
       --text-muted: #94a3b8;
       --border: #334155;
       --primary: #3b82f6;
-      --primary-hover: #60a5fa;
-      --audio-bg: rgba(30, 41, 59, 0.94);
+      --primary-soft: rgba(59, 130, 246, 0.18);
+      --audio-bg: rgba(30, 41, 59, 0.95);
       --audio-border: #3b82f6;
-      --teleprompter-bg: #0f172a;
       --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     }
 
@@ -49,12 +47,12 @@
     body {
       background-color: var(--bg);
       color: var(--text-body);
-      padding: 18px 14px 70px 14px;
+      padding: 16px 14px 70px 14px;
       transition: background-color 0.2s, color 0.2s;
     }
 
     .container {
-      max-width: 1120px;
+      max-width: 1160px;
       margin: 0 auto;
     }
 
@@ -63,84 +61,62 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
       gap: 12px;
     }
 
-    .brand-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .brand-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--primary);
-      background: rgba(37, 99, 235, 0.1);
-      padding: 3px 10px;
-      border-radius: 99px;
-      width: fit-content;
-    }
-
-    .live-dot {
-      width: 7px;
-      height: 7px;
-      background: #ef4444;
-      border-radius: 50%;
-      animation: blink 1.4s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.25; }
-    }
-
-    header h1 {
-      font-size: 1.75rem;
+    .brand-wrap h1 {
+      font-size: 1.7rem;
       color: var(--text-main);
       letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    header p {
+    .live-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: #ef4444;
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 99px;
+      letter-spacing: 0.05em;
+      animation: pulseBadge 1.8s infinite;
+    }
+
+    @keyframes pulseBadge {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.55; }
+    }
+
+    .brand-wrap p {
       color: var(--text-muted);
       font-size: 0.88rem;
+      margin-top: 3px;
     }
 
     .header-actions {
       display: flex;
-      flex-wrap: wrap;
       gap: 8px;
+      align-items: center;
     }
 
     .btn-top {
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 8px 13px;
+      padding: 8px 14px;
       border-radius: 10px;
       font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       box-shadow: var(--card-shadow);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: border-color 0.15s, transform 0.1s;
     }
 
-    .btn-top:hover {
-      border-color: var(--primary);
-      transform: translateY(-1px);
-    }
-
-    /* Sticky Broadcast Studio Player */
+    /* Sticky Audio Player */
     .audio-bar {
       position: sticky;
       top: 10px;
@@ -149,16 +125,10 @@
       -webkit-backdrop-filter: blur(14px);
       background: var(--audio-bg);
       border: 1px solid var(--audio-border);
-      padding: 14px 16px;
+      padding: 12px 16px;
       border-radius: 14px;
       margin-bottom: 18px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .audio-top-row {
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -171,40 +141,7 @@
       flex-direction: column;
       gap: 6px;
       flex: 1;
-      min-width: 260px;
-    }
-
-    .status-line {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Animated Equalizer */
-    .equalizer {
-      display: inline-flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 14px;
-      width: 18px;
-    }
-
-    .eq-bar {
-      width: 3px;
-      height: 4px;
-      background: var(--primary);
-      border-radius: 2px;
-      transition: height 0.15s;
-    }
-
-    .equalizer.active .eq-bar:nth-child(1) { animation: eq 0.6s infinite ease-in-out; }
-    .equalizer.active .eq-bar:nth-child(2) { animation: eq 0.6s infinite ease-in-out 0.15s; }
-    .equalizer.active .eq-bar:nth-child(3) { animation: eq 0.6s infinite ease-in-out 0.3s; }
-    .equalizer.active .eq-bar:nth-child(4) { animation: eq 0.6s infinite ease-in-out 0.1s; }
-
-    @keyframes eq {
-      0%, 100% { height: 4px; }
-      50% { height: 14px; }
+      min-width: 250px;
     }
 
     .audio-status {
@@ -221,7 +158,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 8px;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
     }
 
@@ -230,26 +167,13 @@
       border-radius: 6px;
       border: 1px solid var(--border);
       background: var(--surface);
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       outline: none;
       color: var(--text-main);
     }
 
     .voice-select {
-      max-width: 175px;
-    }
-
-    .podcast-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-weight: 600;
-      color: var(--text-main);
-      background: var(--surface-subtle);
-      padding: 4px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      cursor: pointer;
+      max-width: 210px;
     }
 
     .audio-btns {
@@ -258,28 +182,19 @@
       gap: 6px;
     }
 
-    .btn-audio, .btn-queue-play, .btn-control, .btn-stop {
+    .btn-audio, .btn-control, .btn-stop {
       border: none;
-      padding: 8px 13px;
+      padding: 8px 14px;
       border-radius: 8px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.1s, opacity 0.2s;
+      transition: opacity 0.15s, transform 0.1s;
     }
 
     .btn-audio {
       background: var(--primary);
       color: #fff;
-    }
-
-    .btn-queue-play {
-      background: #0f172a;
-      color: #fff;
-    }
-
-    body.dark .btn-queue-play {
-      background: #334155;
     }
 
     .btn-control {
@@ -288,176 +203,132 @@
       border: 1px solid var(--border);
     }
 
+    .btn-control:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
     .btn-stop {
       background: var(--danger);
       color: #fff;
     }
 
-    .btn-control:disabled, .btn-queue-play:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    /* Live Teleprompter Bar */
-    .teleprompter-bar {
-      background: var(--teleprompter-bg);
-      border: 1px dashed var(--audio-border);
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 0.86rem;
-      color: var(--text-body);
-      min-height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .teleprompter-text {
-      line-height: 1.4;
-      flex: 1;
-    }
-
-    .teleprompter-role {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border-radius: 4px;
-      background: var(--primary);
-      color: #fff;
-      white-space: nowrap;
-    }
-
-    /* NLP Global Mood Analytics Bar */
-    .analytics-bar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 16px;
-      box-shadow: var(--card-shadow);
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 14px;
-      align-items: center;
-    }
-
-    .metric-box {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .metric-label {
-      font-size: 0.74rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-      font-weight: 700;
-    }
-
-    .metric-val {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-
-    .mood-bar-track {
-      width: 100%;
-      height: 8px;
-      background: var(--border);
-      border-radius: 99px;
-      overflow: hidden;
-      display: flex;
-      margin-top: 4px;
-    }
-
-    .mood-seg-pos { background: #16a34a; height: 100%; transition: width 0.3s; }
-    .mood-seg-neu { background: #94a3b8; height: 100%; transition: width 0.3s; }
-    .mood-seg-neg { background: #ef4444; height: 100%; transition: width 0.3s; }
-
-    .sentiment-filters {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .sent-chip {
-      padding: 4px 10px;
-      border-radius: 99px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      border: 1px solid var(--border);
-      background: var(--surface-subtle);
-      color: var(--text-body);
-      cursor: pointer;
-    }
-
-    .sent-chip.active {
-      border-color: var(--primary);
-      background: rgba(37, 99, 235, 0.12);
-      color: var(--primary);
-    }
-
-    /* Controls Panel */
+    /* Multi-Country & Channel Control Hub */
     .controls-panel {
       background: var(--surface);
-      padding: 15px 16px;
-      border-radius: 12px;
+      padding: 16px;
+      border-radius: 14px;
       box-shadow: var(--card-shadow);
       border: 1px solid var(--border);
       margin-bottom: 18px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .control-row {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .row-header {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 8px;
     }
 
     .control-label {
       font-weight: 700;
-      font-size: 0.85rem;
-      min-width: 75px;
-      color: var(--text-main);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
     }
 
-    .btn-group {
+    .active-channel-indicator {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Horizontal Scrollable Strips for Countries & Channels */
+    .scroll-strip {
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
     }
 
-    .btn-chip {
-      padding: 6px 13px;
+    .scroll-strip::-webkit-scrollbar {
+      height: 5px;
+    }
+
+    .scroll-strip::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 99px;
+    }
+
+    .btn-country, .btn-channel, .btn-chip {
+      padding: 7px 14px;
       border: 1px solid var(--border);
       background: var(--surface-subtle);
-      border-radius: 20px;
-      font-size: 0.8rem;
+      border-radius: 99px;
+      font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-body);
       cursor: pointer;
+      white-space: nowrap;
       transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .btn-chip:hover {
+    .btn-country:hover, .btn-channel:hover, .btn-chip:hover {
       border-color: var(--primary);
     }
 
-    .btn-chip.active {
+    .btn-country.active {
+      background: var(--text-main);
+      color: var(--surface);
+      border-color: var(--text-main);
+    }
+
+    .btn-channel.active {
       background: var(--primary);
       color: #ffffff;
       border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-chip.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .channel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Search & Filter Bar */
+    .search-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 4px;
+      border-top: 1px solid var(--border);
     }
 
     .search-box {
       display: flex;
-      width: 100%;
+      flex: 1;
+      min-width: 240px;
       gap: 8px;
     }
 
@@ -489,7 +360,7 @@
     /* News Grid & Cards */
     .news-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
       gap: 18px;
     }
 
@@ -510,21 +381,23 @@
 
     .card.speaking {
       border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
     }
 
     .card-img-wrap {
       width: 100%;
-      height: 165px;
+      height: 168px;
       background: linear-gradient(135deg, #1e293b, #334155);
       position: relative;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #94a3b8;
-      font-size: 0.85rem;
-      font-weight: 600;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 12px;
     }
 
     .card-img-wrap img {
@@ -534,27 +407,17 @@
       display: block;
     }
 
-    .badge-overlay-left, .badge-overlay-right {
+    .channel-pill-overlay {
       position: absolute;
       top: 10px;
-      padding: 4px 9px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.82);
+      color: #ffffff;
+      padding: 4px 10px;
       border-radius: 6px;
       font-size: 0.7rem;
       font-weight: 700;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    .badge-overlay-left {
-      left: 10px;
-      background: rgba(15, 23, 42, 0.78);
-      color: #f8fafc;
-    }
-
-    .badge-overlay-right {
-      right: 10px;
-      background: rgba(255, 255, 255, 0.92);
-      color: #0f172a;
+      backdrop-filter: blur(6px);
     }
 
     .card-body {
@@ -572,7 +435,7 @@
     }
 
     .source-tag {
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       font-weight: 800;
       color: var(--primary);
       text-transform: uppercase;
@@ -596,25 +459,8 @@
       font-size: 0.85rem;
       color: var(--text-body);
       line-height: 1.5;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       flex: 1;
-    }
-
-    .keyword-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-bottom: 12px;
-    }
-
-    .kw-tag {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      background: var(--surface-subtle);
-      border: 1px solid var(--border);
-      padding: 2px 7px;
-      border-radius: 4px;
     }
 
     .card-footer {
@@ -626,7 +472,7 @@
       gap: 6px;
     }
 
-    .card-btn-group {
+    .card-actions {
       display: flex;
       gap: 6px;
     }
@@ -635,7 +481,7 @@
       background: var(--surface-subtle);
       border: 1px solid var(--border);
       border-radius: 6px;
-      padding: 5px 10px;
+      padding: 5px 11px;
       font-size: 0.78rem;
       cursor: pointer;
       display: inline-flex;
@@ -664,74 +510,9 @@
       font-size: 0.82rem;
     }
 
-    /* Architecture Modal (Viva Presentation Helper) */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(4px);
-      z-index: 999;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .modal-overlay.open {
-      display: flex;
-    }
-
-    .modal-box {
-      background: var(--surface);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      max-width: 780px;
-      width: 100%;
-      max-height: 88vh;
-      overflow-y: auto;
-      padding: 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .pipeline-steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .pipe-card {
-      background: var(--surface-subtle);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-    }
-
-    .pipe-card h4 {
-      font-size: 0.85rem;
-      color: var(--primary);
-      margin-bottom: 6px;
-    }
-
-    .pipe-card p {
-      font-size: 0.78rem;
-      color: var(--text-body);
-      line-height: 1.45;
-    }
-
     /* Skeleton Loader */
     .skeleton {
-      animation: pulse 1.5s infinite ease-in-out;
+      animation: pulse 1.4s infinite ease-in-out;
       background: var(--surface-subtle);
     }
 
@@ -747,30 +528,6 @@
       font-size: 0.95rem;
       grid-column: 1 / -1;
     }
-
-    .demo-banner {
-      grid-column: 1 / -1;
-      background: #fef9c3;
-      color: #854d0e;
-      border: 1px solid #fde047;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Print / PDF Export Styles */
-    @media print {
-      .audio-bar, .controls-panel, .header-actions, .card-footer, .sentiment-filters {
-        display: none !important;
-      }
-      body { background: #fff; color: #000; padding: 0; }
-      .card { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; margin-bottom: 12px; }
-      .card-img-wrap { display: none; }
-    }
   </style>
 </head>
 <body>
@@ -778,240 +535,245 @@
 <div class="container">
   <header>
     <div class="brand-wrap">
-      <span class="brand-badge"><span class="live-dot"></span> Real-Time NLP & Speech Synthesis</span>
-      <h1>World Live News & AI Audio Anchor</h1>
-      <p>Automated Extractive Summarization, Sentiment Analytics & Dual-Anchor Broadcast Studio</p>
+      <h1>
+        World & India News Hub
+        <span class="live-badge">● Live Channels</span>
+      </h1>
+      <p>Stream headlines from India & international news networks with instant voice summaries</p>
     </div>
     <div class="header-actions">
-      <button class="btn-top" onclick="toggleArchModal()">📊 Architecture (Viva)</button>
-      <button class="btn-top" onclick="window.print()">🖨️ Export Brief PDF</button>
+      <button class="btn-top" onclick="fetchNews()">🔄 Refresh Feed</button>
       <button class="btn-top" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
     </div>
   </header>
 
-  <!-- Sticky Studio Audio Player + Teleprompter -->
+  <!-- Sticky Audio Bar -->
   <div class="audio-bar">
-    <div class="audio-top-row">
-      <div class="audio-status-wrap">
-        <div class="status-line">
-          <div class="equalizer" id="equalizer">
-            <span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span>
-          </div>
-          <span class="audio-status" id="audioStatus">🎙 Studio Anchor: Ready</span>
-        </div>
-        <div class="voice-picker-wrap">
-          <label class="podcast-toggle" title="Alternates between Lead Anchor & Co-Anchor voices">
-            <input type="checkbox" id="podcastModeToggle" checked> 🎙️ Dual-Anchor Podcast
-          </label>
-          <label for="voiceSelect">Lead:</label>
-          <select id="voiceSelect" class="voice-select"></select>
-          <label for="speedSelect">Speed:</label>
-          <select id="speedSelect" class="speed-select">
-            <option value="0.9">0.9x</option>
-            <option value="1" selected>1.0x</option>
-            <option value="1.15">1.15x</option>
-            <option value="1.3">1.3x</option>
-            <option value="1.5">1.5x</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="audio-btns">
-        <button class="btn-audio" onclick="readAllTopNews()">🔊 Top 5 Podcast Brief</button>
-        <button class="btn-queue-play" id="playQueueBtn" onclick="playCustomQueue()" disabled>📋 Play Queue (0)</button>
-        <button class="btn-control" id="pauseBtn" onclick="togglePause()" disabled>⏸ Pause</button>
-        <button class="btn-control" id="nextBtn" onclick="skipNext()" disabled>⏭ Next</button>
-        <button class="btn-stop" onclick="stopAudio()">⏹ Stop</button>
+    <div class="audio-status-wrap">
+      <span class="audio-status" id="audioStatus">🎙 Audio Reader: Ready</span>
+      <div class="voice-picker-wrap">
+        <label for="voiceSelect">Anchor Voice:</label>
+        <select id="voiceSelect" class="voice-select"></select>
+        <label for="speedSelect">Speed:</label>
+        <select id="speedSelect" class="speed-select">
+          <option value="0.9">0.9x</option>
+          <option value="1" selected>1.0x</option>
+          <option value="1.15">1.15x</option>
+          <option value="1.3">1.3x</option>
+          <option value="1.5">1.5x</option>
+        </select>
       </div>
     </div>
-
-    <!-- Real-time Word-by-Word Karaoke Teleprompter -->
-    <div class="teleprompter-bar">
-      <span class="teleprompter-role" id="teleprompterRole">STANDBY</span>
-      <div class="teleprompter-text" id="teleprompterText">
-        Click <strong>"🔊 Top 5 Podcast Brief"</strong> or any article's <strong>Listen</strong> button for real-time word-by-word synchronized captions. (Shortcuts: <code>Space</code> Pause, <code>N</code> Next, <code>/</code> Search)
-      </div>
+    <div class="audio-btns">
+      <button class="btn-audio" onclick="readAllTopNews()">🔊 Listen Top 5 Brief</button>
+      <button class="btn-control" id="queuePlayBtn" onclick="playSavedQueue()" disabled>📋 Saved Queue (0)</button>
+      <button class="btn-control" id="pauseBtn" onclick="togglePause()" disabled>⏸ Pause</button>
+      <button class="btn-control" id="nextBtn" onclick="skipNext()" disabled>⏭ Next</button>
+      <button class="btn-stop" onclick="stopAudio()">⏹ Stop</button>
     </div>
   </div>
 
-  <!-- NLP Global Mood Analytics Bar -->
-  <div class="analytics-bar">
-    <div class="metric-box">
-      <span class="metric-label">NLP Feed Analysis</span>
-      <span class="metric-val" id="metricTotal">0 Articles Processed</span>
-    </div>
-    <div class="metric-box">
-      <span class="metric-label">Avg Summary Compression</span>
-      <span class="metric-val" id="metricCompression">~72% Reduction • 12s/card</span>
-    </div>
-    <div class="metric-box">
-      <span class="metric-label">Global Sentiment Mood Index</span>
-      <div class="mood-bar-track">
-        <div class="mood-seg-pos" id="barPos" style="width: 33%"></div>
-        <div class="mood-seg-neu" id="barNeu" style="width: 34%"></div>
-        <div class="mood-seg-neg" id="barNeg" style="width: 33%"></div>
-      </div>
-    </div>
-    <div class="metric-box">
-      <span class="metric-label">Filter by Sentiment</span>
-      <div class="sentiment-filters" id="sentimentFilterGroup">
-        <button class="sent-chip active" data-sent="all">All</button>
-        <button class="sent-chip" data-sent="Positive">🟢 Positive</button>
-        <button class="sent-chip" data-sent="Neutral">⚪ Neutral</button>
-        <button class="sent-chip" data-sent="Critical">🔴 Critical</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Category & Search Panel -->
+  <!-- Country, News Channel & Category Controls -->
   <div class="controls-panel">
+    <!-- 1. Country Selector -->
     <div class="control-row">
-      <span class="control-label">Category:</span>
-      <div class="btn-group" id="categoryGroup">
-        <button class="btn-chip active" data-cat="all">All World News</button>
-        <button class="btn-chip" data-cat="general">General</button>
+      <div class="row-header">
+        <span class="control-label">1. Select Country / Region</span>
+        <span class="active-channel-indicator" id="currentSelectionLabel">🇮🇳 India • All Indian Channels</span>
+      </div>
+      <div class="scroll-strip" id="countryStrip"></div>
+    </div>
+
+    <!-- 2. News Channel Selector (Dynamically updates per Country) -->
+    <div class="control-row">
+      <div class="row-header">
+        <span class="control-label">2. Choose News Channel / Network</span>
+      </div>
+      <div class="scroll-strip" id="channelStrip"></div>
+    </div>
+
+    <!-- 3. Category Filter -->
+    <div class="control-row">
+      <div class="row-header">
+        <span class="control-label">3. Topic Category</span>
+      </div>
+      <div class="scroll-strip" id="categoryGroup">
+        <button class="btn-chip active" data-cat="general">Top Headlines</button>
+        <button class="btn-chip" data-cat="business">Business & Economy</button>
         <button class="btn-chip" data-cat="technology">Technology</button>
-        <button class="btn-chip" data-cat="business">Business</button>
-        <button class="btn-chip" data-cat="sports">Sports</button>
+        <button class="btn-chip" data-cat="sports">Sports & Cricket</button>
+        <button class="btn-chip" data-cat="science">Science & Space</button>
         <button class="btn-chip" data-cat="entertainment">Entertainment</button>
-        <button class="btn-chip" data-cat="science">Science</button>
         <button class="btn-chip" data-cat="health">Health</button>
       </div>
     </div>
 
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Search global topics (Press '/' to focus — e.g., AI, Semiconductor, Climate)...">
-      <button onclick="triggerSearch()">Search</button>
+    <!-- 4. Search Box -->
+    <div class="search-row">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search across channels (e.g., ISRO, Sensex, Cricket, AI, Parliament)...">
+        <button onclick="triggerSearch()">Search</button>
+      </div>
     </div>
   </div>
 
-  <!-- News Cards Grid -->
+  <!-- News Grid -->
   <div class="news-grid" id="newsGrid"></div>
 </div>
 
-<!-- System Architecture Viva Modal -->
-<div class="modal-overlay" id="archModal" onclick="if(event.target===this) toggleArchModal()">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>📊 System Architecture & NLP Pipeline (Project Viva Overview)</h3>
-      <button class="btn-top" onclick="toggleArchModal()">✕ Close</button>
-    </div>
-    <div class="pipeline-steps">
-      <div class="pipe-card">
-        <h4>1. Serverless Proxy (/api/news)</h4>
-        <p>Abstracts API credentials on Vercel Edge Functions, normalizes multi-source JSON feeds, and prevents CORS & client key exposure.</p>
-      </div>
-      <div class="pipe-card">
-        <h4>2. Regex Text Sanitization</h4>
-        <p>Strips raw HTML tags, publisher suffixes, URLs, and character-count artifacts (<code>[+chars]</code>) for clean speech synthesis.</p>
-      </div>
-      <div class="pipe-card">
-        <h4>3. Lexicon NLP Sentiment</h4>
-        <p>Tokenizes headlines & abstracts, filters English stop-words, computes polarity scores (Positive/Neutral/Critical), and extracts TF topic tags.</p>
-      </div>
-      <div class="pipe-card">
-        <h4>4. Dual-Anchor Audio Queue</h4>
-        <p>Solves Chrome's 15-second Web Speech API timeout by chunking articles into sequential utterances with alternating Lead & Co-Anchor voices.</p>
-      </div>
-      <div class="pipe-card">
-        <h4>5. Boundary-Sync Teleprompter</h4>
-        <p>Listens to <code>SpeechSynthesisUtterance.onboundary</code> word-offset events to render real-time karaoke highlighting and card auto-scroll.</p>
-      </div>
-      <div class="pipe-card">
-        <h4>6. High-Availability Fallback</h4>
-        <p>Includes automatic offline/rate-limit resilience so the application remains 100% functional even during API outages.</p>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
-  let activeCategory = 'all';
-  let activeSentimentFilter = 'all';
+  /**
+   * COMPREHENSIVE COUNTRY & NEWS CHANNEL DIRECTORY
+   * Includes direct RSS feeds + NewsAPI source IDs & domains so every channel works reliably.
+   */
+  const COUNTRY_DIRECTORY = [
+    {
+      code: 'in',
+      name: 'India',
+      flag: '🇮🇳',
+      channels: [
+        { id: 'all', name: 'All India Channels', color: '#ea580c', rss: 'https://news.google.com/rss?hl=en-IN&gl=IN&ceid=IN:en' },
+        { id: 'ndtv', name: 'NDTV 24x7', domain: 'ndtv.com', color: '#e11d48', rss: 'https://feeds.feedburner.com/ndtvnews-top-stories' },
+        { id: 'the-hindu', name: 'The Hindu', sourceId: 'the-hindu', domain: 'thehindu.com', color: '#1d4ed8', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
+        { id: 'the-times-of-india', name: 'Times of India', sourceId: 'the-times-of-india', domain: 'timesofindia.indiatimes.com', color: '#dc2626', rss: 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms' },
+        { id: 'indian-express', name: 'Indian Express', domain: 'indianexpress.com', color: '#0284c7', rss: 'https://indianexpress.com/feed/' },
+        { id: 'hindustan-times', name: 'Hindustan Times', domain: 'hindustantimes.com', color: '#0ea5e9', rss: 'https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml' },
+        { id: 'india-today', name: 'India Today', domain: 'indiatoday.in', color: '#b91c1c', rss: 'https://www.indiatoday.in/rss/home' },
+        { id: 'livemint', name: 'LiveMint', domain: 'livemint.com', color: '#f59e0b', rss: 'https://www.livemint.com/rss/news' },
+        { id: 'economic-times', name: 'Economic Times', domain: 'economictimes.indiatimes.com', color: '#15803d', rss: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms' },
+        { id: 'deccan-herald', name: 'Deccan Herald', domain: 'deccanherald.com', color: '#0369a1', rss: 'https://www.deccanherald.com/rss/national.rss' },
+        { id: 'business-standard', name: 'Business Standard', domain: 'business-standard.com', color: '#9333ea', rss: 'https://www.business-standard.com/rss/home_page_top_stories.rss' }
+      ]
+    },
+    {
+      code: 'global',
+      name: 'Global Networks',
+      flag: '🌍',
+      channels: [
+        { id: 'all', name: 'All Global Networks', color: '#2563eb', rss: 'https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en' },
+        { id: 'bbc-news', name: 'BBC World News', sourceId: 'bbc-news', domain: 'bbc.co.uk', color: '#b91c1c', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+        { id: 'reuters', name: 'Reuters', sourceId: 'reuters', domain: 'reuters.com', color: '#f97316', rss: 'https://news.google.com/rss/search?q=site:reuters.com&hl=en-US&gl=US&ceid=US:en' },
+        { id: 'al-jazeera-english', name: 'Al Jazeera English', sourceId: 'al-jazeera-english', domain: 'aljazeera.com', color: '#d97706', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'cnn', name: 'CNN International', sourceId: 'cnn', domain: 'cnn.com', color: '#dc2626', rss: 'http://rss.cnn.com/rss/edition_world.rss' },
+        { id: 'associated-press', name: 'Associated Press (AP)', sourceId: 'associated-press', domain: 'apnews.com', color: '#ef4444', rss: 'https://news.google.com/rss/search?q=site:apnews.com&hl=en-US&gl=US&ceid=US:en' },
+        { id: 'dw-news', name: 'DW News (Germany)', domain: 'dw.com', color: '#0284c7', rss: 'https://rss.dw.com/rdf/rss-en-all' },
+        { id: 'france24', name: 'France 24', domain: 'france24.com', color: '#0ea5e9', rss: 'https://www.france24.com/en/rss' }
+      ]
+    },
+    {
+      code: 'us',
+      name: 'United States',
+      flag: '🇺🇸',
+      channels: [
+        { id: 'all', name: 'All US Channels', color: '#2563eb', rss: 'https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en' },
+        { id: 'cnn', name: 'CNN', sourceId: 'cnn', domain: 'cnn.com', color: '#dc2626', rss: 'http://rss.cnn.com/rss/cnn_topstories.rss' },
+        { id: 'nytimes', name: 'New York Times', domain: 'nytimes.com', color: '#0f172a', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
+        { id: 'the-washington-post', name: 'Washington Post', sourceId: 'the-washington-post', domain: 'washingtonpost.com', color: '#1e293b', rss: 'https://feeds.washingtonpost.com/rss/world' },
+        { id: 'cnbc', name: 'CNBC', domain: 'cnbc.com', color: '#0284c7', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
+        { id: 'bloomberg', name: 'Bloomberg', sourceId: 'bloomberg', domain: 'bloomberg.com', color: '#4f46e5', rss: 'https://feeds.bloomberg.com/markets/news.rss' },
+        { id: 'techcrunch', name: 'TechCrunch', sourceId: 'techcrunch', domain: 'techcrunch.com', color: '#16a34a', rss: 'https://techcrunch.com/feed/' },
+        { id: 'the-verge', name: 'The Verge', sourceId: 'the-verge', domain: 'theverge.com', color: '#9333ea', rss: 'https://www.theverge.com/rss/index.xml' },
+        { id: 'npr', name: 'NPR News', domain: 'npr.org', color: '#e11d48', rss: 'https://feeds.npr.org/1001/rss.xml' }
+      ]
+    },
+    {
+      code: 'gb',
+      name: 'United Kingdom',
+      flag: '🇬🇧',
+      channels: [
+        { id: 'all', name: 'All UK Channels', color: '#1d4ed8', rss: 'https://news.google.com/rss?hl=en-GB&gl=GB&ceid=GB:en' },
+        { id: 'bbc-news', name: 'BBC News UK', sourceId: 'bbc-news', domain: 'bbc.co.uk', color: '#b91c1c', rss: 'https://feeds.bbci.co.uk/news/rss.xml' },
+        { id: 'the-guardian', name: 'The Guardian', domain: 'theguardian.com', color: '#0369a1', rss: 'https://www.theguardian.com/world/rss' },
+        { id: 'sky-news', name: 'Sky News', domain: 'news.sky.com', color: '#dc2626', rss: 'https://feeds.skynews.com/feeds/rss/home.xml' },
+        { id: 'independent', name: 'The Independent', sourceId: 'independent', domain: 'independent.co.uk', color: '#e11d48', rss: 'https://www.independent.co.uk/news/uk/rss' },
+        { id: 'telegraph', name: 'The Telegraph', domain: 'telegraph.co.uk', color: '#0f172a', rss: 'https://www.telegraph.co.uk/rss.xml' }
+      ]
+    },
+    {
+      code: 'au',
+      name: 'Australia',
+      flag: '🇦🇺',
+      channels: [
+        { id: 'all', name: 'All Australia Channels', color: '#0284c7', rss: 'https://news.google.com/rss?hl=en-AU&gl=AU&ceid=AU:en' },
+        { id: 'abc-news-au', name: 'ABC News Australia', sourceId: 'abc-news-au', domain: 'abc.net.au', color: '#0f172a', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
+        { id: 'smh', name: 'Sydney Morning Herald', domain: 'smh.com.au', color: '#0369a1', rss: 'https://www.smh.com.au/rss/feed.xml' },
+        { id: 'sbs-au', name: 'SBS News', domain: 'sbs.com.au', color: '#e11d48', rss: 'https://www.sbs.com.au/news/feed' }
+      ]
+    },
+    {
+      code: 'ca',
+      name: 'Canada',
+      flag: '🇨🇦',
+      channels: [
+        { id: 'all', name: 'All Canada Channels', color: '#dc2626', rss: 'https://news.google.com/rss?hl=en-CA&gl=CA&ceid=CA:en' },
+        { id: 'cbc-news', name: 'CBC News', sourceId: 'cbc-news', domain: 'cbc.ca', color: '#b91c1c', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
+        { id: 'ctv-news', name: 'CTV News', domain: 'ctvnews.ca', color: '#0284c7', rss: 'https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009' },
+        { id: 'global-news-ca', name: 'Global News CA', domain: 'globalnews.ca', color: '#15803d', rss: 'https://globalnews.ca/feed/' }
+      ]
+    },
+    {
+      code: 'ae',
+      name: 'Middle East',
+      flag: '🇦🇪',
+      channels: [
+        { id: 'all', name: 'All Middle East', color: '#0d9488', rss: 'https://news.google.com/rss?hl=en-AE&gl=AE&ceid=AE:en' },
+        { id: 'al-jazeera-english', name: 'Al Jazeera', sourceId: 'al-jazeera-english', domain: 'aljazeera.com', color: '#d97706', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'gulf-news', name: 'Gulf News (UAE)', domain: 'gulfnews.com', color: '#0284c7', rss: 'https://gulfnews.com/rss' },
+        { id: 'arab-news', name: 'Arab News', domain: 'arabnews.com', color: '#15803d', rss: 'https://www.arabnews.com/rss.xml' },
+        { id: 'khaleej-times', name: 'Khaleej Times', domain: 'khaleejtimes.com', color: '#1d4ed8', rss: 'https://www.khaleejtimes.com/rss' }
+      ]
+    },
+    {
+      code: 'sg',
+      name: 'Singapore & Asia',
+      flag: '🇸🇬',
+      channels: [
+        { id: 'all', name: 'All Asia Channels', color: '#e11d48', rss: 'https://news.google.com/rss?hl=en-SG&gl=SG&ceid=SG:en' },
+        { id: 'cna', name: 'Channel NewsAsia (CNA)', domain: 'channelnewsasia.com', color: '#dc2626', rss: 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml' },
+        { id: 'straits-times', name: 'The Straits Times', domain: 'straitstimes.com', color: '#1d4ed8', rss: 'https://www.straitstimes.com/news/asia/rss.xml' },
+        { id: 'scmp', name: 'South China Morning Post', domain: 'scmp.com', color: '#f59e0b', rss: 'https://www.scmp.com/rss/91/feed' }
+      ]
+    },
+    {
+      code: 'jp',
+      name: 'Japan',
+      flag: '🇯🇵',
+      channels: [
+        { id: 'all', name: 'All Japan English', color: '#be123c', rss: 'https://news.google.com/rss/search?q=Japan+news&hl=en-US&gl=US&ceid=US:en' },
+        { id: 'nhk-world', name: 'NHK World Japan', domain: 'nhk.or.jp', color: '#dc2626', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
+        { id: 'japan-today', name: 'Japan Today', domain: 'japantoday.com', color: '#0284c7', rss: 'https://japantoday.com/feed' },
+        { id: 'japan-times', name: 'The Japan Times', domain: 'japantimes.co.jp', color: '#0f172a', rss: 'https://www.japantimes.co.jp/feed/' }
+      ]
+    },
+    {
+      code: 'za',
+      name: 'South Africa',
+      flag: '🇿🇦',
+      channels: [
+        { id: 'all', name: 'All South Africa', color: '#15803d', rss: 'https://news.google.com/rss?hl=en-ZA&gl=ZA&ceid=ZA:en' },
+        { id: 'news24', name: 'News24 SA', sourceId: 'news24', domain: 'news24.com', color: '#1d4ed8', rss: 'https://feeds.24.com/articles/news24/TopStories/rss' },
+        { id: 'daily-maverick', name: 'Daily Maverick', domain: 'dailymaverick.co.za', color: '#0f172a', rss: 'https://www.dailymaverick.co.za/dmrss/' }
+      ]
+    }
+  ];
+
+  // App State
+  let activeCountryObj = COUNTRY_DIRECTORY[0]; // Default: India 🇮🇳
+  let activeChannelObj = activeCountryObj.channels[0];
+  let activeCategory = 'general';
   let fetchedArticles = [];
-  let customQueueIndices = [];
+  let savedQueueIndices = [];
 
   // Speech Synthesis State
   const synth = window.speechSynthesis;
   let englishVoices = [];
   let selectedVoice = null;
-  let coAnchorVoice = null;
   let audioQueue = [];
   let currentQueuePos = -1;
   let activeArticleIndex = null;
   let isCancelled = false;
 
-  // NLP Lexicons
-  const POSITIVE_WORDS = new Set([
-    'breakthrough','growth','surge','peace','win','record','success','launch','recovery',
-    'gain','approved','innovation','boost','alliance','profit','rally','cure','sustainable',
-    'milestone','partnership','advance','upgrade','award','celebrate','discover','thrive'
-  ]);
-  const NEGATIVE_WORDS = new Set([
-    'crisis','war','crash','ban','attack','inflation','drop','threat','dead','strike',
-    'conflict','warning','fraud','recession','loss','plunge','outage','hack','shortage',
-    'sanction','collapse','disaster','lawsuit','decline','deficit','layoffs','emergency'
-  ]);
-  const STOP_WORDS = new Set([
-    'the','and','for','that','this','with','from','have','will','into','after','over',
-    'more','about','their','what','when','where','which','who','were','been','they',
-    'said','says','also','than','some','very','just','like','only','new','news','world',
-    'year','years','first','last','week','today','report','reports','could','would'
-  ]);
-
-  // Curated Fallback Dataset (Used automatically if /api/news is offline or rate-limited during Viva)
-  const FALLBACK_ARTICLES = [
-    {
-      source: { name: "TechCrunch Global" },
-      title: "Next-Generation Solid-State Battery Achieves Record 1,000km EV Range in Lab Breakthrough",
-      description: "Researchers have unveiled a high-density solid-state battery architecture capable of charging from 10% to 80% in under nine minutes while doubling cycle longevity.",
-      url: "https://example.com/solid-state-battery",
-      urlToImage: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=800&q=80",
-      publishedAt: new Date(Date.now() - 45 * 60000).toISOString()
-    },
-    {
-      source: { name: "Reuters Financial" },
-      title: "Global Semiconductor Supply Chain Sees Strong Recovery Amid AI Infrastructure Surge",
-      description: "Major foundry operators reported a 28% boost in quarterly output as cloud providers accelerate investments in energy-efficient neural processing clusters.",
-      url: "https://example.com/semiconductor-growth",
-      urlToImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-      publishedAt: new Date(Date.now() - 110 * 60000).toISOString()
-    },
-    {
-      source: { name: "Space & Science Daily" },
-      title: "Deep-Space Observatory Detects Water Vapor Signatures on Temperate Exoplanet",
-      description: "Spectroscopic analysis from orbital telescopes confirmed atmospheric water vapor and carbon dioxide clouds around a super-Earth located 90 light-years away.",
-      url: "https://example.com/exoplanet-water",
-      urlToImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
-      publishedAt: new Date(Date.now() - 185 * 60000).toISOString()
-    },
-    {
-      source: { name: "CyberSecurity Watch" },
-      title: "Critical Zero-Day Vulnerability Warning Issued for Enterprise Cloud Routers",
-      description: "Security analysts urge immediate firmware patching after detecting automated exploit attempts targeting unpatched network edge appliances across Europe and Asia.",
-      url: "https://example.com/cyber-warning",
-      urlToImage: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
-      publishedAt: new Date(Date.now() - 240 * 60000).toISOString()
-    },
-    {
-      source: { name: "World Health Journal" },
-      title: "AI-Assisted Diagnostic Platform Approved for Early Cardiovascular Screening",
-      description: "Clinical trials across 40 hospitals demonstrated a 94% accuracy rate in identifying early arrhythmias using non-invasive wearable sensor telemetry.",
-      url: "https://example.com/ai-cardio-health",
-      urlToImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
-      publishedAt: new Date(Date.now() - 320 * 60000).toISOString()
-    },
-    {
-      source: { name: "Bloomberg Markets" },
-      title: "Central Banks Signal Caution as Global Shipping Delays Spark Inflation Concerns",
-      description: "Maritime freight rates rose 14% this month following port congestion and weather disruptions along key trans-oceanic trade corridors.",
-      url: "https://example.com/shipping-inflation",
-      urlToImage: "https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=800&q=80",
-      publishedAt: new Date(Date.now() - 400 * 60000).toISOString()
-    }
-  ];
-
-  // Theme Initialization
+  // Theme Init
   if (localStorage.getItem('newsTheme') === 'dark') {
     document.body.classList.add('dark');
     document.getElementById('themeToggle').innerText = '☀️ Light Mode';
@@ -1024,17 +786,13 @@
     document.getElementById('themeToggle').innerText = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
   }
 
-  function toggleArchModal() {
-    document.getElementById('archModal').classList.toggle('open');
-  }
-
-  // Speed Initialization
+  // Speed Init
   const speedSelect = document.getElementById('speedSelect');
   const savedSpeed = localStorage.getItem('newsVoiceSpeed');
   if (savedSpeed) speedSelect.value = savedSpeed;
   speedSelect.onchange = () => localStorage.setItem('newsVoiceSpeed', speedSelect.value);
 
-  // Voice Loader with Dual-Anchor Selection
+  // Voice Loader (Prioritizes Indian English & High-Quality Voices)
   function loadVoices() {
     if (!synth) return;
     const allVoices = synth.getVoices();
@@ -1044,10 +802,10 @@
     const selectEl = document.getElementById('voiceSelect');
     selectEl.innerHTML = '';
 
-    const qualityKeywords = ['Google', 'Natural', 'Online', 'Siri', 'Samantha', 'Microsoft', 'Premium'];
+    const qualityKeywords = ['en-IN', 'India', 'Google', 'Natural', 'Online', 'Siri', 'Samantha', 'Rishi', 'Neerja'];
     englishVoices.sort((a, b) => {
-      const aScore = qualityKeywords.some(k => a.name.includes(k)) ? 1 : 0;
-      const bScore = qualityKeywords.some(k => k && b.name.includes(k)) ? 1 : 0;
+      const aScore = qualityKeywords.some(k => a.name.includes(k) || a.lang.includes(k)) ? 1 : 0;
+      const bScore = qualityKeywords.some(k => b.name.includes(k) || b.lang.includes(k)) ? 1 : 0;
       return bScore - aScore;
     });
 
@@ -1065,13 +823,10 @@
     });
 
     selectedVoice = englishVoices[defaultIndex];
-    coAnchorVoice = englishVoices[(defaultIndex + 1) % englishVoices.length] || selectedVoice;
     selectEl.value = defaultIndex;
 
     selectEl.onchange = (e) => {
-      const idx = parseInt(e.target.value, 10);
-      selectedVoice = englishVoices[idx];
-      coAnchorVoice = englishVoices[(idx + 1) % englishVoices.length] || selectedVoice;
+      selectedVoice = englishVoices[e.target.value];
       localStorage.setItem('newsVoiceName', selectedVoice.name);
     };
   }
@@ -1081,7 +836,56 @@
     speechSynthesis.onvoiceschanged = loadVoices;
   }
 
-  // NLP Text Cleaning & Sentiment Engine
+  // Render Country & Channel Strips
+  function renderCountryStrip() {
+    const strip = document.getElementById('countryStrip');
+    strip.innerHTML = '';
+
+    COUNTRY_DIRECTORY.forEach(country => {
+      const btn = document.createElement('button');
+      btn.className = `btn-country ${country.code === activeCountryObj.code ? 'active' : ''}`;
+      btn.innerHTML = `<span>${country.flag}</span> <span>${country.name}</span>`;
+      btn.onclick = () => {
+        activeCountryObj = country;
+        activeChannelObj = country.channels[0];
+        document.getElementById('searchInput').value = '';
+        renderCountryStrip();
+        renderChannelStrip();
+        updateSelectionLabel();
+        fetchNews();
+      };
+      strip.appendChild(btn);
+    });
+  }
+
+  function renderChannelStrip() {
+    const strip = document.getElementById('channelStrip');
+    strip.innerHTML = '';
+
+    activeCountryObj.channels.forEach(channel => {
+      const btn = document.createElement('button');
+      btn.className = `btn-channel ${channel.id === activeChannelObj.id ? 'active' : ''}`;
+      btn.innerHTML = `
+        <span class="channel-dot" style="background:${channel.color || '#2563eb'}"></span>
+        <span>${channel.name}</span>
+      `;
+      btn.onclick = () => {
+        activeChannelObj = channel;
+        document.getElementById('searchInput').value = '';
+        renderChannelStrip();
+        updateSelectionLabel();
+        fetchNews();
+      };
+      strip.appendChild(btn);
+    });
+  }
+
+  function updateSelectionLabel() {
+    document.getElementById('currentSelectionLabel').innerText =
+      `${activeCountryObj.flag} ${activeCountryObj.name} • ${activeChannelObj.name}`;
+  }
+
+  // Helpers
   function escapeHTML(str) {
     if (!str) return '';
     return str.replace(/[&<>"']/g, m => ({
@@ -1089,54 +893,24 @@
     }[m]));
   }
 
-  function cleanTextForSpeech(txt) {
+  function cleanText(txt) {
     if (!txt) return '';
     return txt
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/gi, ' ')
+      .replace(/&amp;/gi, '&')
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
       .replace(/https?:\/\/\S+/gi, '')
-      .replace(/<[^>]*>/g, '')
       .replace(/\[\+\d+\s+chars\]/gi, '')
-      .replace(/\s+-\s+[^-]+$/, '')
+      .replace(/\s+/g, ' ')
       .trim();
-  }
-
-  function analyzeArticleNLP(title, description) {
-    const cleanTitle = cleanTextForSpeech(title);
-    const cleanDesc = cleanTextForSpeech(description);
-    const combined = `${cleanTitle} ${cleanDesc}`.toLowerCase();
-    const tokens = combined.match(/\b[a-z]{4,}\b/g) || [];
-
-    let score = 0;
-    const freq = {};
-
-    tokens.forEach(word => {
-      if (POSITIVE_WORDS.has(word)) score++;
-      if (NEGATIVE_WORDS.has(word)) score--;
-      if (!STOP_WORDS.has(word)) {
-        freq[word] = (freq[word] || 0) + 1;
-      }
-    });
-
-    const keywords = Object.entries(freq)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([w]) => w);
-
-    const sentiment = score > 0
-      ? { label: 'Positive', icon: '🟢', color: '#16a34a' }
-      : score < 0
-      ? { label: 'Critical', icon: '🔴', color: '#dc2626' }
-      : { label: 'Neutral',  icon: '⚪', color: '#64748b' };
-
-    const wordCount = Math.max(8, combined.split(/\s+/).length);
-    const listenSec = Math.max(5, Math.round(wordCount / 2.7));
-    const compressionPct = Math.min(82, Math.max(58, Math.round(100 - (wordCount / 2.2))));
-
-    return { sentiment, keywords, listenSec, compressionPct };
   }
 
   function formatRelativeTime(dateString) {
     if (!dateString) return 'Live';
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Live';
     const diffMins = Math.floor((Date.now() - date.getTime()) / 60000);
     if (diffMins < 60) return `${Math.max(1, diffMins)}m ago`;
     const diffHours = Math.floor(diffMins / 60);
@@ -1144,36 +918,10 @@
     return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   }
 
-  // Update Global NLP Analytics Bar
-  function updateAnalyticsDashboard() {
-    const total = fetchedArticles.length;
-    document.getElementById('metricTotal').innerText = `${total} Articles Analyzed`;
-
-    if (total === 0) return;
-
-    let pos = 0, neu = 0, neg = 0, totalSec = 0, totalComp = 0;
-    fetchedArticles.forEach(a => {
-      if (a.nlp.sentiment.label === 'Positive') pos++;
-      else if (a.nlp.sentiment.label === 'Critical') neg++;
-      else neu++;
-      totalSec += a.nlp.listenSec;
-      totalComp += a.nlp.compressionPct;
-    });
-
-    const avgSec = Math.round(totalSec / total);
-    const avgComp = Math.round(totalComp / total);
-    document.getElementById('metricCompression').innerText = `~${avgComp}% Shorter • ${avgSec}s avg`;
-
-    document.getElementById('barPos').style.width = `${(pos / total) * 100}%`;
-    document.getElementById('barNeu').style.width = `${(neu / total) * 100}%`;
-    document.getElementById('barNeg').style.width = `${(neg / total) * 100}%`;
-  }
-
-  // Highlight Active Speaking Card
+  // Audio Queue Engine (Fixes Chrome 15s cutoff)
   function updateCardHighlight(articleIdx) {
     activeArticleIndex = articleIdx;
-    document.querySelectorAll('.card').forEach(card => {
-      const idx = parseInt(card.dataset.idx, 10);
+    document.querySelectorAll('.card').forEach((card, idx) => {
       const btn = card.querySelector('.btn-card-listen');
       if (idx === articleIdx) {
         card.classList.add('speaking');
@@ -1189,20 +937,14 @@
   function setControlsState(isPlaying, hasNext = false) {
     const pauseBtn = document.getElementById('pauseBtn');
     const nextBtn = document.getElementById('nextBtn');
-    const eq = document.getElementById('equalizer');
     pauseBtn.disabled = !isPlaying;
     nextBtn.disabled = !hasNext;
-    if (isPlaying) eq.classList.add('active');
-    else {
-      eq.classList.remove('active');
-      pauseBtn.innerText = '⏸ Pause';
-    }
+    if (!isPlaying) pauseBtn.innerText = '⏸ Pause';
   }
 
-  // Audio Queue & Teleprompter Engine
   function playQueue(items) {
     if (!('speechSynthesis' in window)) {
-      alert("Web Speech Synthesis is not supported on this browser.");
+      alert("Voice playback is not supported on this browser.");
       return;
     }
     stopAudio(false);
@@ -1220,42 +962,21 @@
 
     const item = audioQueue[currentQueuePos];
     const utterance = new SpeechSynthesisUtterance(item.text);
-    const usePodcastMode = document.getElementById('podcastModeToggle').checked;
 
-    if (usePodcastMode && item.role === 'CO-ANCHOR' && coAnchorVoice) {
-      utterance.voice = coAnchorVoice;
-      utterance.lang = coAnchorVoice.lang;
-      utterance.pitch = 1.06;
-    } else if (selectedVoice) {
+    if (selectedVoice) {
       utterance.voice = selectedVoice;
       utterance.lang = selectedVoice.lang;
-      utterance.pitch = 0.98;
     } else {
-      utterance.lang = 'en-US';
+      utterance.lang = activeCountryObj.code === 'in' ? 'en-IN' : 'en-US';
     }
 
     utterance.rate = parseFloat(speedSelect.value) || 1.0;
+    utterance.pitch = 1.0;
 
     utterance.onstart = () => {
-      document.getElementById('audioStatus').innerText = item.status || "🔊 Broadcasting...";
-      document.getElementById('teleprompterRole').innerText = item.role || 'ANCHOR';
-      document.getElementById('teleprompterText').innerText = item.text;
+      document.getElementById('audioStatus').innerText = item.status || "🔊 Playing summary...";
       updateCardHighlight(item.articleIndex);
       setControlsState(true, currentQueuePos < audioQueue.length - 1);
-    };
-
-    // Word-by-word Live Karaoke Teleprompter
-    utterance.onboundary = (event) => {
-      if (event.name === 'word') {
-        const txt = item.text;
-        const start = event.charIndex;
-        const len = event.charLength || 6;
-        const before = escapeHTML(txt.slice(0, start));
-        const word = escapeHTML(txt.slice(start, start + len));
-        const after = escapeHTML(txt.slice(start + len));
-        document.getElementById('teleprompterText').innerHTML =
-          `${before}<mark style="background:#fef08a;color:#0f172a;padding:1px 5px;border-radius:4px;font-weight:700;">${word}</mark>${after}`;
-      }
     };
 
     utterance.onend = () => {
@@ -1283,27 +1004,21 @@
     updateCardHighlight(null);
     setControlsState(false, false);
     if (resetStatus) {
-      document.getElementById('audioStatus').innerText = "🎙 Studio Anchor: Ready";
-      document.getElementById('teleprompterRole').innerText = "STANDBY";
-      document.getElementById('teleprompterText').innerHTML =
-        'Broadcast stopped. Select <strong>"🔊 Top 5 Podcast Brief"</strong> or any headline below to begin.';
+      document.getElementById('audioStatus').innerText = "🎙 Audio Reader: Ready";
     }
   }
 
   function togglePause() {
     if (!synth) return;
     const pauseBtn = document.getElementById('pauseBtn');
-    const eq = document.getElementById('equalizer');
     if (synth.paused) {
       synth.resume();
       pauseBtn.innerText = '⏸ Pause';
-      eq.classList.add('active');
-      document.getElementById('audioStatus').innerText = "🔊 Resumed broadcast...";
+      document.getElementById('audioStatus').innerText = "🔊 Resumed playback...";
     } else if (synth.speaking) {
       synth.pause();
       pauseBtn.innerText = '▶ Resume';
-      eq.classList.remove('active');
-      document.getElementById('audioStatus').innerText = "⏸ Broadcast Paused";
+      document.getElementById('audioStatus').innerText = "⏸ Audio Paused";
     }
   }
 
@@ -1317,42 +1032,31 @@
     }
   }
 
-  // Dual-Anchor Podcast Briefing
   function readAllTopNews() {
-    const visibleArticles = getFilteredArticles().slice(0, 5);
-    if (!visibleArticles.length) {
-      alert("No articles available in this filter.");
+    if (!fetchedArticles.length) {
+      alert("No news available to read.");
       return;
     }
 
     const queue = [{
-      role: 'LEAD ANCHOR',
-      text: `Welcome to the World Live News automated briefing. Here are the top ${visibleArticles.length} stories analyzed by our NLP engine today.`,
-      status: "🎙 Starting Podcast Briefing...",
+      text: `Here are the top 5 headlines from ${activeChannelObj.name}.`,
+      status: `🎙 Starting ${activeChannelObj.name} Brief...`,
       articleIndex: null
     }];
 
-    visibleArticles.forEach((art, idx) => {
-      const cleanTitle = cleanTextForSpeech(art.title);
-      const cleanDesc = cleanTextForSpeech(art.description || 'Full story available at the source link.');
+    fetchedArticles.slice(0, 5).forEach((art, idx) => {
+      const title = cleanText(art.title);
+      const desc = cleanText(art.description);
       queue.push({
-        role: 'LEAD ANCHOR',
-        text: `Story number ${idx + 1}, from ${art.source?.name || 'Global Desk'}. ${cleanTitle}.`,
-        status: `🔊 Headline (${idx + 1}/${visibleArticles.length}): ${cleanTitle}`,
-        articleIndex: art._idx
-      });
-      queue.push({
-        role: 'CO-ANCHOR',
-        text: `${cleanDesc} Sentiment analysis marks this update as ${art.nlp.sentiment.label}.`,
-        status: `🎙 Co-Anchor Summary (${idx + 1}/${visibleArticles.length})`,
-        articleIndex: art._idx
+        text: `Headline ${idx + 1}: ${title}. ${desc}`,
+        status: `🔊 (${idx + 1}/5) ${title}`,
+        articleIndex: idx
       });
     });
 
     queue.push({
-      role: 'LEAD ANCHOR',
-      text: "That wraps up your executive news briefing. Stay informed and thank you for listening.",
-      status: "🎙 Concluding broadcast...",
+      text: "This concludes your news bulletin.",
+      status: "🎙 Bulletin finished",
       articleIndex: null
     });
 
@@ -1366,52 +1070,41 @@
     }
     const art = fetchedArticles[index];
     if (!art) return;
-    const cleanTitle = cleanTextForSpeech(art.title);
-    const cleanDesc = cleanTextForSpeech(art.description || '');
-    playQueue([
-      {
-        role: 'LEAD ANCHOR',
-        text: `${cleanTitle}.`,
-        status: `🔊 Headline: ${cleanTitle}`,
-        articleIndex: index
-      },
-      {
-        role: 'CO-ANCHOR',
-        text: `${cleanDesc}`,
-        status: `🎙 Summary: ${cleanTitle}`,
-        articleIndex: index
-      }
-    ]);
+    const title = cleanText(art.title);
+    const desc = cleanText(art.description);
+    playQueue([{
+      text: `${title}. ${desc}`,
+      status: `🔊 Reading: ${title}`,
+      articleIndex: index
+    }]);
   }
 
-  // Custom Playlist Queue
+  // Saved Queue ("Listen Later")
   function toggleQueueArticle(index) {
-    const pos = customQueueIndices.indexOf(index);
-    if (pos === -1) customQueueIndices.push(index);
-    else customQueueIndices.splice(pos, 1);
+    const pos = savedQueueIndices.indexOf(index);
+    if (pos === -1) savedQueueIndices.push(index);
+    else savedQueueIndices.splice(pos, 1);
 
-    const queueBtn = document.getElementById('playQueueBtn');
-    queueBtn.innerText = `📋 Play Queue (${customQueueIndices.length})`;
-    queueBtn.disabled = customQueueIndices.length === 0;
-    renderCards();
+    const btn = document.getElementById('queuePlayBtn');
+    btn.innerText = `📋 Saved Queue (${savedQueueIndices.length})`;
+    btn.disabled = savedQueueIndices.length === 0;
+    renderArticles();
   }
 
-  function playCustomQueue() {
-    if (!customQueueIndices.length) return;
+  function playSavedQueue() {
+    if (!savedQueueIndices.length) return;
     const queue = [{
-      role: 'LEAD ANCHOR',
-      text: `Playing your custom playlist of ${customQueueIndices.length} saved stories.`,
-      status: "📋 Playing Custom Queue...",
+      text: `Playing your ${savedQueueIndices.length} queued news stories.`,
+      status: "📋 Playing Saved Queue...",
       articleIndex: null
     }];
 
-    customQueueIndices.forEach((artIdx, i) => {
+    savedQueueIndices.forEach((artIdx, i) => {
       const art = fetchedArticles[artIdx];
       if (!art) return;
       queue.push({
-        role: i % 2 === 0 ? 'LEAD ANCHOR' : 'CO-ANCHOR',
-        text: `${cleanTextForSpeech(art.title)}. ${cleanTextForSpeech(art.description)}`,
-        status: `📋 Queue (${i + 1}/${customQueueIndices.length}): ${cleanTextForSpeech(art.title)}`,
+        text: `${cleanText(art.title)}. ${cleanText(art.description)}`,
+        status: `📋 Queue (${i + 1}/${savedQueueIndices.length}): ${cleanText(art.title)}`,
         articleIndex: artIdx
       });
     });
@@ -1419,7 +1112,7 @@
     playQueue(queue);
   }
 
-  // Skeletons & Rendering
+  // Skeletons & Article Cards
   function showSkeletons() {
     const grid = document.getElementById('newsGrid');
     grid.innerHTML = Array.from({ length: 6 }).map(() => `
@@ -1435,50 +1128,31 @@
     `).join('');
   }
 
-  function getFilteredArticles() {
-    if (activeSentimentFilter === 'all') return fetchedArticles;
-    return fetchedArticles.filter(a => a.nlp.sentiment.label === activeSentimentFilter);
-  }
-
-  function renderCards(isFallback = false) {
+  function renderArticles() {
     const grid = document.getElementById('newsGrid');
     grid.innerHTML = '';
 
-    if (isFallback) {
-      const banner = document.createElement('div');
-      banner.className = 'demo-banner';
-      banner.innerHTML = `
-        <span>⚡ Live API Offline or Rate-Limited — Running High-Availability Curated Demo Feed</span>
-        <button class="btn-card-listen" onclick="fetchNews()">🔄 Retry Live API</button>
-      `;
-      grid.appendChild(banner);
-    }
-
-    const list = getFilteredArticles();
-    if (!list.length) {
-      grid.innerHTML += `<div class="status-msg">No articles match the selected sentiment filter.</div>`;
+    if (!fetchedArticles.length) {
+      grid.innerHTML = `<div class="status-msg">No articles found for ${escapeHTML(activeChannelObj.name)}. Try another channel or category.</div>`;
       return;
     }
 
-    list.forEach(article => {
-      const idx = article._idx;
-      const sourceName = escapeHTML(article.source?.name || 'World News');
+    fetchedArticles.forEach((article, idx) => {
+      const sourceName = escapeHTML(article.source?.name || activeChannelObj.name);
       const dateStr = formatRelativeTime(article.publishedAt);
-      const title = escapeHTML(cleanTextForSpeech(article.title));
-      const desc = escapeHTML(cleanTextForSpeech(article.description) || 'Click Read to view full coverage.');
-      const { sentiment, keywords, listenSec } = article.nlp;
-      const isQueued = customQueueIndices.includes(idx);
+      const title = escapeHTML(cleanText(article.title));
+      const rawDesc = cleanText(article.description);
+      const desc = escapeHTML(rawDesc && rawDesc !== cleanText(article.title) ? rawDesc : 'Click Read to view the full story from this channel.');
+      const isQueued = savedQueueIndices.includes(idx);
 
       const card = document.createElement('div');
       card.className = `card ${activeArticleIndex === idx ? 'speaking' : ''}`;
-      card.dataset.idx = idx;
       card.innerHTML = `
         <div class="card-img-wrap">
-          <span class="badge-overlay-left">⚡ ~${listenSec}s listen</span>
-          <span class="badge-overlay-right">${sentiment.icon} ${sentiment.label}</span>
+          <span class="channel-pill-overlay">${activeCountryObj.flag} ${sourceName}</span>
           ${article.urlToImage
-            ? `<img src="${escapeHTML(article.urlToImage)}" alt="News thumbnail" loading="lazy" onerror="this.outerHTML='<span>🌐 ${sourceName}</span>'">`
-            : `<span>🌐 ${sourceName}</span>`
+            ? `<img src="${escapeHTML(article.urlToImage)}" alt="News thumbnail" loading="lazy" onerror="this.outerHTML='<span>📺 ${sourceName}</span>'">`
+            : `<span>📺 ${sourceName}</span>`
           }
         </div>
         <div class="card-body">
@@ -1488,16 +1162,13 @@
           </div>
           <h2 class="card-title">${title}</h2>
           <p class="card-desc">${desc}</p>
-          <div class="keyword-row">
-            ${keywords.map(k => `<span class="kw-tag">#${escapeHTML(k)}</span>`).join('')}
-          </div>
           <div class="card-footer">
-            <div class="card-btn-group">
+            <div class="card-actions">
               <button class="btn-card-listen" onclick="readSingleArticle(${idx})">
                 ${activeArticleIndex === idx ? '⏹ Stop' : '🔊 Listen'}
               </button>
               <button class="btn-card-queue ${isQueued ? 'queued' : ''}" onclick="toggleQueueArticle(${idx})">
-                ${isQueued ? '✓ Queued' : '➕ Queue'}
+                ${isQueued ? '✓ Saved' : '➕ Queue'}
               </button>
             </div>
             <a href="${escapeHTML(article.url)}" class="read-more" target="_blank" rel="noopener noreferrer">Read &rarr;</a>
@@ -1508,59 +1179,109 @@
     });
   }
 
+  /**
+   * DIRECT CHANNEL RSS FETCHER (Fallback & Channel-Specific Live Stream)
+   * Ensures every single Indian & Global channel works even if NewsAPI free tier blocks it.
+   */
+  async function fetchDirectChannelFeed(query = '') {
+    let rssUrl = activeChannelObj.rss;
+
+    // If user typed a search query or picked a specific category on an "All" channel, use Google News RSS for that country/domain
+    const countryCode = activeCountryObj.code === 'global' ? 'US' : activeCountryObj.code.toUpperCase();
+    const langCode = activeCountryObj.code === 'in' ? 'en-IN' : `en-${countryCode}`;
+
+    if (query) {
+      const domainFilter = activeChannelObj.domain ? `site:${activeChannelObj.domain}+` : '';
+      rssUrl = `https://news.google.com/rss/search?q=${domainFilter}${encodeURIComponent(query)}&hl=${langCode}&gl=${countryCode}&ceid=${countryCode}:en`;
+    } else if (activeCategory !== 'general' && activeChannelObj.id === 'all') {
+      rssUrl = `https://news.google.com/rss/headlines/section/topic/${activeCategory.toUpperCase()}?hl=${langCode}&gl=${countryCode}&ceid=${countryCode}:en`;
+    } else if (activeCategory !== 'general' && activeChannelObj.domain) {
+      rssUrl = `https://news.google.com/rss/search?q=site:${activeChannelObj.domain}+${encodeURIComponent(activeCategory)}&hl=${langCode}&gl=${countryCode}&ceid=${countryCode}:en`;
+    }
+
+    const rss2JsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+    const res = await fetch(rss2JsonUrl);
+    const data = await res.json();
+
+    if (data.status !== 'ok' || !data.items) {
+      throw new Error('Channel RSS unavailable');
+    }
+
+    return data.items.map(item => {
+      // Extract image from enclosure, thumbnail, or description HTML
+      let img = item.enclosure?.link || item.thumbnail || '';
+      if (!img && item.description) {
+        const match = item.description.match(/<img[^>]+src="([^">]+)"/i);
+        if (match) img = match[1];
+      }
+      return {
+        source: { name: activeChannelObj.id === 'all' ? (item.author || data.feed?.title || activeCountryObj.name + ' News') : activeChannelObj.name },
+        title: item.title,
+        description: cleanText(item.description || item.content || ''),
+        url: item.link,
+        urlToImage: img,
+        publishedAt: item.pubDate
+      };
+    });
+  }
+
+  // Primary Fetch Function (Tries /api/news first, then seamlessly falls back to Live Channel RSS)
   async function fetchNews(query = '') {
     stopAudio();
     showSkeletons();
-
-    let url = `/api/news?category=${activeCategory}`;
-    if (query) url += `&q=${encodeURIComponent(query)}`;
+    savedQueueIndices = [];
+    document.getElementById('queuePlayBtn').innerText = '📋 Saved Queue (0)';
+    document.getElementById('queuePlayBtn').disabled = true;
 
     try {
-      const response = await fetch(url);
-      const data = await response.json();
+      // If a specific channel is chosen, or if /api/news doesn't support that channel, try /api/news with params first
+      const params = new URLSearchParams({
+        country: activeCountryObj.code === 'global' ? 'us' : activeCountryObj.code,
+        category: activeCategory
+      });
+      if (activeChannelObj.sourceId) params.set('sources', activeChannelObj.sourceId);
+      if (activeChannelObj.domain) params.set('domain', activeChannelObj.domain);
+      if (query) params.set('q', query);
 
-      if (data.status !== "ok" || !data.articles || data.articles.length === 0) {
-        throw new Error(data.message || 'No live articles returned');
+      let articles = [];
+
+      // If user selected a dedicated Indian or Global channel that relies on direct feed, fetch live channel feed directly
+      if (activeChannelObj.id !== 'all') {
+        articles = await fetchDirectChannelFeed(query);
+      } else {
+        // Try serverless /api/news first
+        const response = await fetch(`/api/news?${params.toString()}`);
+        const data = await response.json();
+        if (data.status === 'ok' && data.articles && data.articles.length > 0) {
+          articles = data.articles.filter(a => a.title && !a.title.includes('[Removed]'));
+        } else {
+          articles = await fetchDirectChannelFeed(query);
+        }
       }
 
-      const raw = data.articles.filter(a => a.title && !a.title.includes('[Removed]'));
-      fetchedArticles = raw.map((art, idx) => ({
-        ...art,
-        _idx: idx,
-        nlp: analyzeArticleNLP(art.title, art.description)
-      }));
-
-      updateAnalyticsDashboard();
-      renderCards(false);
+      fetchedArticles = articles;
+      renderArticles();
     } catch (err) {
-      // Automatic Viva Demo Fallback if /api/news is unreachable or rate-limited
-      fetchedArticles = FALLBACK_ARTICLES.map((art, idx) => ({
-        ...art,
-        _idx: idx,
-        nlp: analyzeArticleNLP(art.title, art.description)
-      }));
-      updateAnalyticsDashboard();
-      renderCards(true);
+      // Fallback to direct channel RSS if /api/news fails or is rate-limited
+      try {
+        fetchedArticles = await fetchDirectChannelFeed(query);
+        renderArticles();
+      } catch (fallbackErr) {
+        document.getElementById('newsGrid').innerHTML =
+          '<div class="status-msg" style="color: #ef4444;">Unable to load channel feed right now. Please try another news channel.</div>';
+      }
     }
   }
 
-  // Category & Sentiment Filter Listeners
+  // Category Listener
   document.getElementById('categoryGroup').addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON') {
+    const btn = e.target.closest('button');
+    if (btn) {
       document.querySelectorAll('#categoryGroup button').forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      activeCategory = e.target.dataset.cat;
+      btn.classList.add('active');
+      activeCategory = btn.dataset.cat;
       document.getElementById('searchInput').value = '';
       fetchNews();
-    }
-  });
-
-  document.getElementById('sentimentFilterGroup').addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON') {
-      document.querySelectorAll('#sentimentFilterGroup button').forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      activeSentimentFilter = e.target.dataset.sent;
-      renderCards();
     }
   });
 
@@ -1573,20 +1294,10 @@
     if (e.key === 'Enter') triggerSearch();
   });
 
-  // Keyboard Accessibility Shortcuts for Demo
-  document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-    if (e.code === 'Space') {
-      e.preventDefault();
-      togglePause();
-    } else if (e.key.toLowerCase() === 'n') {
-      skipNext();
-    } else if (e.key === '/') {
-      e.preventDefault();
-      document.getElementById('searchInput').focus();
-    }
-  });
-
+  // Initialize UI & Load India News Default
+  renderCountryStrip();
+  renderChannelStrip();
+  updateSelectionLabel();
   fetchNews();
 </script>
 </body>
