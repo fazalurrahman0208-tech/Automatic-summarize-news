@@ -3,495 +3,699 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>World & India Live News | AI Summarizer & Audio Anchor</title>
+  <title>Pulse — Global & India News Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #f1f5f9;
+      --bg: #fafafa;
       --surface: #ffffff;
-      --surface-subtle: #f8fafc;
-      --text-main: #0f172a;
-      --text-body: #334155;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
-      --primary: #2563eb;
-      --primary-soft: rgba(37, 99, 235, 0.12);
-      --ai-accent: #7c3aed;
-      --ai-bg: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(37, 99, 235, 0.08));
-      --ai-border: #c4b5fd;
-      --audio-bg: rgba(255, 255, 255, 0.95);
-      --audio-border: #bfdbfe;
-      --danger: #ef4444;
-      --card-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+      --surface-elevated: #f4f4f5;
+      --surface-hover: #e4e4e7;
+      --glass: rgba(255, 255, 255, 0.86);
+      --text-primary: #09090b;
+      --text-secondary: #52525b;
+      --text-tertiary: #71717a;
+      --border: #e4e4e7;
+      --border-strong: #d4d4d8;
+      --accent: #09090b;
+      --accent-fg: #ffffff;
+      --brand: #2563eb;
+      --brand-soft: rgba(37, 99, 235, 0.08);
+      --danger: #dc2626;
+      --danger-soft: rgba(220, 38, 38, 0.1);
+      --success: #16a34a;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.06);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     body.dark {
-      --bg: #0b1120;
-      --surface: #1e293b;
-      --surface-subtle: #0f172a;
-      --text-main: #f8fafc;
-      --text-body: #cbd5e1;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --primary: #3b82f6;
-      --primary-soft: rgba(59, 130, 246, 0.2);
-      --ai-accent: #a78bfa;
-      --ai-bg: linear-gradient(135deg, rgba(124, 58, 237, 0.18), rgba(37, 99, 235, 0.15));
-      --ai-border: #6d28d9;
-      --audio-bg: rgba(30, 41, 59, 0.95);
-      --audio-border: #3b82f6;
-      --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      --bg: #09090b;
+      --surface: #121215;
+      --surface-elevated: #1c1c21;
+      --surface-hover: #27272e;
+      --glass: rgba(18, 18, 21, 0.86);
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-tertiary: #71717a;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --accent: #fafafa;
+      --accent-fg: #09090b;
+      --brand: #3b82f6;
+      --brand-soft: rgba(59, 130, 246, 0.14);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.15);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 12px 32px -4px rgba(0, 0, 0, 0.5);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg);
-      color: var(--text-body);
-      padding: 16px 12px 70px 12px;
-      transition: background-color 0.2s, color 0.2s;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding: 0 16px 80px 16px;
+      transition: background-color 0.3s var(--ease-out), color 0.3s var(--ease-out);
+      -webkit-font-smoothing: antialiased;
     }
 
     .container {
-      max-width: 1160px;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
-    /* Header */
+    /* Icon Utility */
+    .icon {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    /* Top Editorial Masthead */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 20px 0 16px 0;
+      border-bottom: 1px solid var(--border);
       margin-bottom: 16px;
+      gap: 12px;
       flex-wrap: wrap;
+    }
+
+    .brand-left {
+      display: flex;
+      align-items: center;
       gap: 12px;
     }
 
-    .brand-wrap h1 {
-      font-size: 1.55rem;
-      color: var(--text-main);
-      letter-spacing: -0.02em;
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: var(--accent);
+      color: var(--accent-fg);
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.03em;
+    }
+
+    .brand-titles h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.025em;
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
 
-    .live-badge {
-      font-size: 0.68rem;
-      font-weight: 800;
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
       text-transform: uppercase;
-      background: #ef4444;
-      color: #fff;
-      padding: 3px 8px;
+      letter-spacing: 0.04em;
+      padding: 2px 7px;
       border-radius: 99px;
-      letter-spacing: 0.05em;
-      animation: pulseBadge 1.8s infinite;
+      background: var(--surface-elevated);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
     }
 
-    @keyframes pulseBadge {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.55; }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
     }
 
-    .brand-wrap p {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      margin-top: 3px;
+    .brand-titles p {
+      font-size: 0.78rem;
+      color: var(--text-tertiary);
     }
 
     .header-actions {
       display: flex;
+      align-items: center;
       gap: 8px;
+    }
+
+    /* Button System */
+    .btn {
+      display: inline-flex;
       align-items: center;
-    }
-
-    .btn-top {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 8px 13px;
-      border-radius: 10px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: var(--card-shadow);
-    }
-
-    /* Sticky Audio Player */
-    .audio-bar {
-      position: sticky;
-      top: 10px;
-      z-index: 100;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      background: var(--audio-bg);
-      border: 1px solid var(--audio-border);
-      padding: 12px 14px;
-      border-radius: 14px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .audio-status-wrap {
-      display: flex;
-      flex-direction: column;
+      justify-content: center;
       gap: 6px;
-      flex: 1;
-      min-width: 240px;
-    }
-
-    .audio-status {
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--primary);
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-primary);
+      cursor: pointer;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      transition: all 0.18s var(--ease-out);
+      user-select: none;
     }
 
-    .voice-picker-wrap {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    .btn:hover:not(:disabled) {
+      background: var(--surface-elevated);
+      border-color: var(--border-strong);
     }
 
-    .voice-select, .speed-select {
-      padding: 5px 8px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      font-size: 0.8rem;
-      outline: none;
-      color: var(--text-main);
+    .btn:active:not(:disabled) {
+      transform: scale(0.97);
     }
 
-    .voice-select {
-      max-width: 195px;
-    }
-
-    .audio-btns {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .btn-audio, .btn-ai-brief, .btn-control, .btn-stop {
-      border: none;
-      padding: 8px 13px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
-    }
-
-    .btn-audio {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    .btn-ai-brief {
-      background: linear-gradient(135deg, #7c3aed, #2563eb);
-      color: #ffffff;
-      box-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
-    }
-
-    .btn-control {
-      background: var(--surface);
-      color: var(--text-main);
-      border: 1px solid var(--border);
-    }
-
-    .btn-control:disabled {
-      opacity: 0.45;
+    .btn:disabled {
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
-    .btn-stop {
+    .btn-primary {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      opacity: 0.9;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .btn-brand {
+      background: var(--brand-soft);
+      color: var(--brand);
+      border-color: rgba(59, 130, 246, 0.25);
+      font-weight: 600;
+    }
+
+    .btn-brand:hover:not(:disabled) {
+      background: var(--brand);
+      color: #ffffff;
+      border-color: var(--brand);
+    }
+
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+      border-color: transparent;
+    }
+
+    .btn-danger:hover:not(:disabled) {
       background: var(--danger);
-      color: #fff;
+      color: #ffffff;
     }
 
-    /* Global AI Executive Briefing Box */
-    .ai-briefing-panel {
-      display: none;
-      background: var(--ai-bg);
-      border: 1px solid var(--ai-border);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 18px;
-      box-shadow: var(--card-shadow);
+    .btn-icon-only {
+      padding: 7px;
     }
 
-    .ai-briefing-panel.open {
-      display: block;
-      animation: fadeIn 0.25s ease-out;
+    /* Sticky Broadcast & AI Studio Bar */
+    .studio-bar {
+      position: sticky;
+      top: 12px;
+      z-index: 90;
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-md);
+      transition: border-color 0.25s var(--ease-out);
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
+    .studio-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .ai-panel-header {
+    .studio-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 200px;
+      flex: 1;
+    }
+
+    /* Minimal Audio Waveform */
+    .waveform {
+      display: inline-flex;
+      align-items: center;
+      gap: 2.5px;
+      height: 16px;
+      padding: 0 4px;
+    }
+
+    .wave-bar {
+      width: 2.5px;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--text-tertiary);
+      transition: height 0.2s ease, background-color 0.2s ease;
+    }
+
+    .waveform.playing .wave-bar {
+      background: var(--brand);
+    }
+
+    .waveform.playing .wave-bar:nth-child(1) { animation: sound 0.65s infinite ease-in-out; }
+    .waveform.playing .wave-bar:nth-child(2) { animation: sound 0.65s infinite ease-in-out 0.15s; }
+    .waveform.playing .wave-bar:nth-child(3) { animation: sound 0.65s infinite ease-in-out 0.3s; }
+    .waveform.playing .wave-bar:nth-child(4) { animation: sound 0.65s infinite ease-in-out 0.1s; }
+
+    @keyframes sound {
+      0%, 100% { height: 4px; }
+      50% { height: 15px; }
+    }
+
+    .status-text {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 380px;
+    }
+
+    .studio-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* Collapsible Audio Settings Tray */
+    .studio-drawer {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.28s var(--ease-out);
+    }
+
+    .studio-drawer.open {
+      grid-template-rows: 1fr;
+    }
+
+    .studio-drawer-inner {
+      overflow: hidden;
+    }
+
+    .studio-settings-row {
+      padding-top: 10px;
+      margin-top: 10px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+    }
+
+    .setting-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .select-minimal {
+      font-family: inherit;
+      font-size: 0.76rem;
+      padding: 5px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+      outline: none;
+      max-width: 210px;
+    }
+
+    /* Collapsible AI Executive Briefing Drawer */
+    .ai-drawer {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.35s var(--ease-out), margin-bottom 0.35s var(--ease-out);
+      margin-bottom: 0;
+    }
+
+    .ai-drawer.open {
+      grid-template-rows: 1fr;
+      margin-bottom: 16px;
+    }
+
+    .ai-drawer-inner {
+      overflow: hidden;
+    }
+
+    .ai-brief-card {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .ai-brief-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 10px;
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
     }
 
-    .ai-title-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: var(--ai-accent);
-    }
-
-    .ai-panel-actions {
+    .ai-brief-title {
       display: flex;
-      gap: 6px;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-primary);
     }
 
-    .ai-panel-body {
-      font-size: 0.88rem;
-      color: var(--text-main);
-      line-height: 1.55;
+    .ai-brief-title .icon {
+      color: var(--brand);
     }
 
-    .ai-panel-body p {
+    .ai-brief-body {
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .ai-brief-body p {
+      color: var(--text-primary);
+      font-weight: 500;
       margin-bottom: 10px;
     }
 
-    .ai-panel-body ul {
+    .ai-brief-body ul {
       padding-left: 18px;
-      display: flex;
-      flex-direction: column;
+      display: grid;
       gap: 6px;
     }
 
-    /* Multi-Country & Channel Control Hub */
-    .controls-panel {
+    /* Unified Filter & Navigation Deck */
+    .nav-deck {
       background: var(--surface);
-      padding: 15px;
-      border-radius: 14px;
-      box-shadow: var(--card-shadow);
       border: 1px solid var(--border);
-      margin-bottom: 18px;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 20px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
     }
 
-    .control-row {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .row-header {
+    .deck-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
       flex-wrap: wrap;
-      gap: 4px;
     }
 
-    .control-label {
-      font-weight: 700;
-      font-size: 0.76rem;
+    .active-crumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+    }
+
+    .active-crumb strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Search Input */
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      max-width: 340px;
+      min-width: 200px;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-wrap .icon {
+      position: absolute;
+      left: 10px;
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      padding: 6px 64px 6px 32px;
+      font-family: inherit;
+      font-size: 0.8rem;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .search-wrap input:focus {
+      background: var(--surface);
+      border-color: var(--text-primary);
+    }
+
+    .search-submit {
+      position: absolute;
+      right: 4px;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 5px;
+      border: none;
+      background: var(--surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      border: 1px solid var(--border);
+    }
+
+    .search-submit:hover {
+      color: var(--text-primary);
+    }
+
+    /* Horizontal Pill Strips */
+    .strip-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .strip-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-    }
-
-    .active-channel-indicator {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--primary);
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+      min-width: 58px;
+      flex-shrink: 0;
     }
 
     .scroll-strip {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       -ms-overflow-style: none;
       padding: 2px 0;
+      flex: 1;
     }
 
     .scroll-strip::-webkit-scrollbar {
       display: none;
     }
 
-    .btn-country, .btn-channel, .btn-chip {
-      padding: 7px 14px;
-      border: 1px solid var(--border);
-      background: var(--surface-subtle);
-      border-radius: 99px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-body);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.15s;
+    .pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      padding: 5px 11px;
+      border-radius: 7px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.16s var(--ease-out);
+    }
+
+    .pill:hover {
+      color: var(--text-primary);
+      background: var(--surface-elevated);
+    }
+
+    .pill.active {
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+      border-color: var(--border-strong);
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pill-country.active {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+    }
+
+    .channel-indicator {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
       flex-shrink: 0;
     }
 
-    .btn-country.active {
-      background: var(--text-main);
-      color: var(--surface);
-      border-color: var(--text-main);
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 2px 0;
     }
 
-    .btn-channel.active {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
-    }
-
-    .btn-chip.active {
-      background: var(--primary-soft);
-      color: var(--primary);
-      border-color: var(--primary);
-    }
-
-    .channel-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    /* Search Row */
-    .search-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding-top: 6px;
-      border-top: 1px solid var(--border);
-    }
-
-    .search-box {
-      display: flex;
-      flex: 1;
-      min-width: 220px;
-      gap: 8px;
-    }
-
-    .search-box input {
-      flex: 1;
-      padding: 9px 12px;
-      border: 1px solid var(--border);
-      background: var(--surface-subtle);
-      color: var(--text-main);
-      border-radius: 8px;
-      font-size: 0.88rem;
-      outline: none;
-    }
-
-    .search-box input:focus {
-      border-color: var(--primary);
-    }
-
-    .search-box button {
-      padding: 9px 18px;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* News Grid & Cards */
+    /* Editorial News Grid & Cards */
     .news-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    @keyframes cardEnter {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .card {
       background: var(--surface);
-      border-radius: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
       overflow: hidden;
-      box-shadow: var(--card-shadow);
       display: flex;
       flex-direction: column;
-      border: 2px solid var(--border);
-      transition: transform 0.2s, border-color 0.2s;
+      transition: transform 0.28s var(--ease-out), border-color 0.28s var(--ease-out), box-shadow 0.28s var(--ease-out);
+      animation: cardEnter 0.45s var(--ease-out) backwards;
+      animation-delay: calc(var(--i, 0) * 35ms);
     }
 
     .card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-md);
     }
 
     .card.speaking {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18);
+      border-color: var(--brand);
+      box-shadow: 0 0 0 1px var(--brand), var(--shadow-md);
     }
 
-    .card-img-wrap {
+    .card-media {
       width: 100%;
-      height: 165px;
-      background: linear-gradient(135deg, #1e293b, #334155);
+      height: 176px;
+      background: var(--surface-elevated);
       position: relative;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #cbd5e1;
-      font-size: 0.9rem;
-      font-weight: 700;
-      text-align: center;
-      padding: 12px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .card-img-wrap img {
+    .card-media img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      transition: transform 0.5s var(--ease-out);
     }
 
-    .channel-pill-overlay {
+    .card:hover .card-media img {
+      transform: scale(1.03);
+    }
+
+    .media-fallback {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .card-badge {
       position: absolute;
       top: 10px;
       left: 10px;
-      background: rgba(15, 23, 42, 0.84);
-      color: #ffffff;
-      padding: 4px 10px;
+      background: var(--glass);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
       border-radius: 6px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      backdrop-filter: blur(6px);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      font-weight: 600;
     }
 
     .card-body {
-      padding: 14px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       flex: 1;
@@ -501,240 +705,317 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-tertiary);
     }
 
-    .source-tag {
-      font-size: 0.73rem;
-      font-weight: 800;
-      color: var(--primary);
+    .source-name {
+      color: var(--text-secondary);
+      font-weight: 600;
       text-transform: uppercase;
-    }
-
-    .card-date {
-      font-size: 0.74rem;
-      color: var(--text-muted);
+      letter-spacing: 0.03em;
     }
 
     .card-title {
       font-size: 0.96rem;
-      font-weight: 700;
-      color: var(--text-main);
-      line-height: 1.38;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.42;
+      letter-spacing: -0.01em;
       margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .card-desc {
-      font-size: 0.84rem;
-      color: var(--text-body);
-      line-height: 1.48;
-      margin-bottom: 12px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 14px;
       flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
-    /* Per-Card AI Summary Box */
+    /* Smooth Accordion for Per-Card AI Summary */
+    .card-ai-accordion {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.28s var(--ease-out);
+    }
+
+    .card-ai-accordion.open {
+      grid-template-rows: 1fr;
+    }
+
+    .card-ai-inner {
+      overflow: hidden;
+    }
+
     .card-ai-box {
-      display: none;
-      background: var(--ai-bg);
-      border: 1px solid var(--ai-border);
-      border-radius: 8px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
       padding: 10px 12px;
       margin-bottom: 12px;
-      font-size: 0.8rem;
-      color: var(--text-main);
-      line-height: 1.45;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
     }
 
-    .card-ai-box.open {
-      display: block;
-      animation: fadeIn 0.2s ease-out;
-    }
-
-    .card-ai-header {
+    .card-ai-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-weight: 800;
-      font-size: 0.74rem;
-      color: var(--ai-accent);
-      text-transform: uppercase;
       margin-bottom: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      font-weight: 600;
+      color: var(--brand);
+      text-transform: uppercase;
     }
 
     .card-ai-box ul {
-      padding-left: 16px;
-      margin-top: 4px;
-      display: flex;
-      flex-direction: column;
+      padding-left: 15px;
+      margin-top: 5px;
+      display: grid;
       gap: 4px;
     }
 
     .card-footer {
       border-top: 1px solid var(--border);
-      padding-top: 11px;
+      padding-top: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 8px;
     }
 
     .card-actions {
       display: flex;
-      flex-wrap: wrap;
+      align-items: center;
       gap: 6px;
     }
 
-    .btn-card-listen, .btn-card-ai, .btn-card-queue {
-      background: var(--surface-subtle);
-      border: 1px solid var(--border);
+    .btn-sm {
+      padding: 5px 9px;
+      font-size: 0.73rem;
       border-radius: 6px;
-      padding: 5px 10px;
-      font-size: 0.76rem;
-      cursor: pointer;
+    }
+
+    .card.speaking .btn-listen-card {
+      background: var(--brand);
+      color: #ffffff;
+      border-color: var(--brand);
+    }
+
+    .btn-queue-card.queued {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+    }
+
+    .external-link {
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      font-size: 0.75rem;
       font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .btn-card-ai {
-      border-color: var(--ai-border);
-      color: var(--ai-accent);
-      background: rgba(124, 58, 237, 0.08);
-    }
-
-    .card.speaking .btn-card-listen {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-    }
-
-    .btn-card-queue.queued {
-      background: #dcfce7;
-      border-color: #86efac;
-      color: #166534;
-    }
-
-    .read-more {
-      color: var(--primary);
+      color: var(--text-primary);
       text-decoration: none;
-      font-weight: 700;
-      font-size: 0.8rem;
-      white-space: nowrap;
+      transition: opacity 0.15s ease;
     }
 
+    .external-link:hover {
+      opacity: 0.7;
+    }
+
+    /* Refined Shimmer Skeletons */
     .skeleton {
-      animation: pulse 1.4s infinite ease-in-out;
-      background: var(--surface-subtle);
+      background: linear-gradient(90deg, var(--surface-elevated) 25%, var(--surface-hover) 50%, var(--surface-elevated) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 0 12px 64px 12px; }
+      header { padding: 14px 0 12px 0; }
+      .search-wrap { max-width: 100%; width: 100%; order: 3; }
+      .status-text { max-width: 220px; }
     }
   </style>
 </head>
-<body>
+<body class="dark">
 
 <div class="container">
+  <!-- Minimal Editorial Masthead -->
   <header>
-    <div class="brand-wrap">
-      <h1>
-        World & India AI News Hub
-        <span class="live-badge">● AI + Live Channels</span>
-      </h1>
-      <p>Stream headlines from India & global networks with instant AI summaries and voice anchor</p>
+    <div class="brand-left">
+      <div class="brand-mark">P</div>
+      <div class="brand-titles">
+        <h1>
+          Pulse News
+          <span class="status-pill"><span class="status-dot"></span> Live Feed</span>
+        </h1>
+        <p>Global & Indian Broadcast Intelligence • AI Synthesis</p>
+      </div>
     </div>
+
     <div class="header-actions">
-      <button class="btn-top" onclick="fetchNews()">🔄 Refresh Feed</button>
-      <button class="btn-top" id="themeToggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+      <button class="btn" onclick="fetchNews()" title="Refresh feed">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+        <span>Refresh</span>
+      </button>
+      <button class="btn btn-icon-only" id="themeToggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme"></button>
     </div>
   </header>
 
-  <!-- Sticky Audio Player -->
-  <div class="audio-bar">
-    <div class="audio-status-wrap">
-      <span class="audio-status" id="audioStatus">🎙 Audio Reader: Ready</span>
-      <div class="voice-picker-wrap">
-        <label for="voiceSelect">Anchor Voice:</label>
-        <select id="voiceSelect" class="voice-select"></select>
-        <label for="speedSelect">Speed:</label>
-        <select id="speedSelect" class="speed-select">
-          <option value="0.9">0.9x</option>
-          <option value="1" selected>1.0x</option>
-          <option value="1.15">1.15x</option>
-          <option value="1.3">1.3x</option>
-          <option value="1.5">1.5x</option>
-        </select>
+  <!-- Sleek Floating Studio & AI Control Bar -->
+  <div class="studio-bar">
+    <div class="studio-main">
+      <div class="studio-status">
+        <div class="waveform" id="waveform">
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+          <span class="wave-bar"></span>
+        </div>
+        <span class="status-text" id="audioStatus">Audio Studio Ready</span>
+      </div>
+
+      <div class="studio-controls">
+        <button class="btn btn-brand" onclick="generateChannelAISummary()">
+          <svg class="icon" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          <span>AI Brief</span>
+        </button>
+
+        <button class="btn btn-primary" onclick="readAllTopNews()">
+          <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span>Top 5 Audio</span>
+        </button>
+
+        <button class="btn" id="queuePlayBtn" onclick="playSavedQueue()" disabled>
+          <svg class="icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          <span id="queueCountText">0</span>
+        </button>
+
+        <button class="btn btn-icon-only" id="pauseBtn" onclick="togglePause()" disabled title="Pause / Resume">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+
+        <button class="btn btn-icon-only" id="nextBtn" onclick="skipNext()" disabled title="Next Story">
+          <svg class="icon" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+        </button>
+
+        <button class="btn btn-danger btn-icon-only" onclick="stopAudio()" title="Stop">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+        </button>
+
+        <button class="btn btn-icon-only" onclick="toggleStudioSettings()" title="Voice & Speed Settings">
+          <svg class="icon" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="2" y1="14" x2="6" y2="14"/><line x1="10" y1="8" x2="14" y2="8"/><line x1="18" y1="16" x2="22" y2="16"/></svg>
+        </button>
       </div>
     </div>
-    <div class="audio-btns">
-      <button class="btn-ai-brief" onclick="generateChannelAISummary()">✨ AI Summarize Channel</button>
-      <button class="btn-audio" onclick="readAllTopNews()">🔊 Listen Top 5 Brief</button>
-      <button class="btn-control" id="queuePlayBtn" onclick="playSavedQueue()" disabled>📋 Queue (0)</button>
-      <button class="btn-control" id="pauseBtn" onclick="togglePause()" disabled>⏸ Pause</button>
-      <button class="btn-control" id="nextBtn" onclick="skipNext()" disabled>⏭ Next</button>
-      <button class="btn-stop" onclick="stopAudio()">⏹ Stop</button>
+
+    <!-- Collapsible Voice & Speed Settings -->
+    <div class="studio-drawer" id="studioDrawer">
+      <div class="studio-drawer-inner">
+        <div class="studio-settings-row">
+          <div class="setting-group">
+            <label for="voiceSelect">Voice</label>
+            <select id="voiceSelect" class="select-minimal"></select>
+          </div>
+          <div class="setting-group">
+            <label for="speedSelect">Rate</label>
+            <select id="speedSelect" class="select-minimal">
+              <option value="0.9">0.9x</option>
+              <option value="1" selected>1.0x</option>
+              <option value="1.15">1.15x</option>
+              <option value="1.3">1.3x</option>
+              <option value="1.5">1.5x</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Global AI Channel Executive Summary Panel -->
-  <div class="ai-briefing-panel" id="aiBriefingPanel">
-    <div class="ai-panel-header">
-      <span class="ai-title-badge" id="aiBriefingTitle">✨ AI Executive Briefing</span>
-      <div class="ai-panel-actions">
-        <button class="btn-card-listen" onclick="speakChannelAISummary()">🔊 Read AI Summary</button>
-        <button class="btn-card-listen" onclick="document.getElementById('aiBriefingPanel').classList.remove('open')">✕ Close</button>
+  <!-- Smooth Accordion for Channel AI Executive Summary -->
+  <div class="ai-drawer" id="aiBriefingDrawer">
+    <div class="ai-drawer-inner">
+      <div class="ai-brief-card">
+        <div class="ai-brief-header">
+          <div class="ai-brief-title">
+            <svg class="icon" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            <span id="aiBriefingTitle">Executive Intelligence Brief</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn btn-sm" onclick="speakChannelAISummary()">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <span>Read Aloud</span>
+            </button>
+            <button class="btn btn-sm btn-icon-only" onclick="document.getElementById('aiBriefingDrawer').classList.remove('open')">
+              <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="ai-brief-body" id="aiBriefingContent"></div>
       </div>
-    </div>
-    <div class="ai-panel-body" id="aiBriefingContent">
-      Generating AI executive summary...
     </div>
   </div>
 
-  <!-- Country, News Channel & Category Controls -->
-  <div class="controls-panel">
-    <div class="control-row">
-      <div class="row-header">
-        <span class="control-label">1. Select Country / Region</span>
-        <span class="active-channel-indicator" id="currentSelectionLabel">🇮🇳 India • All India Channels</span>
+  <!-- Compact Filter & Channel Navigation Deck -->
+  <section class="nav-deck">
+    <div class="deck-top">
+      <div class="active-crumb" id="currentSelectionLabel">
+        <span>REGION</span> / <strong>India • All India Channels</strong>
       </div>
+      <div class="search-wrap">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Filter by keyword, company, or topic...">
+        <button class="search-submit" onclick="triggerSearch()">Find</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="strip-row">
+      <span class="strip-label">Region</span>
       <div class="scroll-strip" id="countryStrip"></div>
     </div>
 
-    <div class="control-row">
-      <div class="row-header">
-        <span class="control-label">2. Choose News Channel / Network</span>
-      </div>
+    <div class="strip-row">
+      <span class="strip-label">Network</span>
       <div class="scroll-strip" id="channelStrip"></div>
     </div>
 
-    <div class="control-row">
-      <div class="row-header">
-        <span class="control-label">3. Topic Category</span>
-      </div>
+    <div class="strip-row">
+      <span class="strip-label">Section</span>
       <div class="scroll-strip" id="categoryGroup">
-        <button class="btn-chip active" data-cat="general">Top Headlines</button>
-        <button class="btn-chip" data-cat="business">Business & Economy</button>
-        <button class="btn-chip" data-cat="technology">Technology</button>
-        <button class="btn-chip" data-cat="sports">Sports & Cricket</button>
-        <button class="btn-chip" data-cat="science">Science & Space</button>
-        <button class="btn-chip" data-cat="entertainment">Entertainment</button>
-        <button class="btn-chip" data-cat="health">Health</button>
+        <button class="pill active" data-cat="general">Top Stories</button>
+        <button class="pill" data-cat="business">Markets & Economy</button>
+        <button class="pill" data-cat="technology">Technology</button>
+        <button class="pill" data-cat="sports">Sports</button>
+        <button class="pill" data-cat="science">Science</button>
+        <button class="pill" data-cat="entertainment">Culture</button>
+        <button class="pill" data-cat="health">Health</button>
       </div>
     </div>
-
-    <div class="search-row">
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search across channels (e.g., ISRO, Sensex, Cricket, AI, Parliament)...">
-        <button onclick="triggerSearch()">Search</button>
-      </div>
-    </div>
-  </div>
+  </section>
 
   <!-- News Grid -->
-  <div class="news-grid" id="newsGrid"></div>
+  <main class="news-grid" id="newsGrid"></main>
 </div>
 
 <script>
@@ -742,127 +1023,127 @@
     {
       code: 'in',
       name: 'India',
-      flag: '🇮🇳',
+      iso: 'IN',
       channels: [
-        { id: 'all', name: 'All India Channels', query: 'India', color: '#ea580c', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
+        { id: 'all', name: 'All India Channels', query: 'India', color: '#f97316', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
         { id: 'ndtv', name: 'NDTV 24x7', query: 'NDTV India', color: '#e11d48', rss: 'https://feeds.feedburner.com/ndtvnews-india-news' },
-        { id: 'the-hindu', name: 'The Hindu', query: 'The Hindu India', color: '#1d4ed8', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
+        { id: 'the-hindu', name: 'The Hindu', query: 'The Hindu India', color: '#2563eb', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
         { id: 'times-of-india', name: 'Times of India', query: 'Times of India', color: '#dc2626', rss: 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms' },
         { id: 'indian-express', name: 'Indian Express', query: 'Indian Express', color: '#0284c7', rss: 'https://indianexpress.com/section/india/feed/' },
         { id: 'hindustan-times', name: 'Hindustan Times', query: 'Hindustan Times India', color: '#0ea5e9', rss: 'https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml' },
-        { id: 'india-today', name: 'India Today', query: 'India Today', color: '#b91c1c', rss: 'https://www.indiatoday.in/rss/home' },
+        { id: 'india-today', name: 'India Today', query: 'India Today', color: '#ef4444', rss: 'https://www.indiatoday.in/rss/home' },
         { id: 'livemint', name: 'LiveMint', query: 'Mint India Economy', color: '#f59e0b', rss: 'https://www.livemint.com/rss/news' },
-        { id: 'economic-times', name: 'Economic Times', query: 'Economic Times India', color: '#15803d', rss: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms' },
-        { id: 'deccan-herald', name: 'Deccan Herald', query: 'Deccan Herald India', color: '#0369a1', rss: 'https://www.deccanherald.com/rss/national.rss' },
-        { id: 'dd-news', name: 'DD News India', query: 'India National News', color: '#9333ea', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' }
+        { id: 'economic-times', name: 'Economic Times', query: 'Economic Times India', color: '#10b981', rss: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms' },
+        { id: 'deccan-herald', name: 'Deccan Herald', query: 'Deccan Herald India', color: '#06b6d4', rss: 'https://www.deccanherald.com/rss/national.rss' },
+        { id: 'dd-news', name: 'DD News', query: 'India National News', color: '#8b5cf6', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' }
       ]
     },
     {
       code: 'global',
-      name: 'Global Networks',
-      flag: '🌍',
+      name: 'Global',
+      iso: 'GL',
       channels: [
-        { id: 'all', name: 'All Global Networks', query: 'World News', color: '#2563eb', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-        { id: 'bbc', name: 'BBC World News', query: 'BBC World', color: '#b91c1c', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+        { id: 'all', name: 'All Global Networks', query: 'World News', color: '#3b82f6', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+        { id: 'bbc', name: 'BBC World', query: 'BBC World', color: '#ef4444', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
         { id: 'reuters', name: 'Reuters', query: 'Reuters World', color: '#f97316', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-        { id: 'aljazeera', name: 'Al Jazeera English', query: 'Al Jazeera', color: '#d97706', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'aljazeera', name: 'Al Jazeera', query: 'Al Jazeera', color: '#f59e0b', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
         { id: 'cnn', name: 'CNN International', query: 'CNN World', color: '#dc2626', rss: 'http://rss.cnn.com/rss/edition_world.rss' },
-        { id: 'ap', name: 'Associated Press (AP)', query: 'Associated Press', color: '#ef4444', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-        { id: 'dw', name: 'DW News', query: 'DW Germany World', color: '#0284c7', rss: 'https://rss.dw.com/xml/rss-en-all' },
-        { id: 'france24', name: 'France 24', query: 'France 24 World', color: '#0ea5e9', rss: 'https://www.france24.com/en/rss' }
+        { id: 'ap', name: 'Associated Press', query: 'Associated Press', color: '#10b981', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+        { id: 'dw', name: 'DW News', query: 'DW Germany World', color: '#0ea5e9', rss: 'https://rss.dw.com/xml/rss-en-all' },
+        { id: 'france24', name: 'France 24', query: 'France 24 World', color: '#38bdf8', rss: 'https://www.france24.com/en/rss' }
       ]
     },
     {
       code: 'us',
       name: 'United States',
-      flag: '🇺🇸',
+      iso: 'US',
       channels: [
-        { id: 'all', name: 'All US Channels', query: 'USA News', color: '#2563eb', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
-        { id: 'cnn-us', name: 'CNN', query: 'CNN US', color: '#dc2626', rss: 'http://rss.cnn.com/rss/cnn_topstories.rss' },
-        { id: 'nytimes', name: 'New York Times', query: 'New York Times', color: '#0f172a', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
-        { id: 'cnbc', name: 'CNBC', query: 'CNBC Markets', color: '#0284c7', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
-        { id: 'bloomberg', name: 'Bloomberg', query: 'Bloomberg Economy', color: '#4f46e5', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
-        { id: 'techcrunch', name: 'TechCrunch', query: 'TechCrunch Technology', color: '#16a34a', rss: 'https://techcrunch.com/feed/' },
-        { id: 'verge', name: 'The Verge', query: 'The Verge Tech', color: '#9333ea', rss: 'https://www.theverge.com/rss/index.xml' },
-        { id: 'npr', name: 'NPR News', query: 'NPR US News', color: '#e11d48', rss: 'https://feeds.npr.org/1001/rss.xml' }
+        { id: 'all', name: 'All US Networks', query: 'USA News', color: '#3b82f6', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
+        { id: 'nytimes', name: 'New York Times', query: 'New York Times', color: '#a1a1aa', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
+        { id: 'cnn-us', name: 'CNN US', query: 'CNN US', color: '#ef4444', rss: 'http://rss.cnn.com/rss/cnn_topstories.rss' },
+        { id: 'cnbc', name: 'CNBC', query: 'CNBC Markets', color: '#0ea5e9', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
+        { id: 'bloomberg', name: 'Bloomberg', query: 'Bloomberg Economy', color: '#6366f1', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
+        { id: 'techcrunch', name: 'TechCrunch', query: 'TechCrunch Technology', color: '#10b981', rss: 'https://techcrunch.com/feed/' },
+        { id: 'verge', name: 'The Verge', query: 'The Verge Tech', color: '#a855f7', rss: 'https://www.theverge.com/rss/index.xml' },
+        { id: 'npr', name: 'NPR', query: 'NPR US News', color: '#f43f5e', rss: 'https://feeds.npr.org/1001/rss.xml' }
       ]
     },
     {
       code: 'gb',
       name: 'United Kingdom',
-      flag: '🇬🇧',
+      iso: 'UK',
       channels: [
-        { id: 'all', name: 'All UK Channels', query: 'United Kingdom News', color: '#1d4ed8', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
-        { id: 'bbc-uk', name: 'BBC News UK', query: 'BBC UK', color: '#b91c1c', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
-        { id: 'guardian', name: 'The Guardian', query: 'The Guardian UK', color: '#0369a1', rss: 'https://www.theguardian.com/uk/rss' },
+        { id: 'all', name: 'All UK Networks', query: 'United Kingdom News', color: '#3b82f6', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
+        { id: 'bbc-uk', name: 'BBC UK', query: 'BBC UK', color: '#ef4444', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
+        { id: 'guardian', name: 'The Guardian', query: 'The Guardian UK', color: '#0284c7', rss: 'https://www.theguardian.com/uk/rss' },
         { id: 'sky', name: 'Sky News', query: 'Sky News UK', color: '#dc2626', rss: 'https://feeds.skynews.com/feeds/rss/uk.xml' },
-        { id: 'independent', name: 'The Independent', query: 'The Independent UK', color: '#e11d48', rss: 'https://www.independent.co.uk/news/uk/rss' }
+        { id: 'independent', name: 'The Independent', query: 'The Independent UK', color: '#f43f5e', rss: 'https://www.independent.co.uk/news/uk/rss' }
       ]
     },
     {
       code: 'au',
       name: 'Australia',
-      flag: '🇦🇺',
+      iso: 'AU',
       channels: [
-        { id: 'all', name: 'All Australia Channels', query: 'Australia News', color: '#0284c7', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
-        { id: 'abc-au', name: 'ABC News Australia', query: 'ABC News Australia', color: '#0f172a', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
-        { id: 'smh', name: 'Sydney Morning Herald', query: 'Sydney Australia News', color: '#0369a1', rss: 'https://www.smh.com.au/rss/feed.xml' },
-        { id: 'sbs', name: 'SBS News', query: 'SBS Australia', color: '#e11d48', rss: 'https://www.sbs.com.au/news/feed' }
+        { id: 'all', name: 'All Australia', query: 'Australia News', color: '#0ea5e9', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
+        { id: 'abc-au', name: 'ABC Australia', query: 'ABC News Australia', color: '#10b981', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
+        { id: 'smh', name: 'Sydney Morning Herald', query: 'Sydney Australia News', color: '#3b82f6', rss: 'https://www.smh.com.au/rss/feed.xml' },
+        { id: 'sbs', name: 'SBS News', query: 'SBS Australia', color: '#f43f5e', rss: 'https://www.sbs.com.au/news/feed' }
       ]
     },
     {
       code: 'ca',
       name: 'Canada',
-      flag: '🇨🇦',
+      iso: 'CA',
       channels: [
-        { id: 'all', name: 'All Canada Channels', query: 'Canada News', color: '#dc2626', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
-        { id: 'cbc', name: 'CBC News', query: 'CBC Canada', color: '#b91c1c', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
-        { id: 'ctv', name: 'CTV News', query: 'CTV News Canada', color: '#0284c7', rss: 'https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009' },
-        { id: 'global-ca', name: 'Global News CA', query: 'Global News Canada', color: '#15803d', rss: 'https://globalnews.ca/feed/' }
+        { id: 'all', name: 'All Canada', query: 'Canada News', color: '#ef4444', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
+        { id: 'cbc', name: 'CBC News', query: 'CBC Canada', color: '#dc2626', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
+        { id: 'ctv', name: 'CTV News', query: 'CTV News Canada', color: '#0ea5e9', rss: 'https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009' },
+        { id: 'global-ca', name: 'Global News', query: 'Global News Canada', color: '#10b981', rss: 'https://globalnews.ca/feed/' }
       ]
     },
     {
       code: 'ae',
       name: 'Middle East',
-      flag: '🇦🇪',
+      iso: 'ME',
       channels: [
-        { id: 'all', name: 'All Middle East', query: 'Middle East UAE News', color: '#0d9488', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-        { id: 'aljazeera-me', name: 'Al Jazeera', query: 'Al Jazeera Middle East', color: '#d97706', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-        { id: 'gulf-news', name: 'Gulf News (UAE)', query: 'Gulf News Dubai UAE', color: '#0284c7', rss: 'https://gulfnews.com/rss' },
-        { id: 'arab-news', name: 'Arab News', query: 'Arab News Saudi', color: '#15803d', rss: 'https://www.arabnews.com/rss.xml' },
-        { id: 'khaleej', name: 'Khaleej Times', query: 'Khaleej Times UAE', color: '#1d4ed8', rss: 'https://www.khaleejtimes.com/rss' }
+        { id: 'all', name: 'All Middle East', query: 'Middle East UAE News', color: '#14b8a6', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'aljazeera-me', name: 'Al Jazeera', query: 'Al Jazeera Middle East', color: '#f59e0b', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'gulf-news', name: 'Gulf News', query: 'Gulf News Dubai UAE', color: '#0ea5e9', rss: 'https://gulfnews.com/rss' },
+        { id: 'arab-news', name: 'Arab News', query: 'Arab News Saudi', color: '#10b981', rss: 'https://www.arabnews.com/rss.xml' },
+        { id: 'khaleej', name: 'Khaleej Times', query: 'Khaleej Times UAE', color: '#3b82f6', rss: 'https://www.khaleejtimes.com/rss' }
       ]
     },
     {
       code: 'sg',
-      name: 'Singapore & Asia',
-      flag: '🇸🇬',
+      name: 'Asia Pacific',
+      iso: 'AP',
       channels: [
-        { id: 'all', name: 'All Asia Channels', query: 'Singapore Asia News', color: '#e11d48', rss: 'https://www.scmp.com/rss/91/feed' },
-        { id: 'cna', name: 'Channel NewsAsia (CNA)', query: 'Channel NewsAsia Singapore', color: '#dc2626', rss: 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml' },
-        { id: 'straits', name: 'The Straits Times', query: 'Straits Times Singapore', color: '#1d4ed8', rss: 'https://www.straitstimes.com/news/asia/rss.xml' },
-        { id: 'scmp', name: 'South China Morning Post', query: 'SCMP Asia News', color: '#f59e0b', rss: 'https://www.scmp.com/rss/91/feed' }
+        { id: 'all', name: 'All Asia Networks', query: 'Singapore Asia News', color: '#f43f5e', rss: 'https://www.scmp.com/rss/91/feed' },
+        { id: 'cna', name: 'CNA Singapore', query: 'Channel NewsAsia Singapore', color: '#ef4444', rss: 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml' },
+        { id: 'straits', name: 'Straits Times', query: 'Straits Times Singapore', color: '#3b82f6', rss: 'https://www.straitstimes.com/news/asia/rss.xml' },
+        { id: 'scmp', name: 'SCMP', query: 'SCMP Asia News', color: '#f59e0b', rss: 'https://www.scmp.com/rss/91/feed' }
       ]
     },
     {
       code: 'jp',
       name: 'Japan',
-      flag: '🇯🇵',
+      iso: 'JP',
       channels: [
-        { id: 'all', name: 'All Japan English', query: 'Japan News', color: '#be123c', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
-        { id: 'nhk', name: 'NHK World Japan', query: 'NHK World Japan', color: '#dc2626', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
-        { id: 'japan-today', name: 'Japan Today', query: 'Japan Today Tokyo', color: '#0284c7', rss: 'https://japantoday.com/feed' },
-        { id: 'japan-times', name: 'The Japan Times', query: 'Japan Times', color: '#0f172a', rss: 'https://www.japantimes.co.jp/feed/' }
+        { id: 'all', name: 'All Japan', query: 'Japan News', color: '#e11d48', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
+        { id: 'nhk', name: 'NHK World', query: 'NHK World Japan', color: '#ef4444', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
+        { id: 'japan-today', name: 'Japan Today', query: 'Japan Today Tokyo', color: '#0ea5e9', rss: 'https://japantoday.com/feed' },
+        { id: 'japan-times', name: 'The Japan Times', query: 'Japan Times', color: '#a1a1aa', rss: 'https://www.japantimes.co.jp/feed/' }
       ]
     },
     {
       code: 'za',
       name: 'South Africa',
-      flag: '🇿🇦',
+      iso: 'ZA',
       channels: [
-        { id: 'all', name: 'All South Africa', query: 'South Africa News', color: '#15803d', rss: 'https://www.dailymaverick.co.za/dmrss/' },
-        { id: 'news24', name: 'News24 SA', query: 'News24 South Africa', color: '#1d4ed8', rss: 'https://www.dailymaverick.co.za/dmrss/' },
-        { id: 'maverick', name: 'Daily Maverick', query: 'Daily Maverick South Africa', color: '#0f172a', rss: 'https://www.dailymaverick.co.za/dmrss/' }
+        { id: 'all', name: 'All South Africa', query: 'South Africa News', color: '#10b981', rss: 'https://www.dailymaverick.co.za/dmrss/' },
+        { id: 'news24', name: 'News24', query: 'News24 South Africa', color: '#3b82f6', rss: 'https://www.dailymaverick.co.za/dmrss/' },
+        { id: 'maverick', name: 'Daily Maverick', query: 'Daily Maverick South Africa', color: '#a1a1aa', rss: 'https://www.dailymaverick.co.za/dmrss/' }
       ]
     }
   ];
@@ -884,17 +1165,29 @@
   let activeArticleIndex = null;
   let isCancelled = false;
 
-  // Theme Init
-  if (localStorage.getItem('newsTheme') === 'dark') {
-    document.body.classList.add('dark');
-    document.getElementById('themeToggle').innerText = '☀️ Light Mode';
+  // Theme Management (Defaults to sleek Dark Mode unless Light was chosen)
+  const SUN_SVG = `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
+  const MOON_SVG = `<svg class="icon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
+
+  function syncThemeIcon() {
+    const isDark = document.body.classList.contains('dark');
+    document.getElementById('themeToggle').innerHTML = isDark ? SUN_SVG : MOON_SVG;
   }
+
+  if (localStorage.getItem('newsTheme') === 'light') {
+    document.body.classList.remove('dark');
+  }
+  syncThemeIcon();
 
   function toggleTheme() {
     document.body.classList.toggle('dark');
     const isDark = document.body.classList.contains('dark');
     localStorage.setItem('newsTheme', isDark ? 'dark' : 'light');
-    document.getElementById('themeToggle').innerText = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+    syncThemeIcon();
+  }
+
+  function toggleStudioSettings() {
+    document.getElementById('studioDrawer').classList.toggle('open');
   }
 
   // Speed Init
@@ -953,13 +1246,13 @@
 
     COUNTRY_DIRECTORY.forEach(country => {
       const btn = document.createElement('button');
-      btn.className = `btn-country ${country.code === activeCountryObj.code ? 'active' : ''}`;
-      btn.innerHTML = `<span>${country.flag}</span> <span>${country.name}</span>`;
+      btn.className = `pill pill-country ${country.code === activeCountryObj.code ? 'active' : ''}`;
+      btn.innerHTML = `<span>${country.name}</span>`;
       btn.onclick = () => {
         activeCountryObj = country;
         activeChannelObj = country.channels[0];
         document.getElementById('searchInput').value = '';
-        document.getElementById('aiBriefingPanel').classList.remove('open');
+        document.getElementById('aiBriefingDrawer').classList.remove('open');
         renderCountryStrip();
         renderChannelStrip();
         updateSelectionLabel();
@@ -975,15 +1268,15 @@
 
     activeCountryObj.channels.forEach(channel => {
       const btn = document.createElement('button');
-      btn.className = `btn-channel ${channel.id === activeChannelObj.id ? 'active' : ''}`;
+      btn.className = `pill ${channel.id === activeChannelObj.id ? 'active' : ''}`;
       btn.innerHTML = `
-        <span class="channel-dot" style="background:${channel.color || '#2563eb'}"></span>
+        <span class="channel-indicator" style="background:${channel.color || '#3b82f6'}"></span>
         <span>${channel.name}</span>
       `;
       btn.onclick = () => {
         activeChannelObj = channel;
         document.getElementById('searchInput').value = '';
-        document.getElementById('aiBriefingPanel').classList.remove('open');
+        document.getElementById('aiBriefingDrawer').classList.remove('open');
         renderChannelStrip();
         updateSelectionLabel();
         fetchNews();
@@ -993,8 +1286,8 @@
   }
 
   function updateSelectionLabel() {
-    document.getElementById('currentSelectionLabel').innerText =
-      `${activeCountryObj.flag} ${activeCountryObj.name} • ${activeChannelObj.name}`;
+    document.getElementById('currentSelectionLabel').innerHTML =
+      `<span>${activeCountryObj.iso}</span> / <strong>${escapeHTML(activeCountryObj.name)} • ${escapeHTML(activeChannelObj.name)}</strong>`;
   }
 
   function escapeHTML(str) {
@@ -1020,58 +1313,52 @@
   }
 
   function formatRelativeTime(dateString) {
-    if (!dateString) return 'Live';
+    if (!dateString) return 'LIVE';
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Live';
+    if (isNaN(date.getTime())) return 'LIVE';
     const diffMins = Math.floor((Date.now() - date.getTime()) / 60000);
-    if (diffMins < 60) return `${Math.max(1, diffMins)}m ago`;
+    if (diffMins < 60) return `${Math.max(1, diffMins)}M AGO`;
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    if (diffHours < 24) return `${diffHours}H AGO`;
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase();
   }
 
-  /**
-   * ============================================================================
-   * AI SUMMARIZER ENGINE (Per-Article + Full Channel Briefing)
-   * Uses live generative AI (Pollinations LLM) with instant local NLG fallback.
-   * ============================================================================
-   */
+  // AI Summarizer Engine
   function buildLocalArticleAISummary(art) {
     const title = cleanText(art.title).replace(/\s+-\s+[^-]+$/, '');
     const desc = cleanText(art.description || '');
     const source = art.source?.name || activeChannelObj.name;
 
-    // Extract key sentences/clauses
     const sentences = desc.split(/(?<=[.!?])\s+/).filter(s => s.length > 20);
-    const point1 = sentences[0] || `Reported by ${source}, focusing on ${title.toLowerCase()}.`;
-    const point2 = sentences[1] || `Key developments are unfolding across ${activeCountryObj.name}'s ${activeCategory} sector.`;
+    const point1 = sentences[0] || `Coverage from ${source} examining ${title.toLowerCase()}.`;
+    const point2 = sentences[1] || `Developing implications across ${activeCountryObj.name}'s ${activeCategory} landscape.`;
 
     return {
       tldr: title,
       bullets: [
         point1,
         point2,
-        `Source Verification: Published by ${source} (${activeCountryObj.name} Desk).`
+        `Source: ${source} (${activeCountryObj.name} Desk)`
       ],
-      speech: `AI Summary for ${title}. Key takeaway: ${point1} ${point2}`
+      speech: `Summary for ${title}. ${point1} ${point2}`
     };
   }
 
   async function toggleArticleAISummary(idx) {
-    const box = document.getElementById(`ai-box-${idx}`);
+    const accordion = document.getElementById(`ai-acc-${idx}`);
     const contentEl = document.getElementById(`ai-content-${idx}`);
     const art = fetchedArticles[idx];
-    if (!box || !art) return;
+    if (!accordion || !art) return;
 
-    if (box.classList.contains('open') && art._aiReady) {
-      box.classList.remove('open');
+    if (accordion.classList.contains('open') && art._aiReady) {
+      accordion.classList.remove('open');
       return;
     }
 
-    box.classList.add('open');
+    accordion.classList.add('open');
     if (art._aiReady) return;
 
-    contentEl.innerHTML = `<em>🤖 AI is analyzing & summarizing this story...</em>`;
+    contentEl.innerHTML = `<span style="color:var(--text-tertiary);">Synthesizing key takeaways...</span>`;
 
     const title = cleanText(art.title);
     const desc = cleanText(art.description || '');
@@ -1081,7 +1368,7 @@
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 4500);
 
-      const prompt = `Summarize this news article in 2 short bullet points (under 40 words total). Plain text only, no markdown stars:\nTitle: ${title}\nDetails: ${desc}`;
+      const prompt = `Summarize this news article in 2 concise bullet points (under 40 words total). Plain text only, no markdown:\nTitle: ${title}\nDetails: ${desc}`;
       const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, {
         signal: controller.signal
       });
@@ -1093,7 +1380,7 @@
           const lines = aiText.split(/(?:\r?\n|•|- )+/).map(s => s.trim()).filter(s => s.length > 12).slice(0, 3);
           const bulletsHTML = (lines.length ? lines : [aiText]).map(l => `<li>${escapeHTML(l)}</li>`).join('');
           contentEl.innerHTML = `
-            <div><strong>⚡ TL;DR:</strong> ${escapeHTML(fallback.tldr)}</div>
+            <div style="color:var(--text-primary);font-weight:500;">${escapeHTML(fallback.tldr)}</div>
             <ul>${bulletsHTML}</ul>
           `;
           art._aiSpeech = `AI Summary: ${aiText}`;
@@ -1101,12 +1388,10 @@
           return;
         }
       }
-    } catch (e) {
-      // Fallback to instant local NLG summary below
-    }
+    } catch (e) {}
 
     contentEl.innerHTML = `
-      <div><strong>⚡ TL;DR:</strong> ${escapeHTML(fallback.tldr)}</div>
+      <div style="color:var(--text-primary);font-weight:500;">${escapeHTML(fallback.tldr)}</div>
       <ul>${fallback.bullets.map(b => `<li>${escapeHTML(b)}</li>`).join('')}</ul>
     `;
     art._aiSpeech = fallback.speech;
@@ -1119,34 +1404,33 @@
     const speechText = art._aiSpeech || buildLocalArticleAISummary(art).speech;
     playQueue([{
       text: speechText,
-      status: `✨ Reading AI Summary (#${idx + 1})...`,
+      status: `AI Summary • Story #${idx + 1}`,
       articleIndex: idx
     }]);
   }
 
   async function generateChannelAISummary() {
     if (!fetchedArticles.length) return;
-    const panel = document.getElementById('aiBriefingPanel');
+    const drawer = document.getElementById('aiBriefingDrawer');
     const titleEl = document.getElementById('aiBriefingTitle');
     const contentEl = document.getElementById('aiBriefingContent');
 
-    panel.classList.add('open');
-    titleEl.innerText = `✨ AI Executive Briefing • ${activeChannelObj.name} (${activeCountryObj.name})`;
-    contentEl.innerHTML = `<p>🤖 <em>AI is synthesizing the top 5 headlines from ${escapeHTML(activeChannelObj.name)}...</em></p>`;
+    drawer.classList.add('open');
+    titleEl.innerText = `AI Executive Brief — ${activeChannelObj.name}`;
+    contentEl.innerHTML = `<span style="color:var(--text-tertiary);">Synthesizing top 5 stories from ${escapeHTML(activeChannelObj.name)}...</span>`;
 
     const top5 = fetchedArticles.slice(0, 5);
     const headlinesList = top5.map((a, i) => `${i + 1}. ${cleanText(a.title)}: ${cleanText(a.description)}`).join('\n');
 
-    // Local NLG Executive Briefing (Instant backup & structured bullets)
-    const fallbackOverview = `Today's coverage on ${activeChannelObj.name} (${activeCountryObj.name}) is led by key developments in ${activeCategory === 'general' ? 'national policy, economy, and global affairs' : activeCategory}. Here are the top AI-synthesized takeaways:`;
+    const fallbackOverview = `Current coverage on ${activeChannelObj.name} (${activeCountryObj.name}) centers on key developments across ${activeCategory === 'general' ? 'policy, markets, and national affairs' : activeCategory}:`;
     const fallbackBullets = top5.map(a => {
       const t = cleanText(a.title).replace(/\s+-\s+[^-]+$/, '');
       const d = cleanText(a.description || '').split(/(?<=[.!?])\s+/)[0] || '';
-      return `<strong>${escapeHTML(t)}:</strong> ${escapeHTML(d)}`;
+      return `<strong style="color:var(--text-primary);">${escapeHTML(t)}:</strong> ${escapeHTML(d)}`;
     });
 
-    lastChannelAISummarySpeech = `AI Executive Briefing for ${activeChannelObj.name}. ` +
-      top5.map((a, i) => `Point ${i + 1}: ${cleanText(a.title)}.`).join(' ');
+    lastChannelAISummarySpeech = `Executive Briefing for ${activeChannelObj.name}. ` +
+      top5.map((a, i) => `Story ${i + 1}: ${cleanText(a.title)}.`).join(' ');
 
     try {
       const controller = new AbortController();
@@ -1161,20 +1445,18 @@
         const aiIntro = cleanText(await res.text());
         if (aiIntro && aiIntro.length > 30) {
           contentEl.innerHTML = `
-            <p><strong>🤖 AI Overview:</strong> ${escapeHTML(aiIntro)}</p>
+            <p>${escapeHTML(aiIntro)}</p>
             <ul>${fallbackBullets.map(b => `<li>${b}</li>`).join('')}</ul>
           `;
-          lastChannelAISummarySpeech = `AI Executive Briefing for ${activeChannelObj.name}. ${aiIntro} ` +
-            top5.map((a, i) => `Takeaway ${i + 1}: ${cleanText(a.title)}.`).join(' ');
+          lastChannelAISummarySpeech = `Executive Briefing for ${activeChannelObj.name}. ${aiIntro} ` +
+            top5.map((a, i) => `Highlight ${i + 1}: ${cleanText(a.title)}.`).join(' ');
           return;
         }
       }
-    } catch (e) {
-      // Use structured NLG fallback below
-    }
+    } catch (e) {}
 
     contentEl.innerHTML = `
-      <p><strong>🤖 AI Overview:</strong> ${escapeHTML(fallbackOverview)}</p>
+      <p>${escapeHTML(fallbackOverview)}</p>
       <ul>${fallbackBullets.map(b => `<li>${b}</li>`).join('')}</ul>
     `;
   }
@@ -1183,23 +1465,28 @@
     if (!lastChannelAISummarySpeech) return;
     playQueue([{
       text: lastChannelAISummarySpeech,
-      status: `✨ Reading AI Executive Summary (${activeChannelObj.name})...`,
+      status: `AI Brief • ${activeChannelObj.name}`,
       articleIndex: null
     }]);
   }
 
-  // Audio Queue Controls
+  // Audio Studio Controls
+  const PLAY_ICON = `<svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+  const PAUSE_ICON = `<svg class="icon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+  const STOP_SM_ICON = `<svg class="icon" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>`;
+  const LISTEN_SM_ICON = `<svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+
   function updateCardHighlight(articleIdx) {
     activeArticleIndex = articleIdx;
     document.querySelectorAll('.card').forEach((card, idx) => {
-      const btn = card.querySelector('.btn-card-listen');
+      const btn = card.querySelector('.btn-listen-card');
       if (idx === articleIdx) {
         card.classList.add('speaking');
-        if (btn) btn.innerHTML = '⏹ Stop';
+        if (btn) btn.innerHTML = `${STOP_SM_ICON}<span>Stop</span>`;
         card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       } else {
         card.classList.remove('speaking');
-        if (btn) btn.innerHTML = '🔊 Listen';
+        if (btn) btn.innerHTML = `${LISTEN_SM_ICON}<span>Listen</span>`;
       }
     });
   }
@@ -1207,14 +1494,21 @@
   function setControlsState(isPlaying, hasNext = false) {
     const pauseBtn = document.getElementById('pauseBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const wf = document.getElementById('waveform');
     pauseBtn.disabled = !isPlaying;
     nextBtn.disabled = !hasNext;
-    if (!isPlaying) pauseBtn.innerText = '⏸ Pause';
+    if (isPlaying) {
+      wf.classList.add('playing');
+      pauseBtn.innerHTML = PAUSE_ICON;
+    } else {
+      wf.classList.remove('playing');
+      pauseBtn.innerHTML = PAUSE_ICON;
+    }
   }
 
   function playQueue(items) {
     if (!('speechSynthesis' in window)) {
-      alert("Voice playback is not supported on this browser.");
+      alert("Speech synthesis is not supported on this browser.");
       return;
     }
     stopAudio(false);
@@ -1244,7 +1538,7 @@
     utterance.pitch = 1.0;
 
     utterance.onstart = () => {
-      document.getElementById('audioStatus').innerText = item.status || "🔊 Playing summary...";
+      document.getElementById('audioStatus').innerText = item.status || "Broadcasting...";
       updateCardHighlight(item.articleIndex);
       setControlsState(true, currentQueuePos < audioQueue.length - 1);
     };
@@ -1274,21 +1568,24 @@
     updateCardHighlight(null);
     setControlsState(false, false);
     if (resetStatus) {
-      document.getElementById('audioStatus').innerText = "🎙 Audio Reader: Ready";
+      document.getElementById('audioStatus').innerText = "Audio Studio Ready";
     }
   }
 
   function togglePause() {
     if (!synth) return;
     const pauseBtn = document.getElementById('pauseBtn');
+    const wf = document.getElementById('waveform');
     if (synth.paused) {
       synth.resume();
-      pauseBtn.innerText = '⏸ Pause';
-      document.getElementById('audioStatus').innerText = "🔊 Resumed playback...";
+      pauseBtn.innerHTML = PAUSE_ICON;
+      wf.classList.add('playing');
+      document.getElementById('audioStatus').innerText = "Playback Resumed";
     } else if (synth.speaking) {
       synth.pause();
-      pauseBtn.innerText = '▶ Resume';
-      document.getElementById('audioStatus').innerText = "⏸ Audio Paused";
+      pauseBtn.innerHTML = PLAY_ICON;
+      wf.classList.remove('playing');
+      document.getElementById('audioStatus').innerText = "Playback Paused";
     }
   }
 
@@ -1306,8 +1603,8 @@
     if (!fetchedArticles.length) return;
 
     const queue = [{
-      text: `Here are the top 5 AI summarized headlines from ${activeChannelObj.name}.`,
-      status: `🎙 Starting ${activeChannelObj.name} Brief...`,
+      text: `Top 5 intelligence briefing from ${activeChannelObj.name}.`,
+      status: `Starting ${activeChannelObj.name} Brief`,
       articleIndex: null
     }];
 
@@ -1315,14 +1612,14 @@
       const summary = buildLocalArticleAISummary(art);
       queue.push({
         text: `Story ${idx + 1}: ${summary.speech}`,
-        status: `🔊 (${idx + 1}/5) ${summary.tldr}`,
+        status: `(${idx + 1}/5) ${summary.tldr}`,
         articleIndex: idx
       });
     });
 
     queue.push({
-      text: "This concludes your AI news bulletin.",
-      status: "🎙 Bulletin finished",
+      text: "End of briefing.",
+      status: "Briefing Complete",
       articleIndex: null
     });
 
@@ -1340,7 +1637,7 @@
     const desc = cleanText(art.description);
     playQueue([{
       text: `${title}. ${desc}`,
-      status: `🔊 Reading: ${title}`,
+      status: title,
       articleIndex: index
     }]);
   }
@@ -1351,7 +1648,7 @@
     else savedQueueIndices.splice(pos, 1);
 
     const btn = document.getElementById('queuePlayBtn');
-    btn.innerText = `📋 Queue (${savedQueueIndices.length})`;
+    document.getElementById('queueCountText').innerText = savedQueueIndices.length;
     btn.disabled = savedQueueIndices.length === 0;
     renderArticles();
   }
@@ -1359,8 +1656,8 @@
   function playSavedQueue() {
     if (!savedQueueIndices.length) return;
     const queue = [{
-      text: `Playing your ${savedQueueIndices.length} queued news stories.`,
-      status: "📋 Playing Saved Queue...",
+      text: `Playing ${savedQueueIndices.length} queued articles.`,
+      status: "Playing Saved Queue",
       articleIndex: null
     }];
 
@@ -1369,7 +1666,7 @@
       if (!art) return;
       queue.push({
         text: `${cleanText(art.title)}. ${cleanText(art.description)}`,
-        status: `📋 Queue (${i + 1}/${savedQueueIndices.length}): ${cleanText(art.title)}`,
+        status: `Queue (${i + 1}/${savedQueueIndices.length}) • ${cleanText(art.title)}`,
         articleIndex: artIdx
       });
     });
@@ -1381,12 +1678,12 @@
     const grid = document.getElementById('newsGrid');
     grid.innerHTML = Array.from({ length: 6 }).map(() => `
       <div class="card">
-        <div class="card-img-wrap skeleton"></div>
+        <div class="card-media skeleton"></div>
         <div class="card-body">
-          <div class="skeleton" style="height: 14px; width: 40%; border-radius: 4px; margin-bottom: 12px;"></div>
-          <div class="skeleton" style="height: 20px; width: 95%; border-radius: 4px; margin-bottom: 8px;"></div>
-          <div class="skeleton" style="height: 20px; width: 75%; border-radius: 4px; margin-bottom: 16px;"></div>
-          <div class="skeleton" style="height: 50px; width: 100%; border-radius: 4px;"></div>
+          <div class="skeleton" style="height: 12px; width: 35%; border-radius: 4px; margin-bottom: 12px;"></div>
+          <div class="skeleton" style="height: 18px; width: 92%; border-radius: 4px; margin-bottom: 8px;"></div>
+          <div class="skeleton" style="height: 18px; width: 70%; border-radius: 4px; margin-bottom: 16px;"></div>
+          <div class="skeleton" style="height: 44px; width: 100%; border-radius: 4px;"></div>
         </div>
       </div>
     `).join('');
@@ -1399,52 +1696,66 @@
     fetchedArticles.forEach((article, idx) => {
       const displayChannel = activeChannelObj.id !== 'all'
         ? activeChannelObj.name
-        : (article.source?.name || activeCountryObj.name + ' News');
+        : (article.source?.name || activeCountryObj.name + ' Desk');
       const sourceName = escapeHTML(displayChannel);
       const dateStr = formatRelativeTime(article.publishedAt);
       const title = escapeHTML(cleanText(article.title));
       const rawDesc = cleanText(article.description);
-      const desc = escapeHTML(rawDesc && rawDesc !== cleanText(article.title) ? rawDesc : `Live coverage and full report from ${displayChannel}.`);
+      const desc = escapeHTML(rawDesc && rawDesc !== cleanText(article.title) ? rawDesc : `Full dispatch and live updates available via ${displayChannel}.`);
       const isQueued = savedQueueIndices.includes(idx);
 
-      const card = document.createElement('div');
+      const card = document.createElement('article');
       card.className = `card ${activeArticleIndex === idx ? 'speaking' : ''}`;
+      card.style.setProperty('--i', idx);
       card.innerHTML = `
-        <div class="card-img-wrap">
-          <span class="channel-pill-overlay">${activeCountryObj.flag} ${sourceName}</span>
+        <div class="card-media">
+          <span class="card-badge">${activeCountryObj.iso} • ${sourceName}</span>
           ${article.urlToImage
-            ? `<img src="${escapeHTML(article.urlToImage)}" alt="News thumbnail" loading="lazy" onerror="this.outerHTML='<span>📺 ${sourceName}</span>'">`
-            : `<span>📺 ${sourceName}</span>`
+            ? `<img src="${escapeHTML(article.urlToImage)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=\\'media-fallback\\'>${sourceName}</span>'">`
+            : `<span class="media-fallback">${sourceName}</span>`
           }
         </div>
         <div class="card-body">
           <div class="card-meta">
-            <span class="source-tag">${sourceName}</span>
-            <span class="card-date">${dateStr}</span>
+            <span class="source-name">${sourceName}</span>
+            <span>${dateStr}</span>
           </div>
           <h2 class="card-title">${title}</h2>
           <p class="card-desc">${desc}</p>
 
-          <!-- Per-Article Collapsible AI Summary Box -->
-          <div class="card-ai-box" id="ai-box-${idx}">
-            <div class="card-ai-header">
-              <span>✨ AI Instant Summary</span>
-              <button class="btn-card-listen" style="padding:2px 8px;font-size:0.7rem;" onclick="speakArticleAISummary(${idx})">🔊 Speak AI</button>
+          <!-- Smooth CSS Grid Accordion for AI Summary -->
+          <div class="card-ai-accordion" id="ai-acc-${idx}">
+            <div class="card-ai-inner">
+              <div class="card-ai-box">
+                <div class="card-ai-top">
+                  <span>AI Synthesis</span>
+                  <button class="btn btn-sm" style="padding:2px 7px;font-size:0.65rem;" onclick="speakArticleAISummary(${idx})">Speak</button>
+                </div>
+                <div id="ai-content-${idx}"></div>
+              </div>
             </div>
-            <div id="ai-content-${idx}"></div>
           </div>
 
           <div class="card-footer">
             <div class="card-actions">
-              <button class="btn-card-ai" onclick="toggleArticleAISummary(${idx})">✨ AI Summary</button>
-              <button class="btn-card-listen" onclick="readSingleArticle(${idx})">
-                ${activeArticleIndex === idx ? '⏹ Stop' : '🔊 Listen'}
+              <button class="btn btn-sm btn-brand" onclick="toggleArticleAISummary(${idx})">
+                <svg class="icon" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                <span>Summarize</span>
               </button>
-              <button class="btn-card-queue ${isQueued ? 'queued' : ''}" onclick="toggleQueueArticle(${idx})">
-                ${isQueued ? '✓' : '➕'}
+              <button class="btn btn-sm btn-listen-card" onclick="readSingleArticle(${idx})">
+                ${activeArticleIndex === idx ? `${STOP_SM_ICON}<span>Stop</span>` : `${LISTEN_SM_ICON}<span>Listen</span>`}
+              </button>
+              <button class="btn btn-sm btn-icon-only btn-queue-card ${isQueued ? 'queued' : ''}" onclick="toggleQueueArticle(${idx})" title="Add to Queue">
+                ${isQueued
+                  ? `<svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`
+                  : `<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`
+                }
               </button>
             </div>
-            <a href="${escapeHTML(article.url || '#')}" class="read-more" target="_blank" rel="noopener noreferrer">Read &rarr;</a>
+            <a href="${escapeHTML(article.url || '#')}" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span>Read</span>
+              <svg class="icon" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </a>
           </div>
         </div>
       `;
@@ -1490,61 +1801,61 @@
     });
   }
 
-  // Layer 3: Zero-Failure Curated Fallback
+  // Layer 3: Curated Channel-Matched Fallback
   function getChannelFallbackArticles(userQuery = '') {
     const chName = activeChannelObj.name;
     const countryName = activeCountryObj.name;
-    const topicLabel = userQuery || (activeCategory === 'general' ? 'Top Stories' : activeCategory.toUpperCase());
+    const topicLabel = userQuery || (activeCategory === 'general' ? 'National' : activeCategory);
     const now = Date.now();
 
     return [
       {
         source: { name: chName },
-        title: `${chName} Exclusive: Major Policy & Infrastructure Push Announced Across ${countryName}`,
-        description: `Senior correspondents at ${chName} report accelerated investment in digital public infrastructure, clean energy grids, and high-speed transit corridors this quarter.`,
-        url: "https://news.google.com",
-        urlToImage: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 18 * 60000).toISOString()
-      },
-      {
-        source: { name: chName },
-        title: `${countryName} ${topicLabel} Update: Tech & Manufacturing Sectors Post Strong Growth`,
-        description: `Market analysts speaking to ${chName} highlighted surging domestic demand, semiconductor partnerships, and AI adoption driving record quarterly momentum.`,
-        url: "https://news.google.com",
-        urlToImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 42 * 60000).toISOString()
-      },
-      {
-        source: { name: chName },
-        title: `Live Desk (${chName}): Space & Scientific Research Teams Prepare Next Orbital Mission`,
-        description: `Engineers have completed final telemetry checks for the upcoming satellite launch aimed at enhancing high-resolution weather forecasting and communications.`,
-        url: "https://news.google.com",
-        urlToImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 75 * 60000).toISOString()
-      },
-      {
-        source: { name: chName },
-        title: `${chName} Business Brief: Central Bank & Trade Ministers Review Global Supply Chains`,
-        description: `New bilateral trade frameworks aim to reduce port turnaround times and stabilize essential commodity prices across regional markets in ${countryName}.`,
+        title: `${chName}: Digital Infrastructure and Clean Energy Grid Expansion Accelerates Across ${countryName}`,
+        description: `Correspondents at ${chName} report increased capital allocation toward public digital corridors, renewable storage capacity, and regional transit networks this quarter.`,
         url: "https://news.google.com",
         urlToImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 120 * 60000).toISOString()
+        publishedAt: new Date(now - 14 * 60000).toISOString()
       },
       {
         source: { name: chName },
-        title: `Healthcare & Innovation: AI-Powered Early Screening Rolled Out in Major Hospitals`,
-        description: `Medical boards in ${countryName} have expanded telemedicine and automated diagnostic tools to improve rural and urban patient care outcomes.`,
+        title: `${countryName} ${topicLabel} Dispatch: Semiconductor & Enterprise AI Sectors Post Strong Output`,
+        description: `Industry benchmarks tracked by ${chName} highlight resilient domestic manufacturing, new foundry partnerships, and enterprise cloud adoption.`,
+        url: "https://news.google.com",
+        urlToImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+        publishedAt: new Date(now - 38 * 60000).toISOString()
+      },
+      {
+        source: { name: chName },
+        title: `Aerospace & Research: Next-Generation Earth Observation Payload Completes Final Integration`,
+        description: `Mission control teams have cleared pre-launch telemetry verification for the upcoming orbital deployment supporting climate and communications monitoring.`,
+        url: "https://news.google.com",
+        urlToImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+        publishedAt: new Date(now - 68 * 60000).toISOString()
+      },
+      {
+        source: { name: chName },
+        title: `${chName} Markets Desk: Central Bank Maintains Steady Policy Rate Amid Supply Chain Recovery`,
+        description: `Updated trade logistics frameworks are projected to lower freight turnaround times and stabilize core commodity indices across ${countryName}.`,
+        url: "https://news.google.com",
+        urlToImage: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80",
+        publishedAt: new Date(now - 115 * 60000).toISOString()
+      },
+      {
+        source: { name: chName },
+        title: `Clinical Innovation: Automated Diagnostic Telemetry Expands Across Regional Hospitals`,
+        description: `Health authorities in ${countryName} have approved new point-of-care screening protocols designed to accelerate early preventive care.`,
         url: "https://news.google.com",
         urlToImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 165 * 60000).toISOString()
+        publishedAt: new Date(now - 160 * 60000).toISOString()
       },
       {
         source: { name: chName },
-        title: `${chName} Sports & Culture: National Squad Announces Final Roster Ahead of Championship`,
-        description: `Selectors confirmed key returning players and rising youth talent following intensive training camps and domestic tournament performances.`,
+        title: `${chName} Sports Desk: National Selection Committee Confirms Squad Ahead of International Series`,
+        description: `The upcoming fixture schedule features returning senior players alongside standout performers from recent domestic championships.`,
         url: "https://news.google.com",
         urlToImage: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 210 * 60000).toISOString()
+        publishedAt: new Date(now - 205 * 60000).toISOString()
       }
     ];
   }
@@ -1553,13 +1864,13 @@
     stopAudio();
     showSkeletons();
     savedQueueIndices = [];
-    document.getElementById('queuePlayBtn').innerText = '📋 Queue (0)';
+    document.getElementById('queueCountText').innerText = '0';
     document.getElementById('queuePlayBtn').disabled = true;
 
     const topicPart = activeCategory !== 'general' ? activeCategory : '';
     const combinedQuery = [userQuery, activeChannelObj.query, topicPart].filter(Boolean).join(' ').trim();
 
-    // LAYER 1: Vercel /api/news backend
+    // Layer 1: Vercel /api/news backend
     try {
       const apiUrl = `/api/news?category=${encodeURIComponent(activeCategory)}&q=${encodeURIComponent(combinedQuery)}`;
       const response = await fetch(apiUrl);
@@ -1575,7 +1886,7 @@
       }
     } catch (e) {}
 
-    // LAYER 2: XML RSS Proxy
+    // Layer 2: XML RSS Proxy
     if (activeChannelObj.rss && !userQuery) {
       try {
         const xmlArticles = await fetchViaXmlProxy(activeChannelObj.rss);
@@ -1587,7 +1898,7 @@
       } catch (e) {}
     }
 
-    // LAYER 3: Curated Fallback
+    // Layer 3: Curated Fallback
     fetchedArticles = getChannelFallbackArticles(userQuery);
     renderArticles();
   }
@@ -1599,7 +1910,7 @@
       btn.classList.add('active');
       activeCategory = btn.dataset.cat;
       document.getElementById('searchInput').value = '';
-      document.getElementById('aiBriefingPanel').classList.remove('open');
+      document.getElementById('aiBriefingDrawer').classList.remove('open');
       fetchNews();
     }
   });
