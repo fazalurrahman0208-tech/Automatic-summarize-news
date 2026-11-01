@@ -23,6 +23,8 @@
       --accent-fg: #ffffff;
       --brand: #2563eb;
       --brand-soft: rgba(37, 99, 235, 0.08);
+      --bookmark: #f59e0b;
+      --bookmark-soft: rgba(245, 158, 11, 0.12);
       --danger: #dc2626;
       --danger-soft: rgba(220, 38, 38, 0.1);
       --success: #16a34a;
@@ -49,6 +51,8 @@
       --accent-fg: #09090b;
       --brand: #3b82f6;
       --brand-soft: rgba(59, 130, 246, 0.14);
+      --bookmark: #fbbf24;
+      --bookmark-soft: rgba(251, 191, 36, 0.15);
       --danger: #ef4444;
       --danger-soft: rgba(239, 68, 68, 0.15);
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -87,9 +91,14 @@
       stroke-linejoin: round;
       fill: none;
       flex-shrink: 0;
+      transition: transform 0.2s var(--ease-out), fill 0.2s var(--ease-out);
     }
 
-    /* Top Editorial Masthead */
+    .icon-filled {
+      fill: currentColor;
+    }
+
+    /* Top Editorial Masthead / Navbar */
     header {
       display: flex;
       justify-content: space-between;
@@ -105,6 +114,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      cursor: pointer;
     }
 
     .brand-mark {
@@ -239,6 +249,31 @@
 
     .btn-icon-only {
       padding: 7px;
+    }
+
+    /* Navbar Bookmark Button & Badge */
+    .btn-nav-bookmarks.active {
+      background: var(--accent);
+      color: var(--accent-fg);
+      border-color: var(--accent);
+    }
+
+    .nav-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 99px;
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      transition: all 0.2s var(--ease-out);
+    }
+
+    .btn-nav-bookmarks.active .nav-badge {
+      background: rgba(128, 128, 128, 0.25);
+      color: inherit;
+      border-color: transparent;
     }
 
     /* Sticky Broadcast & AI Studio Bar */
@@ -432,6 +467,61 @@
       gap: 6px;
     }
 
+    /* Dedicated Bookmarks View Header Banner */
+    .bookmarks-banner {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+      animation: cardEnter 0.3s var(--ease-out);
+    }
+
+    .bookmarks-banner.open {
+      display: flex;
+    }
+
+    .bookmarks-banner-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bookmarks-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--bookmark-soft);
+      color: var(--bookmark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bookmarks-banner-info h2 {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .bookmarks-banner-info p {
+      font-size: 0.76rem;
+      color: var(--text-tertiary);
+    }
+
+    .bookmarks-banner-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     /* Unified Filter & Navigation Deck */
     .nav-deck {
       background: var(--surface);
@@ -443,6 +533,10 @@
       flex-direction: column;
       gap: 10px;
       box-shadow: var(--shadow-sm);
+    }
+
+    .nav-deck.hidden {
+      display: none;
     }
 
     .deck-top {
@@ -509,7 +603,6 @@
       font-size: 0.7rem;
       font-weight: 600;
       border-radius: 5px;
-      border: none;
       background: var(--surface);
       color: var(--text-secondary);
       cursor: pointer;
@@ -800,7 +893,8 @@
     .card-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      flex-wrap: wrap;
     }
 
     .btn-sm {
@@ -813,6 +907,13 @@
       background: var(--brand);
       color: #ffffff;
       border-color: var(--brand);
+    }
+
+    .btn-save-card.saved {
+      background: var(--bookmark-soft);
+      color: var(--bookmark);
+      border-color: rgba(245, 158, 11, 0.35);
+      font-weight: 600;
     }
 
     .btn-queue-card.queued {
@@ -834,6 +935,73 @@
 
     .external-link:hover {
       opacity: 0.7;
+    }
+
+    /* Empty Bookmarks State */
+    .empty-state {
+      grid-column: 1 / -1;
+      background: var(--surface);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 56px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      animation: cardEnter 0.35s var(--ease-out);
+    }
+
+    .empty-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface-elevated);
+      color: var(--text-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .empty-state h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .empty-state p {
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+      max-width: 360px;
+      margin-bottom: 6px;
+    }
+
+    /* Minimal Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 200;
+      background: var(--accent);
+      color: var(--accent-fg);
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+      transition: opacity 0.22s var(--ease-out), transform 0.22s var(--ease-out);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* Refined Shimmer Skeletons */
@@ -859,9 +1027,9 @@
 <body class="dark">
 
 <div class="container">
-  <!-- Minimal Editorial Masthead -->
+  <!-- Minimal Editorial Masthead / Navbar -->
   <header>
-    <div class="brand-left">
+    <div class="brand-left" onclick="switchView('feed')" title="Return to Live Feed">
       <div class="brand-mark">P</div>
       <div class="brand-titles">
         <h1>
@@ -873,10 +1041,17 @@
     </div>
 
     <div class="header-actions">
+      <button class="btn btn-nav-bookmarks" id="navBookmarksBtn" onclick="toggleBookmarksView()" title="View Saved Bookmarks">
+        <svg class="icon" id="navBookmarkIcon" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+        <span>Bookmarks</span>
+        <span class="nav-badge" id="bookmarkNavCount">0</span>
+      </button>
+
       <button class="btn" onclick="fetchNews()" title="Refresh feed">
         <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
         <span>Refresh</span>
       </button>
+
       <button class="btn btn-icon-only" id="themeToggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme"></button>
     </div>
   </header>
@@ -905,7 +1080,7 @@
           <span>Top 5 Audio</span>
         </button>
 
-        <button class="btn" id="queuePlayBtn" onclick="playSavedQueue()" disabled>
+        <button class="btn" id="queuePlayBtn" onclick="playSavedQueue()" disabled title="Play temporary audio queue">
           <svg class="icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           <span id="queueCountText">0</span>
         </button>
@@ -975,8 +1150,36 @@
     </div>
   </div>
 
+  <!-- Bookmarks Section Header Banner (Visible when Bookmarks View is active) -->
+  <div class="bookmarks-banner" id="bookmarksBanner">
+    <div class="bookmarks-banner-info">
+      <div class="bookmarks-icon-box">
+        <svg class="icon icon-filled" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+      </div>
+      <div>
+        <h2>Saved Bookmarks</h2>
+        <p id="bookmarksSubtitle">Your personal reading & audio library stored on this device</p>
+      </div>
+    </div>
+
+    <div class="bookmarks-banner-actions">
+      <button class="btn btn-sm" onclick="readAllTopNews()">
+        <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        <span>Listen All Saved</span>
+      </button>
+      <button class="btn btn-sm btn-danger" id="clearBookmarksBtn" onclick="clearAllBookmarks()">
+        <svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        <span>Clear All</span>
+      </button>
+      <button class="btn btn-sm btn-primary" onclick="switchView('feed')">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span>Back to Live Feed</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Compact Filter & Channel Navigation Deck -->
-  <section class="nav-deck">
+  <section class="nav-deck" id="navDeck">
     <div class="deck-top">
       <div class="active-crumb" id="currentSelectionLabel">
         <span>REGION</span> / <strong>India • All India Channels</strong>
@@ -1017,6 +1220,9 @@
   <!-- News Grid -->
   <main class="news-grid" id="newsGrid"></main>
 </div>
+
+<!-- Minimal Toast Feedback -->
+<div class="toast" id="toast"></div>
 
 <script>
   const COUNTRY_DIRECTORY = [
@@ -1152,9 +1358,160 @@
   let activeCountryObj = COUNTRY_DIRECTORY[0];
   let activeChannelObj = activeCountryObj.channels[0];
   let activeCategory = 'general';
+  let currentView = 'feed'; // 'feed' | 'bookmarks'
   let fetchedArticles = [];
   let savedQueueIndices = [];
+  let bookmarkedArticles = [];
   let lastChannelAISummarySpeech = '';
+  let toastTimeout = null;
+
+  // Load Persistent Bookmarks from localStorage
+  try {
+    const rawSaved = localStorage.getItem('pulseSavedBookmarks');
+    if (rawSaved) bookmarkedArticles = JSON.parse(rawSaved);
+  } catch (e) {
+    bookmarkedArticles = [];
+  }
+
+  // Helper: Get active list based on current view ('feed' vs 'bookmarks')
+  function getActiveArticlesList() {
+    return currentView === 'bookmarks' ? bookmarkedArticles : fetchedArticles;
+  }
+
+  function getArticleKey(article) {
+    return cleanText(article?.title || '').toLowerCase();
+  }
+
+  function isArticleBookmarked(article) {
+    const key = getArticleKey(article);
+    return bookmarkedArticles.some(b => getArticleKey(b) === key);
+  }
+
+  function persistBookmarks() {
+    try {
+      localStorage.setItem('pulseSavedBookmarks', JSON.stringify(bookmarkedArticles));
+    } catch (e) {}
+    updateBookmarkNavUI();
+  }
+
+  function updateBookmarkNavUI() {
+    const countEl = document.getElementById('bookmarkNavCount');
+    const navBtn = document.getElementById('navBookmarksBtn');
+    const navIcon = document.getElementById('navBookmarkIcon');
+    const clearBtn = document.getElementById('clearBookmarksBtn');
+    const subtitle = document.getElementById('bookmarksSubtitle');
+
+    countEl.innerText = bookmarkedArticles.length;
+    if (clearBtn) clearBtn.disabled = bookmarkedArticles.length === 0;
+    if (subtitle) {
+      subtitle.innerText = `${bookmarkedArticles.length} saved ${bookmarkedArticles.length === 1 ? 'story' : 'stories'} stored on this device`;
+    }
+
+    if (currentView === 'bookmarks') {
+      navBtn.classList.add('active');
+      navIcon.classList.add('icon-filled');
+    } else {
+      navBtn.classList.remove('active');
+      if (bookmarkedArticles.length > 0) navIcon.classList.add('icon-filled');
+      else navIcon.classList.remove('icon-filled');
+    }
+  }
+
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.innerText = message;
+    toast.classList.add('show');
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2200);
+  }
+
+  function toggleBookmarkArticle(index) {
+    const list = getActiveArticlesList();
+    const art = list[index];
+    if (!art) return;
+
+    const key = getArticleKey(art);
+    const existingIdx = bookmarkedArticles.findIndex(b => getArticleKey(b) === key);
+
+    if (existingIdx > -1) {
+      bookmarkedArticles.splice(existingIdx, 1);
+      persistBookmarks();
+      showToast('Removed from Bookmarks');
+
+      if (currentView === 'bookmarks') {
+        stopAudio();
+        renderArticles();
+        return;
+      }
+    } else {
+      const displayChannel = activeChannelObj.id !== 'all'
+        ? activeChannelObj.name
+        : (art.source?.name || activeCountryObj.name + ' Desk');
+
+      bookmarkedArticles.unshift({
+        source: { name: displayChannel },
+        countryIso: art.countryIso || activeCountryObj.iso,
+        title: cleanText(art.title),
+        description: cleanText(art.description),
+        url: art.url || '#',
+        urlToImage: art.urlToImage || '',
+        publishedAt: art.publishedAt || new Date().toISOString()
+      });
+      persistBookmarks();
+      showToast('Saved to Bookmarks');
+    }
+
+    // Update the specific card's Save button in-place without disrupting audio/AI accordions
+    const btn = document.getElementById(`save-btn-${index}`);
+    if (btn) {
+      const savedNow = isArticleBookmarked(art);
+      btn.className = `btn btn-sm btn-save-card ${savedNow ? 'saved' : ''}`;
+      btn.innerHTML = getBookmarkButtonInner(savedNow);
+    }
+  }
+
+  function getBookmarkButtonInner(isSaved) {
+    return `
+      <svg class="icon ${isSaved ? 'icon-filled' : ''}" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+      <span>${isSaved ? 'Saved' : 'Save'}</span>
+    `;
+  }
+
+  function toggleBookmarksView() {
+    switchView(currentView === 'bookmarks' ? 'feed' : 'bookmarks');
+  }
+
+  function switchView(targetView) {
+    if (currentView === targetView) return;
+    currentView = targetView;
+    stopAudio();
+    document.getElementById('aiBriefingDrawer').classList.remove('open');
+
+    const navDeck = document.getElementById('navDeck');
+    const bookmarksBanner = document.getElementById('bookmarksBanner');
+
+    if (currentView === 'bookmarks') {
+      navDeck.classList.add('hidden');
+      bookmarksBanner.classList.add('open');
+    } else {
+      navDeck.classList.remove('hidden');
+      bookmarksBanner.classList.remove('open');
+    }
+
+    updateBookmarkNavUI();
+    renderArticles();
+  }
+
+  function clearAllBookmarks() {
+    if (!bookmarkedArticles.length) return;
+    bookmarkedArticles = [];
+    persistBookmarks();
+    stopAudio();
+    renderArticles();
+    showToast('Cleared all saved bookmarks');
+  }
 
   // Speech Synthesis State
   const synth = window.speechSynthesis;
@@ -1165,7 +1522,7 @@
   let activeArticleIndex = null;
   let isCancelled = false;
 
-  // Theme Management (Defaults to sleek Dark Mode unless Light was chosen)
+  // Theme Management
   const SUN_SVG = `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
   const MOON_SVG = `<svg class="icon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
 
@@ -1338,16 +1695,17 @@
       bullets: [
         point1,
         point2,
-        `Source: ${source} (${activeCountryObj.name} Desk)`
+        `Source: ${source}`
       ],
       speech: `Summary for ${title}. ${point1} ${point2}`
     };
   }
 
   async function toggleArticleAISummary(idx) {
+    const list = getActiveArticlesList();
     const accordion = document.getElementById(`ai-acc-${idx}`);
     const contentEl = document.getElementById(`ai-content-${idx}`);
-    const art = fetchedArticles[idx];
+    const art = list[idx];
     if (!accordion || !art) return;
 
     if (accordion.classList.contains('open') && art._aiReady) {
@@ -1356,7 +1714,7 @@
     }
 
     accordion.classList.add('open');
-    if (art._aiReady) return;
+    if (art._aiReady && contentEl.innerHTML.trim() !== '') return;
 
     contentEl.innerHTML = `<span style="color:var(--text-tertiary);">Synthesizing key takeaways...</span>`;
 
@@ -1399,7 +1757,8 @@
   }
 
   function speakArticleAISummary(idx) {
-    const art = fetchedArticles[idx];
+    const list = getActiveArticlesList();
+    const art = list[idx];
     if (!art) return;
     const speechText = art._aiSpeech || buildLocalArticleAISummary(art).speech;
     playQueue([{
@@ -1410,32 +1769,38 @@
   }
 
   async function generateChannelAISummary() {
-    if (!fetchedArticles.length) return;
+    const list = getActiveArticlesList();
+    if (!list.length) {
+      showToast('No articles available to summarize');
+      return;
+    }
+
     const drawer = document.getElementById('aiBriefingDrawer');
     const titleEl = document.getElementById('aiBriefingTitle');
     const contentEl = document.getElementById('aiBriefingContent');
 
+    const contextLabel = currentView === 'bookmarks' ? 'Saved Bookmarks' : activeChannelObj.name;
     drawer.classList.add('open');
-    titleEl.innerText = `AI Executive Brief — ${activeChannelObj.name}`;
-    contentEl.innerHTML = `<span style="color:var(--text-tertiary);">Synthesizing top 5 stories from ${escapeHTML(activeChannelObj.name)}...</span>`;
+    titleEl.innerText = `AI Executive Brief — ${contextLabel}`;
+    contentEl.innerHTML = `<span style="color:var(--text-tertiary);">Synthesizing top stories from ${escapeHTML(contextLabel)}...</span>`;
 
-    const top5 = fetchedArticles.slice(0, 5);
+    const top5 = list.slice(0, 5);
     const headlinesList = top5.map((a, i) => `${i + 1}. ${cleanText(a.title)}: ${cleanText(a.description)}`).join('\n');
 
-    const fallbackOverview = `Current coverage on ${activeChannelObj.name} (${activeCountryObj.name}) centers on key developments across ${activeCategory === 'general' ? 'policy, markets, and national affairs' : activeCategory}:`;
+    const fallbackOverview = `Executive synthesis of the top ${top5.length} stories from ${contextLabel}:`;
     const fallbackBullets = top5.map(a => {
       const t = cleanText(a.title).replace(/\s+-\s+[^-]+$/, '');
       const d = cleanText(a.description || '').split(/(?<=[.!?])\s+/)[0] || '';
       return `<strong style="color:var(--text-primary);">${escapeHTML(t)}:</strong> ${escapeHTML(d)}`;
     });
 
-    lastChannelAISummarySpeech = `Executive Briefing for ${activeChannelObj.name}. ` +
+    lastChannelAISummarySpeech = `Executive Briefing for ${contextLabel}. ` +
       top5.map((a, i) => `Story ${i + 1}: ${cleanText(a.title)}.`).join(' ');
 
     try {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 5000);
-      const prompt = `Write a 2-sentence executive news briefing summarizing these 5 headlines from ${activeChannelObj.name}. Plain text only:\n${headlinesList}`;
+      const prompt = `Write a 2-sentence executive news briefing summarizing these headlines from ${contextLabel}. Plain text only:\n${headlinesList}`;
       const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, {
         signal: controller.signal
       });
@@ -1448,7 +1813,7 @@
             <p>${escapeHTML(aiIntro)}</p>
             <ul>${fallbackBullets.map(b => `<li>${b}</li>`).join('')}</ul>
           `;
-          lastChannelAISummarySpeech = `Executive Briefing for ${activeChannelObj.name}. ${aiIntro} ` +
+          lastChannelAISummarySpeech = `Executive Briefing for ${contextLabel}. ${aiIntro} ` +
             top5.map((a, i) => `Highlight ${i + 1}: ${cleanText(a.title)}.`).join(' ');
           return;
         }
@@ -1465,7 +1830,7 @@
     if (!lastChannelAISummarySpeech) return;
     playQueue([{
       text: lastChannelAISummarySpeech,
-      status: `AI Brief • ${activeChannelObj.name}`,
+      status: `AI Brief • ${currentView === 'bookmarks' ? 'Bookmarks' : activeChannelObj.name}`,
       articleIndex: null
     }]);
   }
@@ -1600,19 +1965,25 @@
   }
 
   function readAllTopNews() {
-    if (!fetchedArticles.length) return;
+    const list = getActiveArticlesList();
+    if (!list.length) {
+      showToast('No articles available to play');
+      return;
+    }
 
+    const label = currentView === 'bookmarks' ? 'Saved Bookmarks' : activeChannelObj.name;
+    const subset = list.slice(0, 5);
     const queue = [{
-      text: `Top 5 intelligence briefing from ${activeChannelObj.name}.`,
-      status: `Starting ${activeChannelObj.name} Brief`,
+      text: `Starting audio briefing from ${label}.`,
+      status: `Starting ${label} Brief`,
       articleIndex: null
     }];
 
-    fetchedArticles.slice(0, 5).forEach((art, idx) => {
+    subset.forEach((art, idx) => {
       const summary = buildLocalArticleAISummary(art);
       queue.push({
         text: `Story ${idx + 1}: ${summary.speech}`,
-        status: `(${idx + 1}/5) ${summary.tldr}`,
+        status: `(${idx + 1}/${subset.length}) ${summary.tldr}`,
         articleIndex: idx
       });
     });
@@ -1631,7 +2002,8 @@
       stopAudio();
       return;
     }
-    const art = fetchedArticles[index];
+    const list = getActiveArticlesList();
+    const art = list[index];
     if (!art) return;
     const title = cleanText(art.title);
     const desc = cleanText(art.description);
@@ -1644,8 +2016,13 @@
 
   function toggleQueueArticle(index) {
     const pos = savedQueueIndices.indexOf(index);
-    if (pos === -1) savedQueueIndices.push(index);
-    else savedQueueIndices.splice(pos, 1);
+    if (pos === -1) {
+      savedQueueIndices.push(index);
+      showToast('Added to playback queue');
+    } else {
+      savedQueueIndices.splice(pos, 1);
+      showToast('Removed from playback queue');
+    }
 
     const btn = document.getElementById('queuePlayBtn');
     document.getElementById('queueCountText').innerText = savedQueueIndices.length;
@@ -1655,14 +2032,15 @@
 
   function playSavedQueue() {
     if (!savedQueueIndices.length) return;
+    const list = getActiveArticlesList();
     const queue = [{
       text: `Playing ${savedQueueIndices.length} queued articles.`,
-      status: "Playing Saved Queue",
+      status: "Playing Audio Queue",
       articleIndex: null
     }];
 
     savedQueueIndices.forEach((artIdx, i) => {
-      const art = fetchedArticles[artIdx];
+      const art = list[artIdx];
       if (!art) return;
       queue.push({
         text: `${cleanText(art.title)}. ${cleanText(art.description)}`,
@@ -1693,23 +2071,46 @@
     const grid = document.getElementById('newsGrid');
     grid.innerHTML = '';
 
-    fetchedArticles.forEach((article, idx) => {
-      const displayChannel = activeChannelObj.id !== 'all'
-        ? activeChannelObj.name
-        : (article.source?.name || activeCountryObj.name + ' Desk');
+    const list = getActiveArticlesList();
+
+    // Empty State for Bookmarks View
+    if (currentView === 'bookmarks' && list.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon-wrap">
+            <svg class="icon" style="width:22px;height:22px;" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+          </div>
+          <h3>No saved bookmarks yet</h3>
+          <p>Click the <strong>Save</strong> button on any news card in the live feed to build your personal reading and audio list.</p>
+          <button class="btn btn-primary" onclick="switchView('feed')">Explore Live News</button>
+        </div>
+      `;
+      return;
+    }
+
+    list.forEach((article, idx) => {
+      const displayChannel = currentView === 'bookmarks'
+        ? (article.source?.name || 'Saved Dispatch')
+        : (activeChannelObj.id !== 'all' ? activeChannelObj.name : (article.source?.name || activeCountryObj.name + ' Desk'));
+
+      const isoTag = currentView === 'bookmarks'
+        ? (article.countryIso || 'SAVED')
+        : activeCountryObj.iso;
+
       const sourceName = escapeHTML(displayChannel);
       const dateStr = formatRelativeTime(article.publishedAt);
       const title = escapeHTML(cleanText(article.title));
       const rawDesc = cleanText(article.description);
       const desc = escapeHTML(rawDesc && rawDesc !== cleanText(article.title) ? rawDesc : `Full dispatch and live updates available via ${displayChannel}.`);
       const isQueued = savedQueueIndices.includes(idx);
+      const isBookmarked = isArticleBookmarked(article);
 
       const card = document.createElement('article');
       card.className = `card ${activeArticleIndex === idx ? 'speaking' : ''}`;
       card.style.setProperty('--i', idx);
       card.innerHTML = `
         <div class="card-media">
-          <span class="card-badge">${activeCountryObj.iso} • ${sourceName}</span>
+          <span class="card-badge">${escapeHTML(isoTag)} • ${sourceName}</span>
           ${article.urlToImage
             ? `<img src="${escapeHTML(article.urlToImage)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=\\'media-fallback\\'>${sourceName}</span>'">`
             : `<span class="media-fallback">${sourceName}</span>`
@@ -1740,12 +2141,18 @@
             <div class="card-actions">
               <button class="btn btn-sm btn-brand" onclick="toggleArticleAISummary(${idx})">
                 <svg class="icon" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                <span>Summarize</span>
+                <span>AI</span>
               </button>
+
               <button class="btn btn-sm btn-listen-card" onclick="readSingleArticle(${idx})">
                 ${activeArticleIndex === idx ? `${STOP_SM_ICON}<span>Stop</span>` : `${LISTEN_SM_ICON}<span>Listen</span>`}
               </button>
-              <button class="btn btn-sm btn-icon-only btn-queue-card ${isQueued ? 'queued' : ''}" onclick="toggleQueueArticle(${idx})" title="Add to Queue">
+
+              <button class="btn btn-sm btn-save-card ${isBookmarked ? 'saved' : ''}" id="save-btn-${idx}" onclick="toggleBookmarkArticle(${idx})" title="Save to Bookmarks">
+                ${getBookmarkButtonInner(isBookmarked)}
+              </button>
+
+              <button class="btn btn-sm btn-icon-only btn-queue-card ${isQueued ? 'queued' : ''}" onclick="toggleQueueArticle(${idx})" title="Add to Audio Queue">
                 ${isQueued
                   ? `<svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`
                   : `<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`
@@ -1861,6 +2268,9 @@
   }
 
   async function fetchNews(userQuery = '') {
+    if (currentView === 'bookmarks') {
+      switchView('feed');
+    }
     stopAudio();
     showSkeletons();
     savedQueueIndices = [];
@@ -1925,6 +2335,7 @@
   });
 
   // Initialize
+  updateBookmarkNavUI();
   renderCountryStrip();
   renderChannelStrip();
   updateSelectionLabel();
