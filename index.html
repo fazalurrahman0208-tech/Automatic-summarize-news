@@ -30,7 +30,6 @@
       --danger: #dc2626;
       --danger-soft: rgba(220, 38, 38, 0.1);
       --success: #16a34a;
-      --success-soft: rgba(22, 163, 74, 0.12);
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
       --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.06);
       --radius-sm: 8px;
@@ -60,8 +59,6 @@
       --video-soft: rgba(244, 63, 94, 0.16);
       --danger: #ef4444;
       --danger-soft: rgba(239, 68, 68, 0.15);
-      --success: #22c55e;
-      --success-soft: rgba(34, 197, 94, 0.16);
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 12px 32px -4px rgba(0, 0, 0, 0.5);
     }
@@ -88,7 +85,6 @@
       margin: 0 auto;
     }
 
-    /* Icon Utility */
     .icon {
       width: 15px;
       height: 15px;
@@ -146,7 +142,6 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
     }
 
     .status-pill {
@@ -158,7 +153,7 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      padding: 2px 8px;
+      padding: 2px 7px;
       border-radius: 99px;
       background: var(--surface-elevated);
       color: var(--text-secondary);
@@ -171,12 +166,6 @@
       border-radius: 50%;
       background: var(--success);
       box-shadow: 0 0 8px var(--success);
-      animation: pulseDot 2s infinite;
-    }
-
-    @keyframes pulseDot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
     }
 
     .brand-titles p {
@@ -272,7 +261,6 @@
       padding: 7px;
     }
 
-    /* Navbar Bookmark Button & Badge */
     .btn-nav-bookmarks.active {
       background: var(--accent);
       color: var(--accent-fg);
@@ -329,7 +317,6 @@
       flex: 1;
     }
 
-    /* Minimal Audio Waveform */
     .waveform {
       display: inline-flex;
       align-items: center;
@@ -377,7 +364,6 @@
       flex-wrap: wrap;
     }
 
-    /* Collapsible Audio Settings Tray */
     .studio-drawer {
       display: grid;
       grid-template-rows: 0fr;
@@ -575,7 +561,6 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.72rem;
       color: var(--text-tertiary);
-      flex-wrap: wrap;
     }
 
     .active-crumb strong {
@@ -649,7 +634,7 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-tertiary);
-      min-width: 62px;
+      min-width: 64px;
       flex-shrink: 0;
     }
 
@@ -707,11 +692,10 @@
     .pill-count {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.64rem;
-      padding: 0 5px;
+      padding: 1px 5px;
       border-radius: 99px;
-      background: var(--surface);
-      color: var(--text-tertiary);
-      border: 1px solid var(--border);
+      background: rgba(128, 128, 128, 0.16);
+      color: inherit;
     }
 
     .channel-indicator {
@@ -1001,7 +985,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
       margin-bottom: 8px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.68rem;
@@ -1013,36 +996,11 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.03em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
-    .time-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 1px 6px;
-      border-radius: 5px;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    .time-badge.live-today {
-      background: var(--success-soft);
+    .time-badge-live {
       color: var(--success);
-    }
-
-    .time-badge.historical {
-      background: var(--surface-elevated);
-      color: var(--text-tertiary);
-    }
-
-    .live-mini-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--success);
+      font-weight: 600;
     }
 
     .card-title {
@@ -1277,14 +1235,14 @@
 <div class="container">
   <!-- Minimal Editorial Masthead / Navbar -->
   <header>
-    <div class="brand-left" onclick="switchView('feed')" title="Return to Live Feed">
+    <div class="brand-left" onclick="switchView('feed')" title="Return to Live Wire">
       <div class="brand-mark">P</div>
       <div class="brand-titles">
         <h1>
           Pulse News
-          <span class="status-pill"><span class="status-dot"></span> <span id="liveSyncBadge">Live Wire</span></span>
+          <span class="status-pill"><span class="status-dot"></span> LIVE WIRE</span>
         </h1>
-        <p>Real-Time Current Day Wire + Historical Archive • AI & Video Synthesis</p>
+        <p>Real-Time Current Day Wire • Historical Archive • AI & Video Synthesis</p>
       </div>
     </div>
 
@@ -1295,7 +1253,7 @@
         <span class="nav-badge" id="bookmarkNavCount">0</span>
       </button>
 
-      <button class="btn" onclick="fetchNews('', true)" title="Refresh live & historical feed now">
+      <button class="btn" onclick="fetchNews()" title="Sync live news feed">
         <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
         <span>Sync Live</span>
       </button>
@@ -1477,7 +1435,7 @@
           <span class="pill-count" id="countAll">0</span>
         </button>
         <button class="pill" data-time="today">
-          <span class="channel-indicator" style="background:var(--success)"></span>
+          <span class="status-dot" style="width:5px;height:5px;"></span>
           <span>Today's Live Wire</span>
           <span class="pill-count" id="countToday">0</span>
         </button>
@@ -1502,7 +1460,6 @@
       code: 'in',
       name: 'India',
       iso: 'IN',
-      gl: 'IN',
       ytChannelId: 'UCZFMm1mMw0F81Z37aaEzTUA',
       channels: [
         { id: 'all', name: 'All India Channels', query: 'India News', color: '#f97316', ytChannelId: 'UCZFMm1mMw0F81Z37aaEzTUA', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
@@ -1512,7 +1469,7 @@
         { id: 'indian-express', name: 'Indian Express', query: 'Indian Express', color: '#0284c7', ytChannelId: 'UCJFOER35ggIWwsXh2ZDnqyg', rss: 'https://indianexpress.com/section/india/feed/' },
         { id: 'hindustan-times', name: 'Hindustan Times', query: 'Hindustan Times India', color: '#0ea5e9', ytChannelId: 'UCm7lHFkt2yB_WzL67aruVBQ', rss: 'https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml' },
         { id: 'india-today', name: 'India Today', query: 'India Today', color: '#ef4444', ytChannelId: 'UCYPvAwZP8pZhSMW8qs7cVCw', rss: 'https://www.indiatoday.in/rss/home' },
-        { id: 'livemint', name: 'LiveMint', query: 'LiveMint Economy', color: '#f59e0b', ytChannelId: 'UCUI9vm69ZbAqRK3q3vKLWCQ', rss: 'https://www.livemint.com/rss/news' },
+        { id: 'livemint', name: 'LiveMint', query: 'Mint India Economy', color: '#f59e0b', ytChannelId: 'UCUI9vm69ZbAqRK3q3vKLWCQ', rss: 'https://www.livemint.com/rss/news' },
         { id: 'economic-times', name: 'Economic Times', query: 'Economic Times India', color: '#10b981', ytChannelId: 'UCJFOER35ggIWwsXh2ZDnqyg', rss: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms' },
         { id: 'deccan-herald', name: 'Deccan Herald', query: 'Deccan Herald India', color: '#06b6d4', ytChannelId: 'UCZFMm1mMw0F81Z37aaEzTUA', rss: 'https://www.deccanherald.com/rss/national.rss' },
         { id: 'dd-news', name: 'DD News', query: 'DD News India', color: '#8b5cf6', ytChannelId: 'UCKwucPzHZ7zCUIf7If-Wo1g', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' }
@@ -1522,11 +1479,10 @@
       code: 'global',
       name: 'Global',
       iso: 'GL',
-      gl: 'US',
       ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA',
       channels: [
         { id: 'all', name: 'All Global Networks', query: 'World News', color: '#3b82f6', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-        { id: 'bbc', name: 'BBC World', query: 'BBC World News', color: '#ef4444', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+        { id: 'bbc', name: 'BBC World', query: 'BBC News World', color: '#ef4444', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
         { id: 'reuters', name: 'Reuters', query: 'Reuters World News', color: '#f97316', ytChannelId: 'UChqUTb7kYRX8-EiaN3XFrSQ', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
         { id: 'aljazeera', name: 'Al Jazeera', query: 'Al Jazeera English', color: '#f59e0b', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
         { id: 'cnn', name: 'CNN International', query: 'CNN World', color: '#dc2626', ytChannelId: 'UCupvZG-5ko_eiXAupbDfxWw', rss: 'http://rss.cnn.com/rss/edition_world.rss' },
@@ -1539,16 +1495,15 @@
       code: 'us',
       name: 'United States',
       iso: 'US',
-      gl: 'US',
       ytChannelId: 'UCvJJ_dzjViJCoLf5uKUTwoA',
       channels: [
-        { id: 'all', name: 'All US Networks', query: 'US Breaking News', color: '#3b82f6', ytChannelId: 'UCupvZG-5ko_eiXAupbDfxWw', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
+        { id: 'all', name: 'All US Networks', query: 'USA News', color: '#3b82f6', ytChannelId: 'UCupvZG-5ko_eiXAupbDfxWw', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
         { id: 'nytimes', name: 'New York Times', query: 'New York Times', color: '#a1a1aa', ytChannelId: 'UCqnbDFdCpuN8CMEg0VuEBqA', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
-        { id: 'cnn-us', name: 'CNN US', query: 'CNN US News', color: '#ef4444', ytChannelId: 'UCupvZG-5ko_eiXAupbDfxWw', rss: 'http://rss.cnn.com/rss/cnn_topstories.rss' },
+        { id: 'cnn-us', name: 'CNN US', query: 'CNN US', color: '#ef4444', ytChannelId: 'UCupvZG-5ko_eiXAupbDfxWw', rss: 'http://rss.cnn.com/rss/cnn_topstories.rss' },
         { id: 'cnbc', name: 'CNBC', query: 'CNBC Markets', color: '#0ea5e9', ytChannelId: 'UCvJJ_dzjViJCoLf5uKUTwoA', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
-        { id: 'bloomberg', name: 'Bloomberg', query: 'Bloomberg Markets', color: '#6366f1', ytChannelId: 'UCIALMKvObZNtJ6AmdCLP7Lg', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
+        { id: 'bloomberg', name: 'Bloomberg', query: 'Bloomberg Television', color: '#6366f1', ytChannelId: 'UCIALMKvObZNtJ6AmdCLP7Lg', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
         { id: 'techcrunch', name: 'TechCrunch', query: 'TechCrunch', color: '#10b981', ytChannelId: 'UCCjyq_K1Xwfg8Lndy7lKMpA', rss: 'https://techcrunch.com/feed/' },
-        { id: 'verge', name: 'The Verge', query: 'The Verge Tech', color: '#a855f7', ytChannelId: 'UCddiUEpeqJcYeBxX1IVBKvQ', rss: 'https://www.theverge.com/rss/index.xml' },
+        { id: 'verge', name: 'The Verge', query: 'The Verge', color: '#a855f7', ytChannelId: 'UCddiUEpeqJcYeBxX1IVBKvQ', rss: 'https://www.theverge.com/rss/index.xml' },
         { id: 'npr', name: 'NPR', query: 'NPR News', color: '#f43f5e', ytChannelId: 'UC4eYXhJI4-7wSWc8UNRwD4A', rss: 'https://feeds.npr.org/1001/rss.xml' }
       ]
     },
@@ -1556,12 +1511,11 @@
       code: 'gb',
       name: 'United Kingdom',
       iso: 'UK',
-      gl: 'GB',
       ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA',
       channels: [
         { id: 'all', name: 'All UK Networks', query: 'UK News', color: '#3b82f6', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
         { id: 'bbc-uk', name: 'BBC UK', query: 'BBC News UK', color: '#ef4444', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
-        { id: 'guardian', name: 'The Guardian', query: 'The Guardian UK', color: '#0284c7', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://www.theguardian.com/uk/rss' },
+        { id: 'guardian', name: 'The Guardian', query: 'Guardian News', color: '#0284c7', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://www.theguardian.com/uk/rss' },
         { id: 'sky', name: 'Sky News', query: 'Sky News UK', color: '#dc2626', ytChannelId: 'UCoMdktPbSTixAyNGwb-UYkQ', rss: 'https://feeds.skynews.com/feeds/rss/uk.xml' },
         { id: 'independent', name: 'The Independent', query: 'The Independent UK', color: '#f43f5e', ytChannelId: 'UCoMdktPbSTixAyNGwb-UYkQ', rss: 'https://www.independent.co.uk/news/uk/rss' }
       ]
@@ -1570,10 +1524,9 @@
       code: 'au',
       name: 'Australia',
       iso: 'AU',
-      gl: 'AU',
       ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q',
       channels: [
-        { id: 'all', name: 'All Australia', query: 'Australia News', color: '#0ea5e9', ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
+        { id: 'all', name: 'All Australia', query: 'ABC News Australia', color: '#0ea5e9', ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
         { id: 'abc-au', name: 'ABC Australia', query: 'ABC News Australia', color: '#10b981', ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
         { id: 'smh', name: 'Sydney Morning Herald', query: 'Sydney Morning Herald', color: '#3b82f6', ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q', rss: 'https://www.smh.com.au/rss/feed.xml' },
         { id: 'sbs', name: 'SBS News', query: 'SBS News Australia', color: '#f43f5e', ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q', rss: 'https://www.sbs.com.au/news/feed' }
@@ -1583,12 +1536,11 @@
       code: 'ca',
       name: 'Canada',
       iso: 'CA',
-      gl: 'CA',
       ytChannelId: 'UCuFFtHWoLl5fauMMD5Ww2jA',
       channels: [
-        { id: 'all', name: 'All Canada', query: 'Canada News', color: '#ef4444', ytChannelId: 'UCuFFtHWoLl5fauMMD5Ww2jA', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
-        { id: 'cbc', name: 'CBC News', query: 'CBC News Canada', color: '#dc2626', ytChannelId: 'UCuFFtHWoLl5fauMMD5Ww2jA', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
-        { id: 'ctv', name: 'CTV News', query: 'CTV News Canada', color: '#0ea5e9', ytChannelId: 'UCi7Zk9baY1tvdlgxIML8MXg', rss: 'https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009' },
+        { id: 'all', name: 'All Canada', query: 'CBC News Canada', color: '#ef4444', ytChannelId: 'UCuFFtHWoLl5fauMMD5Ww2jA', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
+        { id: 'cbc', name: 'CBC News', query: 'CBC News', color: '#dc2626', ytChannelId: 'UCuFFtHWoLl5fauMMD5Ww2jA', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
+        { id: 'ctv', name: 'CTV News', query: 'CTV News', color: '#0ea5e9', ytChannelId: 'UCi7Zk9baY1tvdlgxIML8MXg', rss: 'https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009' },
         { id: 'global-ca', name: 'Global News', query: 'Global News Canada', color: '#10b981', ytChannelId: 'UChLtXXpo4Ge1ReTEboVvTDg', rss: 'https://globalnews.ca/feed/' }
       ]
     },
@@ -1596,11 +1548,10 @@
       code: 'ae',
       name: 'Middle East',
       iso: 'ME',
-      gl: 'AE',
       ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg',
       channels: [
-        { id: 'all', name: 'All Middle East', query: 'Middle East News', color: '#14b8a6', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-        { id: 'aljazeera-me', name: 'Al Jazeera', query: 'Al Jazeera Middle East', color: '#f59e0b', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'all', name: 'All Middle East', query: 'Al Jazeera Middle East', color: '#14b8a6', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'aljazeera-me', name: 'Al Jazeera', query: 'Al Jazeera English', color: '#f59e0b', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
         { id: 'gulf-news', name: 'Gulf News', query: 'Gulf News UAE', color: '#0ea5e9', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://gulfnews.com/rss' },
         { id: 'arab-news', name: 'Arab News', query: 'Arab News', color: '#10b981', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.arabnews.com/rss.xml' },
         { id: 'khaleej', name: 'Khaleej Times', query: 'Khaleej Times', color: '#3b82f6', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.khaleejtimes.com/rss' }
@@ -1610,11 +1561,10 @@
       code: 'sg',
       name: 'Asia Pacific',
       iso: 'AP',
-      gl: 'SG',
       ytChannelId: 'UC83jt4dlz1Gjl58fzQrrKZg',
       channels: [
-        { id: 'all', name: 'All Asia Networks', query: 'Asia News Singapore', color: '#f43f5e', ytChannelId: 'UC83jt4dlz1Gjl58fzQrrKZg', rss: 'https://www.scmp.com/rss/91/feed' },
-        { id: 'cna', name: 'CNA Singapore', query: 'CNA Singapore News', color: '#ef4444', ytChannelId: 'UC83jt4dlz1Gjl58fzQrrKZg', rss: 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml' },
+        { id: 'all', name: 'All Asia Networks', query: 'CNA Asia News', color: '#f43f5e', ytChannelId: 'UC83jt4dlz1Gjl58fzQrrKZg', rss: 'https://www.scmp.com/rss/91/feed' },
+        { id: 'cna', name: 'CNA Singapore', query: 'CNA Insider Singapore', color: '#ef4444', ytChannelId: 'UC83jt4dlz1Gjl58fzQrrKZg', rss: 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml' },
         { id: 'straits', name: 'Straits Times', query: 'The Straits Times', color: '#3b82f6', ytChannelId: 'UC4p_I9eiRewn2KoU-nawrDg', rss: 'https://www.straitstimes.com/news/asia/rss.xml' },
         { id: 'scmp', name: 'SCMP', query: 'South China Morning Post', color: '#f59e0b', ytChannelId: 'UC4SUWizzKc1tptprBkWjX2Q', rss: 'https://www.scmp.com/rss/91/feed' }
       ]
@@ -1623,12 +1573,11 @@
       code: 'jp',
       name: 'Japan',
       iso: 'JP',
-      gl: 'JP',
       ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A',
       channels: [
-        { id: 'all', name: 'All Japan', query: 'Japan News', color: '#e11d48', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
-        { id: 'nhk', name: 'NHK World', query: 'NHK World Japan', color: '#ef4444', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
-        { id: 'japan-today', name: 'Japan Today', query: 'Japan Today News', color: '#0ea5e9', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://japantoday.com/feed' },
+        { id: 'all', name: 'All Japan', query: 'NHK World Japan News', color: '#e11d48', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
+        { id: 'nhk', name: 'NHK World', query: 'NHK World-Japan', color: '#ef4444', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
+        { id: 'japan-today', name: 'Japan Today', query: 'Japan News Tokyo', color: '#0ea5e9', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://japantoday.com/feed' },
         { id: 'japan-times', name: 'The Japan Times', query: 'The Japan Times', color: '#a1a1aa', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://www.japantimes.co.jp/feed/' }
       ]
     },
@@ -1636,79 +1585,40 @@
       code: 'za',
       name: 'South Africa',
       iso: 'ZA',
-      gl: 'ZA',
       ytChannelId: 'UC8yH-uI81UUtEMDsowQyx1g',
       channels: [
-        { id: 'all', name: 'All South Africa', query: 'South Africa News', color: '#10b981', ytChannelId: 'UC8yH-uI81UUtEMDsowQyx1g', rss: 'https://www.dailymaverick.co.za/dmrss/' },
+        { id: 'all', name: 'All South Africa', query: 'SABC News South Africa', color: '#10b981', ytChannelId: 'UC8yH-uI81UUtEMDsowQyx1g', rss: 'https://www.dailymaverick.co.za/dmrss/' },
         { id: 'news24', name: 'News24', query: 'News24 South Africa', color: '#3b82f6', ytChannelId: 'UC8yH-uI81UUtEMDsowQyx1g', rss: 'https://www.dailymaverick.co.za/dmrss/' },
         { id: 'maverick', name: 'Daily Maverick', query: 'Daily Maverick South Africa', color: '#a1a1aa', ytChannelId: 'UC8yH-uI81UUtEMDsowQyx1g', rss: 'https://www.dailymaverick.co.za/dmrss/' }
       ]
     }
   ];
 
-  // Editorial Fallback Visuals for Live Wire Dispatches without embedded images
-  const CATEGORY_EDITORIAL_IMAGES = {
-    general: [
-      'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80'
-    ],
-    business: [
-      'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80'
-    ],
-    technology: [
-      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80'
-    ],
-    sports: [
-      'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80'
-    ],
-    science: [
-      'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80'
-    ],
-    entertainment: [
-      'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80'
-    ],
-    health: [
-      'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
-      'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=800&q=80'
-    ]
-  };
-
-  function getEditorialFallbackImage(index = 0) {
-    const pool = CATEGORY_EDITORIAL_IMAGES[activeCategory] || CATEGORY_EDITORIAL_IMAGES.general;
-    return pool[index % pool.length];
-  }
-
   // App State
   let activeCountryObj = COUNTRY_DIRECTORY[0];
   let activeChannelObj = activeCountryObj.channels[0];
   let activeCategory = 'general';
-  let activeTimelineFilter = 'all'; // 'all' | 'today' | 'archive'
+  let activeTimeline = 'all'; // 'all' | 'today' | 'archive'
   let currentView = 'feed'; // 'feed' | 'bookmarks'
-  let allMergedArticles = []; // Holds combined Live Today + Historical articles
-  let fetchedArticles = [];   // Holds currently filtered articles for display
+  let fetchedArticles = [];
   let savedQueueIndices = [];
   let bookmarkedArticles = [];
   let lastChannelAISummarySpeech = '';
   let toastTimeout = null;
-  let autoEmbedVideos = localStorage.getItem('pulseAutoEmbedVideos') === 'true';
+  let autoEmbedVideos = false;
   let activePlayingVideoIdx = null;
   let currentRenderGeneration = 0;
 
-  // Cache of latest YouTube videos per channel ID
   let channelYtFeedCache = {};
   let videoCache = {};
+
+  try {
+    autoEmbedVideos = localStorage.getItem('pulseAutoEmbedVideos') === 'true';
+  } catch (e) {}
+
   try {
     const rawCache = sessionStorage.getItem('pulseVideoCacheV3');
-    if (rawCache) videoCache = JSON.parse(rawCache);
+    if (rawCache) videoCache = JSON.parse(rawCache) || {};
   } catch (e) {
     videoCache = {};
   }
@@ -1719,10 +1629,9 @@
     } catch (e) {}
   }
 
-  // Load Persistent Bookmarks from localStorage
   try {
     const rawSaved = localStorage.getItem('pulseSavedBookmarks');
-    if (rawSaved) bookmarkedArticles = JSON.parse(rawSaved);
+    if (rawSaved) bookmarkedArticles = JSON.parse(rawSaved) || [];
   } catch (e) {
     bookmarkedArticles = [];
   }
@@ -1734,61 +1643,49 @@
     btn.classList.toggle('active', autoEmbedVideos);
     txt.innerText = `Auto-Embed: ${autoEmbedVideos ? 'On' : 'Off'}`;
   }
-  syncAutoEmbedButtonUI();
 
   function toggleAutoEmbedVideos() {
     autoEmbedVideos = !autoEmbedVideos;
-    localStorage.setItem('pulseAutoEmbedVideos', String(autoEmbedVideos));
+    try {
+      localStorage.setItem('pulseAutoEmbedVideos', String(autoEmbedVideos));
+    } catch (e) {}
     syncAutoEmbedButtonUI();
     showToast(autoEmbedVideos ? 'Auto-Embed enabled for news cards' : 'Click-to-play video mode active');
     renderArticles();
   }
 
-  // Determines whether a timestamp is from Today / within the last 24 hours
-  function isArticleFromToday(dateString) {
-    if (!dateString) return true;
-    const pubTime = new Date(dateString).getTime();
+  // Timeline Classification (Today's Live Wire vs Historical / Earlier)
+  function isArticleToday(article) {
+    if (!article || !article.publishedAt) return true;
+    const pubTime = new Date(article.publishedAt).getTime();
     if (isNaN(pubTime)) return true;
-    const now = Date.now();
-    const hoursDiff = (now - pubTime) / (1000 * 60 * 60);
-    const pubDate = new Date(pubTime);
-    const todayDate = new Date(now);
-    const sameCalendarDay =
-      pubDate.getFullYear() === todayDate.getFullYear() &&
-      pubDate.getMonth() === todayDate.getMonth() &&
-      pubDate.getDate() === todayDate.getDate();
-
-    return sameCalendarDay || (hoursDiff >= -2 && hoursDiff <= 24);
+    const hoursDiff = (Date.now() - pubTime) / (1000 * 60 * 60);
+    return hoursDiff <= 24;
   }
 
-  function applyTimelineFilter() {
-    const todayList = allMergedArticles.filter(a => isArticleFromToday(a.publishedAt));
-    const archiveList = allMergedArticles.filter(a => !isArticleFromToday(a.publishedAt));
+  function updateTimelineCounters() {
+    const allCount = fetchedArticles.length;
+    const todayCount = fetchedArticles.filter(isArticleToday).length;
+    const archiveCount = Math.max(0, allCount - todayCount);
 
-    document.getElementById('countAll').innerText = allMergedArticles.length;
-    document.getElementById('countToday').innerText = todayList.length;
-    document.getElementById('countArchive').innerText = archiveList.length;
+    const elAll = document.getElementById('countAll');
+    const elToday = document.getElementById('countToday');
+    const elArchive = document.getElementById('countArchive');
 
-    if (activeTimelineFilter === 'today') {
-      fetchedArticles = todayList;
-    } else if (activeTimelineFilter === 'archive') {
-      fetchedArticles = archiveList;
-    } else {
-      fetchedArticles = allMergedArticles;
-    }
+    if (elAll) elAll.innerText = allCount;
+    if (elToday) elToday.innerText = todayCount;
+    if (elArchive) elArchive.innerText = archiveCount;
   }
 
   function getActiveArticlesList() {
-    return currentView === 'bookmarks' ? bookmarkedArticles : fetchedArticles;
+    if (currentView === 'bookmarks') return bookmarkedArticles;
+    if (activeTimeline === 'today') return fetchedArticles.filter(isArticleToday);
+    if (activeTimeline === 'archive') return fetchedArticles.filter(a => !isArticleToday(a));
+    return fetchedArticles;
   }
 
   function getArticleKey(article) {
-    return cleanText(article?.title || '')
-      .replace(/\s+-\s+[^-]+$/, '')
-      .toLowerCase()
-      .replace(/[^\w\s]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+    return cleanText(article?.title || '').toLowerCase();
   }
 
   function isArticleBookmarked(article) {
@@ -1810,24 +1707,27 @@
     const clearBtn = document.getElementById('clearBookmarksBtn');
     const subtitle = document.getElementById('bookmarksSubtitle');
 
-    countEl.innerText = bookmarkedArticles.length;
+    if (countEl) countEl.innerText = bookmarkedArticles.length;
     if (clearBtn) clearBtn.disabled = bookmarkedArticles.length === 0;
     if (subtitle) {
       subtitle.innerText = `${bookmarkedArticles.length} saved ${bookmarkedArticles.length === 1 ? 'story' : 'stories'} stored on this device`;
     }
 
-    if (currentView === 'bookmarks') {
-      navBtn.classList.add('active');
-      navIcon.classList.add('icon-filled');
-    } else {
-      navBtn.classList.remove('active');
-      if (bookmarkedArticles.length > 0) navIcon.classList.add('icon-filled');
-      else navIcon.classList.remove('icon-filled');
+    if (navBtn && navIcon) {
+      if (currentView === 'bookmarks') {
+        navBtn.classList.add('active');
+        navIcon.classList.add('icon-filled');
+      } else {
+        navBtn.classList.remove('active');
+        if (bookmarkedArticles.length > 0) navIcon.classList.add('icon-filled');
+        else navIcon.classList.remove('icon-filled');
+      }
     }
   }
 
   function showToast(message) {
     const toast = document.getElementById('toast');
+    if (!toast) return;
     toast.innerText = message;
     toast.classList.add('show');
     if (toastTimeout) clearTimeout(toastTimeout);
@@ -1896,17 +1796,18 @@
     if (currentView === targetView) return;
     currentView = targetView;
     stopAudio();
-    document.getElementById('aiBriefingDrawer').classList.remove('open');
+    const aiDrawer = document.getElementById('aiBriefingDrawer');
+    if (aiDrawer) aiDrawer.classList.remove('open');
 
     const navDeck = document.getElementById('navDeck');
     const bookmarksBanner = document.getElementById('bookmarksBanner');
 
     if (currentView === 'bookmarks') {
-      navDeck.classList.add('hidden');
-      bookmarksBanner.classList.add('open');
+      if (navDeck) navDeck.classList.add('hidden');
+      if (bookmarksBanner) bookmarksBanner.classList.add('open');
     } else {
-      navDeck.classList.remove('hidden');
-      bookmarksBanner.classList.remove('open');
+      if (navDeck) navDeck.classList.remove('hidden');
+      if (bookmarksBanner) bookmarksBanner.classList.remove('open');
     }
 
     updateBookmarkNavUI();
@@ -1927,7 +1828,7 @@
   // ============================================================================
 
   function getActiveYtChannelId() {
-    return activeChannelObj.ytChannelId || activeCountryObj.ytChannelId || 'UCZFMm1mMw0F81Z37aaEzTUA';
+    return activeChannelObj?.ytChannelId || activeCountryObj?.ytChannelId || 'UCZFMm1mMw0F81Z37aaEzTUA';
   }
 
   function getChannelUploadsPlaylistId(channelId) {
@@ -1974,13 +1875,11 @@
   function parseVideoFromTextOrUrl(rawInput, idx = 0) {
     if (!rawInput || typeof rawInput !== 'string') return null;
 
-    // 1. YouTube
     const ytMatch = rawInput.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
     if (ytMatch && ytMatch[1]) {
       return buildYouTubeVideoObject(ytMatch[1], idx);
     }
 
-    // 2. Vimeo
     const vimeoMatch = rawInput.match(/vimeo\.com\/(?:video\/)?(\d{6,11})/i);
     if (vimeoMatch && vimeoMatch[1]) {
       const vid = vimeoMatch[1];
@@ -1995,7 +1894,6 @@
       };
     }
 
-    // 3. Dailymotion
     const dmMatch = rawInput.match(/(?:dailymotion\.com\/(?:video|embed\/video)\/|dai\.ly\/)([a-zA-Z0-9]+)/i);
     if (dmMatch && dmMatch[1]) {
       const vid = dmMatch[1];
@@ -2010,7 +1908,6 @@
       };
     }
 
-    // 4. Direct HTML5 Video Stream (.mp4 / .webm)
     const mp4Match = rawInput.match(/(https?:\/\/[^\s"'<>]+\.(?:mp4|webm)(?:\?[^\s"'<>]*)?)/i);
     if (mp4Match && mp4Match[1]) {
       const url = mp4Match[1];
@@ -2028,17 +1925,15 @@
     return null;
   }
 
-  // Fetches latest YouTube uploads for the active channel (with metadata so it can also populate live today stories)
-  async function fetchChannelYouTubeFeed(ytChannelId, forceFresh = false) {
+  async function fetchChannelYouTubeFeed(ytChannelId) {
     if (!ytChannelId) return [];
-    if (!forceFresh && channelYtFeedCache[ytChannelId]) return channelYtFeedCache[ytChannelId];
+    if (channelYtFeedCache[ytChannelId]) return channelYtFeedCache[ytChannelId];
 
     const ytRssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${ytChannelId}`;
 
-    // Method A: Fast JSON via rss2json
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 3200);
+      const timer = setTimeout(() => controller.abort(), 3000);
       const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(ytRssUrl)}`, {
         signal: controller.signal
       });
@@ -2049,57 +1944,9 @@
           const parsedVideos = data.items
             .map(item => {
               const parsed = parseVideoFromTextOrUrl(item.link || item.guid || '');
-              return parsed
-                ? {
-                    title: cleanText(item.title || ''),
-                    description: cleanText(item.description || item.title || ''),
-                    pubDate: item.pubDate ? new Date(item.pubDate.replace(' ', 'T') + 'Z').toISOString() : new Date().toISOString(),
-                    link: item.link || `https://www.youtube.com/watch?v=${parsed.videoId}`,
-                    videoId: parsed.videoId,
-                    thumbnail: parsed.thumbnail
-                  }
-                : null;
+              return parsed ? { title: cleanText(item.title || ''), videoId: parsed.videoId } : null;
             })
             .filter(Boolean);
-          if (parsedVideos.length > 0) {
-            channelYtFeedCache[ytChannelId] = parsedVideos;
-            return parsedVideos;
-          }
-        }
-      }
-    } catch (e) {}
-
-    // Method B: AllOrigins XML fallback
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 3500);
-      const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(ytRssUrl)}&_cb=${Date.now()}`, {
-        signal: controller.signal
-      });
-      clearTimeout(timer);
-      if (res.ok) {
-        const data = await res.json();
-        const xmlText = data?.contents || '';
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(xmlText, 'text/xml');
-        const entries = Array.from(xml.querySelectorAll('entry'));
-        if (entries.length > 0) {
-          const parsedVideos = entries.map(entry => {
-            const vid = entry.getElementsByTagNameNS('*', 'videoId')[0]?.textContent?.trim() || '';
-            const title = entry.querySelector('title')?.textContent || '';
-            const published = entry.querySelector('published')?.textContent || new Date().toISOString();
-            const desc = entry.getElementsByTagNameNS('*', 'description')[0]?.textContent || title;
-            if (!vid) return null;
-            return {
-              title: cleanText(title),
-              description: cleanText(desc),
-              pubDate: published,
-              link: `https://www.youtube.com/watch?v=${vid}`,
-              videoId: vid,
-              thumbnail: `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`
-            };
-          }).filter(Boolean);
-
           if (parsedVideos.length > 0) {
             channelYtFeedCache[ytChannelId] = parsedVideos;
             return parsedVideos;
@@ -2187,8 +2034,6 @@
     const article = list[idx];
     if (!mediaEl || !article) return;
 
-    mediaEl.classList.add('has-video');
-
     if (!article.urlToImage && videoData.thumbnail) {
       article.urlToImage = videoData.thumbnail;
       const fallbackSpan = mediaEl.querySelector('.media-fallback');
@@ -2201,40 +2046,11 @@
       }
     }
 
-    if (!mediaEl.querySelector('.card-video-frame-wrap')) {
-      let pill = mediaEl.querySelector('.video-platform-pill');
-      if (!pill) {
-        pill = document.createElement('div');
-        pill.className = 'video-platform-pill';
-        pill.onclick = (e) => {
-          e.stopPropagation();
-          toggleCardVideo(idx);
-        };
-        mediaEl.appendChild(pill);
-      }
-      pill.innerHTML = `<span class="video-platform-dot"></span><span>${escapeHTML(videoData.platform)}</span>`;
-
-      let overlay = mediaEl.querySelector('.video-play-overlay');
-      if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.className = 'video-play-overlay';
-        overlay.title = `Play ${videoData.platform} broadcast inside card`;
-        overlay.onclick = () => toggleCardVideo(idx);
-        overlay.innerHTML = `
-          <div class="video-play-btn">
-            <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          </div>
-        `;
-        mediaEl.appendChild(overlay);
-      }
-    }
-
     if (watchBtn) {
       watchBtn.classList.add('ready');
-      watchBtn.title = `Play ${videoData.platform} video inside card`;
     }
 
-    if (autoEmbedVideos) {
+    if (autoEmbedVideos && !mediaEl.querySelector('.card-video-frame-wrap')) {
       loadVideoInCard(idx, false);
     }
   }
@@ -2295,7 +2111,8 @@
 
     if (autoplay) {
       activePlayingVideoIdx = idx;
-      document.getElementById('audioStatus').innerText = `Playing ${vData.platform} • Story #${idx + 1}`;
+      const statusEl = document.getElementById('audioStatus');
+      if (statusEl) statusEl.innerText = `Playing ${vData.platform} • Story #${idx + 1}`;
     }
 
     card.classList.add('playing-video');
@@ -2357,7 +2174,8 @@
     card.classList.remove('playing-video');
     if (activePlayingVideoIdx === idx) {
       activePlayingVideoIdx = null;
-      document.getElementById('audioStatus').innerText = 'Audio & Video Studio Ready';
+      const statusEl = document.getElementById('audioStatus');
+      if (statusEl) statusEl.innerText = 'Audio & Video Studio Ready';
     }
 
     const displayChannel = currentView === 'bookmarks'
@@ -2367,11 +2185,22 @@
       ? (article.countryIso || 'SAVED')
       : activeCountryObj.iso;
     const sourceName = escapeHTML(displayChannel);
-    const imgUrl = article.urlToImage || getEditorialFallbackImage(idx);
 
     mediaEl.innerHTML = `
       <span class="card-badge">${escapeHTML(isoTag)} • ${sourceName}</span>
-      <img src="${escapeHTML(imgUrl)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=\\'media-fallback\\'>${sourceName}</span>'">
+      <div class="video-platform-pill" onclick="event.stopPropagation(); toggleCardVideo(${idx})">
+        <span class="video-platform-dot"></span>
+        <span>YouTube</span>
+      </div>
+      <div class="video-play-overlay" onclick="toggleCardVideo(${idx})" title="Play broadcast inside card">
+        <div class="video-play-btn">
+          <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+      ${article.urlToImage
+        ? `<img src="${escapeHTML(article.urlToImage)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=\\'media-fallback\\'>${sourceName}</span>'">`
+        : `<span class="media-fallback">${sourceName}</span>`
+      }
     `;
 
     if (watchBtn) {
@@ -2380,41 +2209,36 @@
         <span>Video</span>
       `;
     }
-
-    if (article.videoData) {
-      const prevAuto = autoEmbedVideos;
-      autoEmbedVideos = false;
-      applyVideoToCardDOM(idx, article.videoData);
-      autoEmbedVideos = prevAuto;
-    }
   }
 
   async function discoverVideosForVisibleCards(generation) {
-    const list = getActiveArticlesList();
-    await fetchChannelYouTubeFeed(getActiveYtChannelId());
+    try {
+      const list = getActiveArticlesList();
+      await fetchChannelYouTubeFeed(getActiveYtChannelId());
 
-    const concurrency = 4;
-    let cursor = 0;
+      const concurrency = 4;
+      let cursor = 0;
 
-    async function worker() {
-      while (cursor < list.length && generation === currentRenderGeneration) {
-        const idx = cursor++;
-        const art = list[idx];
-        const videoData = await resolveVideoForArticle(art, idx, generation);
-        if (generation === currentRenderGeneration && videoData) {
-          applyVideoToCardDOM(idx, videoData);
+      async function worker() {
+        while (cursor < list.length && generation === currentRenderGeneration) {
+          const idx = cursor++;
+          const art = list[idx];
+          const videoData = await resolveVideoForArticle(art, idx, generation);
+          if (generation === currentRenderGeneration && videoData) {
+            applyVideoToCardDOM(idx, videoData);
+          }
         }
       }
-    }
 
-    const workers = Array.from({ length: Math.min(concurrency, list.length) }, () => worker());
-    await Promise.all(workers);
+      const workers = Array.from({ length: Math.min(concurrency, list.length) }, () => worker());
+      await Promise.all(workers);
+    } catch (e) {}
   }
 
   // ============================================================================
   // SPEECH SYNTHESIS & THEME MANAGEMENT
   // ============================================================================
-  const synth = window.speechSynthesis;
+  const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
   let englishVoices = [];
   let selectedVoice = null;
   let audioQueue = [];
@@ -2426,76 +2250,91 @@
   const MOON_SVG = `<svg class="icon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
 
   function syncThemeIcon() {
+    const btn = document.getElementById('themeToggle');
+    if (!btn) return;
     const isDark = document.body.classList.contains('dark');
-    document.getElementById('themeToggle').innerHTML = isDark ? SUN_SVG : MOON_SVG;
+    btn.innerHTML = isDark ? SUN_SVG : MOON_SVG;
   }
 
-  if (localStorage.getItem('newsTheme') === 'light') {
-    document.body.classList.remove('dark');
-  }
+  try {
+    if (localStorage.getItem('newsTheme') === 'light') {
+      document.body.classList.remove('dark');
+    }
+  } catch (e) {}
   syncThemeIcon();
 
   function toggleTheme() {
     document.body.classList.toggle('dark');
     const isDark = document.body.classList.contains('dark');
-    localStorage.setItem('newsTheme', isDark ? 'dark' : 'light');
+    try {
+      localStorage.setItem('newsTheme', isDark ? 'dark' : 'light');
+    } catch (e) {}
     syncThemeIcon();
   }
 
   function toggleStudioSettings() {
-    document.getElementById('studioDrawer').classList.toggle('open');
+    const drawer = document.getElementById('studioDrawer');
+    if (drawer) drawer.classList.toggle('open');
   }
 
   const speedSelect = document.getElementById('speedSelect');
-  const savedSpeed = localStorage.getItem('newsVoiceSpeed');
-  if (savedSpeed) speedSelect.value = savedSpeed;
-  speedSelect.onchange = () => localStorage.setItem('newsVoiceSpeed', speedSelect.value);
+  if (speedSelect) {
+    try {
+      const savedSpeed = localStorage.getItem('newsVoiceSpeed');
+      if (savedSpeed) speedSelect.value = savedSpeed;
+      speedSelect.onchange = () => localStorage.setItem('newsVoiceSpeed', speedSelect.value);
+    } catch (e) {}
+  }
 
   function loadVoices() {
     if (!synth) return;
-    const allVoices = synth.getVoices();
-    englishVoices = allVoices.filter(v => v.lang.startsWith('en'));
-    if (englishVoices.length === 0) return;
+    try {
+      const allVoices = synth.getVoices() || [];
+      englishVoices = allVoices.filter(v => v.lang && v.lang.startsWith('en'));
+      if (englishVoices.length === 0) return;
 
-    const selectEl = document.getElementById('voiceSelect');
-    selectEl.innerHTML = '';
+      const selectEl = document.getElementById('voiceSelect');
+      if (!selectEl) return;
+      selectEl.innerHTML = '';
 
-    const qualityKeywords = ['en-IN', 'en_IN', 'India', 'Google', 'Natural', 'Online', 'Siri', 'Samantha'];
-    englishVoices.sort((a, b) => {
-      const aScore = qualityKeywords.some(k => a.name.includes(k) || a.lang.includes(k)) ? 1 : 0;
-      const bScore = qualityKeywords.some(k => b.name.includes(k) || b.lang.includes(k)) ? 1 : 0;
-      return bScore - aScore;
-    });
+      const qualityKeywords = ['en-IN', 'en_IN', 'India', 'Google', 'Natural', 'Online', 'Siri', 'Samantha'];
+      englishVoices.sort((a, b) => {
+        const aScore = qualityKeywords.some(k => a.name.includes(k) || a.lang.includes(k)) ? 1 : 0;
+        const bScore = qualityKeywords.some(k => b.name.includes(k) || b.lang.includes(k)) ? 1 : 0;
+        return bScore - aScore;
+      });
 
-    const savedVoiceName = localStorage.getItem('newsVoiceName');
-    let defaultIndex = 0;
+      const savedVoiceName = localStorage.getItem('newsVoiceName');
+      let defaultIndex = 0;
 
-    englishVoices.forEach((voice, index) => {
-      const option = document.createElement('option');
-      option.value = index;
-      option.textContent = `${voice.name} (${voice.lang})`;
-      selectEl.appendChild(option);
-      if (savedVoiceName && voice.name === savedVoiceName) {
-        defaultIndex = index;
-      }
-    });
+      englishVoices.forEach((voice, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `${voice.name} (${voice.lang})`;
+        selectEl.appendChild(option);
+        if (savedVoiceName && voice.name === savedVoiceName) {
+          defaultIndex = index;
+        }
+      });
 
-    selectedVoice = englishVoices[defaultIndex];
-    selectEl.value = defaultIndex;
+      selectedVoice = englishVoices[defaultIndex];
+      selectEl.value = defaultIndex;
 
-    selectEl.onchange = (e) => {
-      selectedVoice = englishVoices[e.target.value];
-      localStorage.setItem('newsVoiceName', selectedVoice.name);
-    };
+      selectEl.onchange = (e) => {
+        selectedVoice = englishVoices[e.target.value];
+        localStorage.setItem('newsVoiceName', selectedVoice.name);
+      };
+    } catch (e) {}
   }
 
   loadVoices();
-  if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = loadVoices;
+  if (synth && synth.onvoiceschanged !== undefined) {
+    synth.onvoiceschanged = loadVoices;
   }
 
   function renderCountryStrip() {
     const strip = document.getElementById('countryStrip');
+    if (!strip) return;
     strip.innerHTML = '';
 
     COUNTRY_DIRECTORY.forEach(country => {
@@ -2505,8 +2344,10 @@
       btn.onclick = () => {
         activeCountryObj = country;
         activeChannelObj = country.channels[0];
-        document.getElementById('searchInput').value = '';
-        document.getElementById('aiBriefingDrawer').classList.remove('open');
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.value = '';
+        const aiDrawer = document.getElementById('aiBriefingDrawer');
+        if (aiDrawer) aiDrawer.classList.remove('open');
         renderCountryStrip();
         renderChannelStrip();
         updateSelectionLabel();
@@ -2518,6 +2359,7 @@
 
   function renderChannelStrip() {
     const strip = document.getElementById('channelStrip');
+    if (!strip) return;
     strip.innerHTML = '';
 
     activeCountryObj.channels.forEach(channel => {
@@ -2529,8 +2371,10 @@
       `;
       btn.onclick = () => {
         activeChannelObj = channel;
-        document.getElementById('searchInput').value = '';
-        document.getElementById('aiBriefingDrawer').classList.remove('open');
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.value = '';
+        const aiDrawer = document.getElementById('aiBriefingDrawer');
+        if (aiDrawer) aiDrawer.classList.remove('open');
         renderChannelStrip();
         updateSelectionLabel();
         fetchNews();
@@ -2540,20 +2384,22 @@
   }
 
   function updateSelectionLabel() {
-    document.getElementById('currentSelectionLabel').innerHTML =
-      `<span>${activeCountryObj.iso}</span> / <strong>${escapeHTML(activeCountryObj.name)} • ${escapeHTML(activeChannelObj.name)}</strong>`;
+    const labelEl = document.getElementById('currentSelectionLabel');
+    if (!labelEl) return;
+    labelEl.innerHTML =
+      `<span>REGION</span> / <strong>${escapeHTML(activeCountryObj.name)} • ${escapeHTML(activeChannelObj.name)}</strong>`;
   }
 
   function escapeHTML(str) {
     if (!str) return '';
-    return str.replace(/[&<>"']/g, m => ({
+    return String(str).replace(/[&<>"']/g, m => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     }[m]));
   }
 
   function cleanText(txt) {
     if (!txt) return '';
-    return txt
+    return String(txt)
       .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1')
       .replace(/<[^>]*>/g, ' ')
       .replace(/&nbsp;/gi, ' ')
@@ -2566,36 +2412,15 @@
       .trim();
   }
 
-  function formatRelativeTimeInfo(dateString) {
-    if (!dateString) {
-      return { label: 'TODAY • LIVE', isToday: true };
-    }
+  function formatRelativeTime(dateString) {
+    if (!dateString) return 'LIVE';
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return { label: 'TODAY • LIVE', isToday: true };
-    }
-
-    const diffMs = Date.now() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const isToday = isArticleFromToday(dateString);
-
-    if (diffMins < 2) {
-      return { label: 'TODAY • JUST NOW', isToday: true };
-    }
-    if (diffMins < 60) {
-      return { label: `TODAY • ${diffMins}M AGO`, isToday: true };
-    }
+    if (isNaN(date.getTime())) return 'LIVE';
+    const diffMins = Math.floor((Date.now() - date.getTime()) / 60000);
+    if (diffMins < 60) return `${Math.max(1, diffMins)}M AGO`;
     const diffHours = Math.floor(diffMins / 60);
-    if (isToday && diffHours < 24) {
-      return { label: `TODAY • ${diffHours}H AGO`, isToday: true };
-    }
-    if (diffHours < 48) {
-      return { label: `YESTERDAY • ${date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase()}`, isToday: false };
-    }
-    return {
-      label: date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase(),
-      isToday: false
-    };
+    if (diffHours < 24) return `${diffHours}H AGO`;
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase();
   }
 
   // AI Summarizer Engine
@@ -2624,9 +2449,794 @@
     const accordion = document.getElementById(`ai-acc-${idx}`);
     const contentEl = document.getElementById(`ai-content-${idx}`);
     const art = list[idx];
-    if (!accordion || !art) return;
+    if (!accordion || !art || !contentEl) return;
 
     if (accordion.classList.contains('open') && art._aiReady) {
       accordion.classList.remove('open');
       return;
-    
+    }
+
+    accordion.classList.add('open');
+    if (art._aiReady && contentEl.innerHTML.trim() !== '') return;
+
+    contentEl.innerHTML = `<span style="color:var(--text-tertiary);">Synthesizing key takeaways...</span>`;
+
+    const title = cleanText(art.title);
+    const desc = cleanText(art.description || '');
+    const fallback = buildLocalArticleAISummary(art);
+
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 4500);
+
+      const prompt = `Summarize this news article in 2 concise bullet points (under 40 words total). Plain text only, no markdown:\nTitle: ${title}\nDetails: ${desc}`;
+      const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, {
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+
+      if (res.ok) {
+        const aiText = cleanText(await res.text());
+        if (aiText && aiText.length > 25) {
+          const lines = aiText.split(/(?:\r?\n|•|- )+/).map(s => s.trim()).filter(s => s.length > 12).slice(0, 3);
+          const bulletsHTML = (lines.length ? lines : [aiText]).map(l => `<li>${escapeHTML(l)}</li>`).join('');
+          contentEl.innerHTML = `
+            <div style="color:var(--text-primary);font-weight:500;">${escapeHTML(fallback.tldr)}</div>
+            <ul>${bulletsHTML}</ul>
+          `;
+          art._aiSpeech = `AI Summary: ${aiText}`;
+          art._aiReady = true;
+          return;
+        }
+      }
+    } catch (e) {}
+
+    contentEl.innerHTML = `
+      <div style="color:var(--text-primary);font-weight:500;">${escapeHTML(fallback.tldr)}</div>
+      <ul>${fallback.bullets.map(b => `<li>${escapeHTML(b)}</li>`).join('')}</ul>
+    `;
+    art._aiSpeech = fallback.speech;
+    art._aiReady = true;
+  }
+
+  function speakArticleAISummary(idx) {
+    const list = getActiveArticlesList();
+    const art = list[idx];
+    if (!art) return;
+    const speechText = art._aiSpeech || buildLocalArticleAISummary(art).speech;
+    playQueue([{
+      text: speechText,
+      status: `AI Summary • Story #${idx + 1}`,
+      articleIndex: idx
+    }]);
+  }
+
+  async function generateChannelAISummary() {
+    const list = getActiveArticlesList();
+    if (!list.length) {
+      showToast('No articles available to summarize');
+      return;
+    }
+
+    const drawer = document.getElementById('aiBriefingDrawer');
+    const titleEl = document.getElementById('aiBriefingTitle');
+    const contentEl = document.getElementById('aiBriefingContent');
+    if (!drawer || !titleEl || !contentEl) return;
+
+    const contextLabel = currentView === 'bookmarks' ? 'Saved Bookmarks' : activeChannelObj.name;
+    drawer.classList.add('open');
+    titleEl.innerText = `AI Executive Brief — ${contextLabel}`;
+    contentEl.innerHTML = `<span style="color:var(--text-tertiary);">Synthesizing top stories from ${escapeHTML(contextLabel)}...</span>`;
+
+    const top5 = list.slice(0, 5);
+    const headlinesList = top5.map((a, i) => `${i + 1}. ${cleanText(a.title)}: ${cleanText(a.description)}`).join('\n');
+
+    const fallbackOverview = `Executive synthesis of the top ${top5.length} stories from ${contextLabel}:`;
+    const fallbackBullets = top5.map(a => {
+      const t = cleanText(a.title).replace(/\s+-\s+[^-]+$/, '');
+      const d = cleanText(a.description || '').split(/(?<=[.!?])\s+/)[0] || '';
+      return `<strong style="color:var(--text-primary);">${escapeHTML(t)}:</strong> ${escapeHTML(d)}`;
+    });
+
+    lastChannelAISummarySpeech = `Executive Briefing for ${contextLabel}. ` +
+      top5.map((a, i) => `Story ${i + 1}: ${cleanText(a.title)}.`).join(' ');
+
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 5000);
+      const prompt = `Write a 2-sentence executive news briefing summarizing these headlines from ${contextLabel}. Plain text only:\n${headlinesList}`;
+      const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, {
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+
+      if (res.ok) {
+        const aiIntro = cleanText(await res.text());
+        if (aiIntro && aiIntro.length > 30) {
+          contentEl.innerHTML = `
+            <p>${escapeHTML(aiIntro)}</p>
+            <ul>${fallbackBullets.map(b => `<li>${b}</li>`).join('')}</ul>
+          `;
+          lastChannelAISummarySpeech = `Executive Briefing for ${contextLabel}. ${aiIntro} ` +
+            top5.map((a, i) => `Highlight ${i + 1}: ${cleanText(a.title)}.`).join(' ');
+          return;
+        }
+      }
+    } catch (e) {}
+
+    contentEl.innerHTML = `
+      <p>${escapeHTML(fallbackOverview)}</p>
+      <ul>${fallbackBullets.map(b => `<li>${b}</li>`).join('')}</ul>
+    `;
+  }
+
+  function speakChannelAISummary() {
+    if (!lastChannelAISummarySpeech) return;
+    playQueue([{
+      text: lastChannelAISummarySpeech,
+      status: `AI Brief • ${currentView === 'bookmarks' ? 'Bookmarks' : activeChannelObj.name}`,
+      articleIndex: null
+    }]);
+  }
+
+  // Audio Studio Controls
+  const PLAY_ICON = `<svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+  const PAUSE_ICON = `<svg class="icon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+  const STOP_SM_ICON = `<svg class="icon" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>`;
+  const LISTEN_SM_ICON = `<svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+
+  function updateCardHighlight(articleIdx) {
+    activeArticleIndex = articleIdx;
+    document.querySelectorAll('.card').forEach((card, idx) => {
+      const btn = card.querySelector('.btn-listen-card');
+      if (idx === articleIdx) {
+        card.classList.add('speaking');
+        if (btn) btn.innerHTML = `${STOP_SM_ICON}<span>Stop</span>`;
+        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        card.classList.remove('speaking');
+        if (btn) btn.innerHTML = `${LISTEN_SM_ICON}<span>Listen</span>`;
+      }
+    });
+  }
+
+  function setControlsState(isPlaying, hasNext = false) {
+    const pauseBtn = document.getElementById('pauseBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const wf = document.getElementById('waveform');
+    if (pauseBtn) pauseBtn.disabled = !isPlaying;
+    if (nextBtn) nextBtn.disabled = !hasNext;
+    if (wf && pauseBtn) {
+      if (isPlaying) {
+        wf.classList.add('playing');
+        pauseBtn.innerHTML = PAUSE_ICON;
+      } else {
+        wf.classList.remove('playing');
+        pauseBtn.innerHTML = PAUSE_ICON;
+      }
+    }
+  }
+
+  function playQueue(items) {
+    if (!synth) {
+      showToast("Speech synthesis is not supported on this browser.");
+      return;
+    }
+    if (activePlayingVideoIdx !== null) {
+      closeVideoInCard(activePlayingVideoIdx);
+    }
+    stopAudio(false);
+    isCancelled = false;
+    audioQueue = items;
+    currentQueuePos = 0;
+    playCurrentQueueItem();
+  }
+
+  function playCurrentQueueItem() {
+    if (!synth || isCancelled || currentQueuePos < 0 || currentQueuePos >= audioQueue.length) {
+      stopAudio(true);
+      return;
+    }
+
+    const item = audioQueue[currentQueuePos];
+    const utterance = new SpeechSynthesisUtterance(item.text);
+
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice.lang;
+    } else {
+      utterance.lang = activeCountryObj.code === 'in' ? 'en-IN' : 'en-US';
+    }
+
+    utterance.rate = parseFloat(speedSelect?.value) || 1.0;
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => {
+      const statusEl = document.getElementById('audioStatus');
+      if (statusEl) statusEl.innerText = item.status || "Broadcasting...";
+      updateCardHighlight(item.articleIndex);
+      setControlsState(true, currentQueuePos < audioQueue.length - 1);
+    };
+
+    utterance.onend = () => {
+      if (isCancelled) return;
+      currentQueuePos++;
+      if (currentQueuePos < audioQueue.length) {
+        playCurrentQueueItem();
+      } else {
+        stopAudio(true);
+      }
+    };
+
+    utterance.onerror = () => {
+      if (!isCancelled) stopAudio(true);
+    };
+
+    synth.speak(utterance);
+  }
+
+  function stopAudio(resetStatus = true) {
+    isCancelled = true;
+    audioQueue = [];
+    currentQueuePos = -1;
+    try {
+      if (synth) synth.cancel();
+    } catch (e) {}
+    updateCardHighlight(null);
+    setControlsState(false, false);
+    if (resetStatus) {
+      const statusEl = document.getElementById('audioStatus');
+      if (statusEl) statusEl.innerText = "Audio & Video Studio Ready";
+    }
+  }
+
+  function togglePause() {
+    if (!synth) return;
+    const pauseBtn = document.getElementById('pauseBtn');
+    const wf = document.getElementById('waveform');
+    const statusEl = document.getElementById('audioStatus');
+    if (synth.paused) {
+      synth.resume();
+      if (pauseBtn) pauseBtn.innerHTML = PAUSE_ICON;
+      if (wf) wf.classList.add('playing');
+      if (statusEl) statusEl.innerText = "Playback Resumed";
+    } else if (synth.speaking) {
+      synth.pause();
+      if (pauseBtn) pauseBtn.innerHTML = PLAY_ICON;
+      if (wf) wf.classList.remove('playing');
+      if (statusEl) statusEl.innerText = "Playback Paused";
+    }
+  }
+
+  function skipNext() {
+    if (synth && currentQueuePos < audioQueue.length - 1) {
+      isCancelled = true;
+      synth.cancel();
+      isCancelled = false;
+      currentQueuePos++;
+      playCurrentQueueItem();
+    }
+  }
+
+  function readAllTopNews() {
+    const list = getActiveArticlesList();
+    if (!list.length) {
+      showToast('No articles available to play');
+      return;
+    }
+
+    const label = currentView === 'bookmarks' ? 'Saved Bookmarks' : activeChannelObj.name;
+    const subset = list.slice(0, 5);
+    const queue = [{
+      text: `Starting audio briefing from ${label}.`,
+      status: `Starting ${label} Brief`,
+      articleIndex: null
+    }];
+
+    subset.forEach((art, idx) => {
+      const summary = buildLocalArticleAISummary(art);
+      queue.push({
+        text: `Story ${idx + 1}: ${summary.speech}`,
+        status: `(${idx + 1}/${subset.length}) ${summary.tldr}`,
+        articleIndex: idx
+      });
+    });
+
+    queue.push({
+      text: "End of briefing.",
+      status: "Briefing Complete",
+      articleIndex: null
+    });
+
+    playQueue(queue);
+  }
+
+  function readSingleArticle(index) {
+    if (activeArticleIndex === index) {
+      stopAudio();
+      return;
+    }
+    const list = getActiveArticlesList();
+    const art = list[index];
+    if (!art) return;
+    const title = cleanText(art.title);
+    const desc = cleanText(art.description);
+    playQueue([{
+      text: `${title}. ${desc}`,
+      status: title,
+      articleIndex: index
+    }]);
+  }
+
+  function toggleQueueArticle(index) {
+    const pos = savedQueueIndices.indexOf(index);
+    if (pos === -1) {
+      savedQueueIndices.push(index);
+      showToast('Added to playback queue');
+    } else {
+      savedQueueIndices.splice(pos, 1);
+      showToast('Removed from playback queue');
+    }
+
+    const btn = document.getElementById('queuePlayBtn');
+    const txt = document.getElementById('queueCountText');
+    if (txt) txt.innerText = savedQueueIndices.length;
+    if (btn) btn.disabled = savedQueueIndices.length === 0;
+    renderArticles();
+  }
+
+  function playSavedQueue() {
+    if (!savedQueueIndices.length) return;
+    const list = getActiveArticlesList();
+    const queue = [{
+      text: `Playing ${savedQueueIndices.length} queued articles.`,
+      status: "Playing Audio Queue",
+      articleIndex: null
+    }];
+
+    savedQueueIndices.forEach((artIdx, i) => {
+      const art = list[artIdx];
+      if (!art) return;
+      queue.push({
+        text: `${cleanText(art.title)}. ${cleanText(art.description)}`,
+        status: `Queue (${i + 1}/${savedQueueIndices.length}) • ${cleanText(art.title)}`,
+        articleIndex: artIdx
+      });
+    });
+
+    playQueue(queue);
+  }
+
+  function showSkeletons() {
+    const grid = document.getElementById('newsGrid');
+    if (!grid) return;
+    grid.innerHTML = Array.from({ length: 6 }).map(() => `
+      <div class="card">
+        <div class="card-media skeleton"></div>
+        <div class="card-body">
+          <div class="skeleton" style="height: 12px; width: 35%; border-radius: 4px; margin-bottom: 12px;"></div>
+          <div class="skeleton" style="height: 18px; width: 92%; border-radius: 4px; margin-bottom: 8px;"></div>
+          <div class="skeleton" style="height: 18px; width: 70%; border-radius: 4px; margin-bottom: 16px;"></div>
+          <div class="skeleton" style="height: 44px; width: 100%; border-radius: 4px;"></div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderArticles() {
+    const grid = document.getElementById('newsGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    activePlayingVideoIdx = null;
+    const renderGen = ++currentRenderGeneration;
+
+    updateTimelineCounters();
+    const list = getActiveArticlesList();
+
+    if (currentView === 'bookmarks' && list.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon-wrap">
+            <svg class="icon" style="width:22px;height:22px;" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
+          </div>
+          <h3>No saved bookmarks yet</h3>
+          <p>Click the <strong>Save</strong> button on any news card in the live feed to build your personal reading, video, and audio list.</p>
+          <button class="btn btn-primary" onclick="switchView('feed')">Explore Live News</button>
+        </div>
+      `;
+      return;
+    }
+
+    if (list.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <h3>No stories in this timeline view</h3>
+          <p>Switch to <strong>All (Live + Archive)</strong> to view all dispatches for this channel.</p>
+          <button class="btn btn-primary" onclick="selectTimeline('all')">Show All Stories</button>
+        </div>
+      `;
+      return;
+    }
+
+    list.forEach((article, idx) => {
+      const displayChannel = currentView === 'bookmarks'
+        ? (article.source?.name || 'Saved Dispatch')
+        : (activeChannelObj.id !== 'all' ? activeChannelObj.name : (article.source?.name || activeCountryObj.name + ' Desk'));
+
+      const isoTag = currentView === 'bookmarks'
+        ? (article.countryIso || 'SAVED')
+        : activeCountryObj.iso;
+
+      const sourceName = escapeHTML(displayChannel);
+      const dateStr = formatRelativeTime(article.publishedAt);
+      const isToday = isArticleToday(article);
+      const title = escapeHTML(cleanText(article.title));
+      const rawDesc = cleanText(article.description);
+      const desc = escapeHTML(rawDesc && rawDesc !== cleanText(article.title) ? rawDesc : `Full dispatch and live updates available via ${displayChannel}.`);
+      const isQueued = savedQueueIndices.includes(idx);
+      const isBookmarked = isArticleBookmarked(article);
+
+      const card = document.createElement('article');
+      card.id = `card-${idx}`;
+      card.className = `card ${activeArticleIndex === idx ? 'speaking' : ''}`;
+      card.style.setProperty('--i', idx);
+      card.innerHTML = `
+        <div class="card-media has-video" id="card-media-${idx}">
+          <span class="card-badge">${escapeHTML(isoTag)} • ${sourceName}</span>
+          <div class="video-platform-pill" onclick="event.stopPropagation(); toggleCardVideo(${idx})">
+            <span class="video-platform-dot"></span>
+            <span>YouTube</span>
+          </div>
+          <div class="video-play-overlay" onclick="toggleCardVideo(${idx})" title="Play broadcast inside card">
+            <div class="video-play-btn">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+          ${article.urlToImage
+            ? `<img src="${escapeHTML(article.urlToImage)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=\\'media-fallback\\'>${sourceName}</span>'">`
+            : `<span class="media-fallback">${sourceName}</span>`
+          }
+        </div>
+        <div class="card-body">
+          <div class="card-meta">
+            <span class="source-name">${sourceName}</span>
+            <span class="${isToday ? 'time-badge-live' : ''}">${isToday ? '● ' : ''}${dateStr}</span>
+          </div>
+          <h2 class="card-title">${title}</h2>
+          <p class="card-desc">${desc}</p>
+
+          <!-- Smooth CSS Grid Accordion for AI Summary -->
+          <div class="card-ai-accordion" id="ai-acc-${idx}">
+            <div class="card-ai-inner">
+              <div class="card-ai-box">
+                <div class="card-ai-top">
+                  <span>AI Synthesis</span>
+                  <button class="btn btn-sm" style="padding:2px 7px;font-size:0.65rem;" onclick="speakArticleAISummary(${idx})">Speak</button>
+                </div>
+                <div id="ai-content-${idx}"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div class="card-actions">
+              <button class="btn btn-sm btn-brand" onclick="toggleArticleAISummary(${idx})">
+                <svg class="icon" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                <span>AI</span>
+              </button>
+
+              <button class="btn btn-sm btn-watch-card ready" id="watch-btn-${idx}" onclick="toggleCardVideo(${idx})" title="Watch related video inside card">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg>
+                <span>Video</span>
+              </button>
+
+              <button class="btn btn-sm btn-listen-card" onclick="readSingleArticle(${idx})">
+                ${activeArticleIndex === idx ? `${STOP_SM_ICON}<span>Stop</span>` : `${LISTEN_SM_ICON}<span>Listen</span>`}
+              </button>
+
+              <button class="btn btn-sm btn-save-card ${isBookmarked ? 'saved' : ''}" id="save-btn-${idx}" onclick="toggleBookmarkArticle(${idx})" title="Save to Bookmarks">
+                ${getBookmarkButtonInner(isBookmarked)}
+              </button>
+
+              <button class="btn btn-sm btn-icon-only btn-queue-card ${isQueued ? 'queued' : ''}" onclick="toggleQueueArticle(${idx})" title="Add to Audio Queue">
+                ${isQueued
+                  ? `<svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`
+                  : `<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`
+                }
+              </button>
+            </div>
+            <a href="${escapeHTML(article.url || '#')}" class="external-link" target="_blank" rel="noopener noreferrer">
+              <span>Read</span>
+              <svg class="icon" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </a>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+
+      if (article.videoData) {
+        applyVideoToCardDOM(idx, article.videoData);
+      }
+    });
+
+    discoverVideosForVisibleCards(renderGen);
+  }
+
+  // Layer 2A: Fast JSON RSS via rss2json
+  async function fetchViaRss2Json(rssUrl) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 3500);
+    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`, {
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error('rss2json error');
+    const data = await res.json();
+    if (!Array.isArray(data.items) || data.items.length === 0) throw new Error('Empty rss2json items');
+
+    return data.items.map((item, idx) => {
+      const directVideo = parseVideoFromTextOrUrl(item.link || item.description || '', idx);
+      let img = item.thumbnail || item.enclosure?.link || '';
+      if (!img && item.description) {
+        const match = item.description.match(/<img[^>]+src=["']([^"'>]+)["']/i);
+        if (match) img = match[1];
+      }
+      return {
+        source: { name: activeChannelObj.name },
+        title: cleanText(item.title),
+        description: cleanText(item.description || item.content),
+        url: item.link || '#',
+        urlToImage: img || (directVideo?.thumbnail || ''),
+        videoData: directVideo || null,
+        publishedAt: item.pubDate || new Date().toISOString()
+      };
+    });
+  }
+
+  // Layer 2B: XML RSS Parser Backup via AllOrigins
+  async function fetchViaXmlProxy(rssUrl) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+    const res = await fetch(proxyUrl, { signal: controller.signal });
+    clearTimeout(timer);
+    const data = await res.json();
+    if (!data.contents) throw new Error('Empty proxy response');
+
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(data.contents, "text/xml");
+    const items = Array.from(xml.querySelectorAll("item, entry")).slice(0, 18);
+    if (!items.length) throw new Error('No XML items');
+
+    return items.map((item, idx) => {
+      const title = item.querySelector("title")?.textContent || '';
+      const desc = item.querySelector("description, summary, content")?.textContent || '';
+      const linkNode = item.querySelector("link");
+      const link = linkNode?.getAttribute("href") || linkNode?.textContent || '#';
+      const pubDate = item.querySelector("pubDate, published, updated")?.textContent || new Date().toISOString();
+
+      let img = '';
+      let rawMediaUrl = '';
+
+      const mediaElements = Array.from(item.getElementsByTagNameNS('*', 'content')).concat(
+        Array.from(item.getElementsByTagNameNS('*', 'thumbnail')),
+        Array.from(item.querySelectorAll('enclosure'))
+      );
+
+      for (const el of mediaElements) {
+        const urlAttr = el.getAttribute('url') || '';
+        const typeAttr = (el.getAttribute('type') || '').toLowerCase();
+        const mediumAttr = (el.getAttribute('medium') || '').toLowerCase();
+
+        if (!rawMediaUrl && (typeAttr.includes('video') || mediumAttr === 'video' || parseVideoFromTextOrUrl(urlAttr, idx))) {
+          rawMediaUrl = urlAttr;
+        }
+        if (!img && (typeAttr.includes('image') || mediumAttr === 'image' || /\.(jpg|jpeg|png|webp)/i.test(urlAttr))) {
+          img = urlAttr;
+        }
+      }
+
+      if (!img) {
+        const match = desc.match(/<img[^>]+src=["']([^"'>]+)["']/i);
+        if (match) img = match[1];
+      }
+
+      const directVideo =
+        parseVideoFromTextOrUrl(rawMediaUrl, idx) ||
+        parseVideoFromTextOrUrl(link, idx) ||
+        parseVideoFromTextOrUrl(desc, idx);
+
+      return {
+        source: { name: activeChannelObj.name },
+        title: cleanText(title),
+        description: cleanText(desc),
+        url: link,
+        urlToImage: img || (directVideo?.thumbnail || ''),
+        rawMediaUrl: rawMediaUrl,
+        videoData: directVideo || null,
+        publishedAt: pubDate
+      };
+    });
+  }
+
+  // Layer 3: Curated Live + Historical Archive Fallback
+  function getChannelFallbackArticles(userQuery = '') {
+    const chName = activeChannelObj.name;
+    const countryName = activeCountryObj.name;
+    const topicLabel = userQuery || (activeCategory === 'general' ? 'National' : activeCategory);
+    const now = Date.now();
+    const hourMs = 3600 * 1000;
+
+    return [
+      {
+        source: { name: chName },
+        title: `${chName}: Digital Infrastructure and Clean Energy Grid Expansion Accelerates Across ${countryName}`,
+        description: `Correspondents at ${chName} report increased capital allocation toward public digital corridors, renewable storage capacity, and regional transit networks this quarter.`,
+        url: "https://news.google.com",
+        urlToImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+        publishedAt: new Date(now - 0.4 * hourMs).toISOString()
+      },
+      {
+        source: { name: chName },
+        title: `${countryName} ${topicLabel} Dispatch: Semiconductor & Enterprise AI Sectors Post Strong Output`,
+        description: `Industry benchmarks tracked by ${chName} highlight resilient domestic manufacturing, new foundry partnerships, and enterprise cloud adoption.`,
+        url: "https://news.google.com",
+        urlToImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+        publishedAt: new Date(now - 1.2 * hourMs).toISOString()
+      },
+      {
+        source: { name: chName },
+        title: `Aerospace & Research: Next-Generation Earth Observation Payload Completes Final Integration`,
+        description: `Mission control teams have cleared pre-launch telemetry verification for the upcoming orbital deployment supporting climate and communications monitoring.`,
+        url: "https://news.google.com",
+        urlToImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+        publishedAt: new Date(now - 3.5 * hourMs).toISOString()
+      },
+      {
+        source: { name: chName },
+        title: `${chName} Markets Desk: Central Bank Maintains Steady Policy Rate Amid Supply Chain Recovery`,
+        description: `Updated trade logistics frameworks are projected to lower freight turnaround times and stabilize core commodity indices across ${countryName}.`,
+        url: "https://news.google.com",
+        urlToImage: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80",
+        publishedAt: new Date(now - 6.0 * hourMs).toISOString()
+      },
+      {
+        source: { name: chName },
+        title: `Archive Dispatch: Automated Diagnostic Telemetry Expands Across Regional Hospitals`,
+        description: `Health authorities in ${countryName} have approved new point-of-care screening protocols designed to accelerate early preventive care.`,
+        url: "https://news.google.com",
+        urlToImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
+        publishedAt: new Date(now - 32 * hourMs).toISOString()
+      },
+      {
+        source: { name: chName },
+        title: `${chName} Historical Review: National Selection Committee Confirms Squad Ahead of International Series`,
+        description: `The upcoming fixture schedule features returning senior players alongside standout performers from recent domestic championships.`,
+        url: "https://news.google.com",
+        urlToImage: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80",
+        publishedAt: new Date(now - 54 * hourMs).toISOString()
+      }
+    ];
+  }
+
+  async function fetchNews(userQuery = '') {
+    if (currentView === 'bookmarks') {
+      switchView('feed');
+    }
+    stopAudio();
+    showSkeletons();
+    savedQueueIndices = [];
+    const qTxt = document.getElementById('queueCountText');
+    const qBtn = document.getElementById('queuePlayBtn');
+    if (qTxt) qTxt.innerText = '0';
+    if (qBtn) qBtn.disabled = true;
+
+    const topicPart = activeCategory !== 'general' ? activeCategory : '';
+    const combinedQuery = [userQuery, activeChannelObj.query, topicPart].filter(Boolean).join(' ').trim();
+
+    // Layer 1: Vercel /api/news backend
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 4000);
+      const apiUrl = `/api/news?category=${encodeURIComponent(activeCategory)}&q=${encodeURIComponent(combinedQuery)}`;
+      const response = await fetch(apiUrl, { signal: controller.signal });
+      clearTimeout(timer);
+      const data = await response.json();
+
+      if (data.status === 'ok' && Array.isArray(data.articles) && data.articles.length > 0) {
+        const valid = data.articles.filter(a => a.title && !a.title.includes('[Removed]'));
+        if (valid.length > 0) {
+          fetchedArticles = valid;
+          renderArticles();
+          return;
+        }
+      }
+    } catch (e) {}
+
+    // Layer 2A: Fast rss2json feed
+    if (activeChannelObj.rss && !userQuery) {
+      try {
+        const r2jArticles = await fetchViaRss2Json(activeChannelObj.rss);
+        if (r2jArticles && r2jArticles.length > 0) {
+          fetchedArticles = r2jArticles;
+          renderArticles();
+          return;
+        }
+      } catch (e) {}
+
+      // Layer 2B: XML Proxy Backup
+      try {
+        const xmlArticles = await fetchViaXmlProxy(activeChannelObj.rss);
+        if (xmlArticles && xmlArticles.length > 0) {
+          fetchedArticles = xmlArticles;
+          renderArticles();
+          return;
+        }
+      } catch (e) {}
+    }
+
+    // Layer 3: Guaranteed Live + Archive Fallback
+    fetchedArticles = getChannelFallbackArticles(userQuery);
+    renderArticles();
+  }
+
+  function selectTimeline(timeKey) {
+    activeTimeline = timeKey;
+    document.querySelectorAll('#timelineGroup button').forEach(b => {
+      b.classList.toggle('active', b.dataset.time === timeKey);
+    });
+    renderArticles();
+  }
+
+  const catGroupEl = document.getElementById('categoryGroup');
+  if (catGroupEl) {
+    catGroupEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (btn && btn.dataset.cat) {
+        document.querySelectorAll('#categoryGroup button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeCategory = btn.dataset.cat;
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) searchInput.value = '';
+        const aiDrawer = document.getElementById('aiBriefingDrawer');
+        if (aiDrawer) aiDrawer.classList.remove('open');
+        fetchNews();
+      }
+    });
+  }
+
+  const timeGroupEl = document.getElementById('timelineGroup');
+  if (timeGroupEl) {
+    timeGroupEl.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (btn && btn.dataset.time) {
+        selectTimeline(btn.dataset.time);
+      }
+    });
+  }
+
+  function triggerSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const query = searchInput ? searchInput.value.trim() : '';
+    if (query) fetchNews(query);
+  }
+
+  const searchInputEl = document.getElementById('searchInput');
+  if (searchInputEl) {
+    searchInputEl.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') triggerSearch();
+    });
+  }
+
+  // Safe Boot Sequence
+  (function initPulseApp() {
+    try { syncAutoEmbedButtonUI(); } catch (e) {}
+    try { updateBookmarkNavUI(); } catch (e) {}
+    try { renderCountryStrip(); } catch (e) {}
+    try { renderChannelStrip(); } catch (e) {}
+    try { updateSelectionLabel(); } catch (e) {}
+    try { fetchNews(); } catch (e) {}
+  })();
+</script>
+</body>
+</html>
