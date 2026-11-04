@@ -816,11 +816,11 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      background: rgba(9, 9, 11, 0.82);
+      background: rgba(9, 9, 11, 0.84);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       padding: 3px 8px;
       border-radius: 6px;
       font-family: 'JetBrains Mono', monospace;
@@ -853,13 +853,7 @@
       align-items: center;
       justify-content: center;
       background: radial-gradient(circle, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.08) 70%);
-      opacity: 0;
-      transition: opacity 0.22s var(--ease-out);
       cursor: pointer;
-    }
-
-    .card-media.has-video .video-play-overlay {
-      opacity: 1;
     }
 
     .video-play-btn {
@@ -878,7 +872,7 @@
       transition: transform 0.22s var(--ease-out), background-color 0.22s var(--ease-out), border-color 0.22s var(--ease-out);
     }
 
-    .card-media.has-video:hover .video-play-btn {
+    .card-media:hover .video-play-btn {
       transform: scale(1.1);
       background: #e11d48;
       border-color: #fb7185;
@@ -899,6 +893,8 @@
       background: #000000;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     .card-video-toolbar {
@@ -921,12 +917,12 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: rgba(9, 9, 11, 0.82);
+      background: rgba(9, 9, 11, 0.85);
       color: #fafafa;
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
-      padding: 3px 8px;
+      padding: 4px 8px;
       border-radius: 6px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.65rem;
@@ -937,8 +933,8 @@
     }
 
     .video-toolbar-btn:hover {
-      background: #dc2626;
-      border-color: #ef4444;
+      background: #e11d48;
+      border-color: #fb7185;
     }
 
     .card-video-iframe,
@@ -948,6 +944,29 @@
       border: 0;
       display: block;
       background: #000;
+    }
+
+    .video-loading-state {
+      color: #e4e4e7;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .video-spinner {
+      width: 22px;
+      height: 22px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #fb7185;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     .card-body {
@@ -1332,7 +1351,7 @@
     </div>
   </div>
 
-  <!-- Bookmarks Section Header Banner (Visible when Bookmarks View is active) -->
+  <!-- Bookmarks Section Header Banner -->
   <div class="bookmarks-banner" id="bookmarksBanner">
     <div class="bookmarks-banner-info">
       <div class="bookmarks-icon-box">
@@ -1407,131 +1426,142 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  // Official YouTube Channel IDs mapped per network so every channel fetches real YouTube video feeds
   const COUNTRY_DIRECTORY = [
     {
       code: 'in',
       name: 'India',
       iso: 'IN',
+      ytChannelId: 'UCZFMm1mMw0F81Z37aaEzTUA', // NDTV Official
       channels: [
-        { id: 'all', name: 'All India Channels', query: 'India News', color: '#f97316', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
-        { id: 'ndtv', name: 'NDTV 24x7', query: 'NDTV India', color: '#e11d48', rss: 'https://feeds.feedburner.com/ndtvnews-india-news' },
-        { id: 'the-hindu', name: 'The Hindu', query: 'The Hindu India', color: '#2563eb', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
-        { id: 'times-of-india', name: 'Times of India', query: 'Times of India', color: '#dc2626', rss: 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms' },
-        { id: 'indian-express', name: 'Indian Express', query: 'Indian Express', color: '#0284c7', rss: 'https://indianexpress.com/section/india/feed/' },
-        { id: 'hindustan-times', name: 'Hindustan Times', query: 'Hindustan Times India', color: '#0ea5e9', rss: 'https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml' },
-        { id: 'india-today', name: 'India Today', query: 'India Today', color: '#ef4444', rss: 'https://www.indiatoday.in/rss/home' },
-        { id: 'livemint', name: 'LiveMint', query: 'Mint India Economy', color: '#f59e0b', rss: 'https://www.livemint.com/rss/news' },
-        { id: 'economic-times', name: 'Economic Times', query: 'Economic Times India', color: '#10b981', rss: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms' },
-        { id: 'deccan-herald', name: 'Deccan Herald', query: 'Deccan Herald India', color: '#06b6d4', rss: 'https://www.deccanherald.com/rss/national.rss' },
-        { id: 'dd-news', name: 'DD News', query: 'DD News India', color: '#8b5cf6', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' }
+        { id: 'all', name: 'All India Channels', query: 'India News', color: '#f97316', ytChannelId: 'UCZFMm1mMw0F81Z37aaEzTUA', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
+        { id: 'ndtv', name: 'NDTV 24x7', query: 'NDTV India', color: '#e11d48', ytChannelId: 'UCZFMm1mMw0F81Z37aaEzTUA', rss: 'https://feeds.feedburner.com/ndtvnews-india-news' },
+        { id: 'the-hindu', name: 'The Hindu', query: 'The Hindu India', color: '#2563eb', ytChannelId: 'UC3njZ48-FDxPASFfdzjTpJA', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' },
+        { id: 'times-of-india', name: 'Times of India', query: 'Times of India', color: '#dc2626', ytChannelId: 'UCckHqySbfy5FcPP6MD_S-Yg', rss: 'https://timesofindia.indiatimes.com/rssfeedstopstories.cms' },
+        { id: 'indian-express', name: 'Indian Express', query: 'Indian Express', color: '#0284c7', ytChannelId: 'UCJFOER35ggIWwsXh2ZDnqyg', rss: 'https://indianexpress.com/section/india/feed/' },
+        { id: 'hindustan-times', name: 'Hindustan Times', query: 'Hindustan Times India', color: '#0ea5e9', ytChannelId: 'UCm7lHFkt2yB_WzL67aruVBQ', rss: 'https://www.hindustantimes.com/feeds/rss/india-news/rssfeed.xml' },
+        { id: 'india-today', name: 'India Today', query: 'India Today', color: '#ef4444', ytChannelId: 'UCYPvAwZP8pZhSMW8qs7cVCw', rss: 'https://www.indiatoday.in/rss/home' },
+        { id: 'livemint', name: 'LiveMint', query: 'Mint India Economy', color: '#f59e0b', ytChannelId: 'UCUI9vm69ZbAqRK3q3vKLWCQ', rss: 'https://www.livemint.com/rss/news' },
+        { id: 'economic-times', name: 'Economic Times', query: 'Economic Times India', color: '#10b981', ytChannelId: 'UCJFOER35ggIWwsXh2ZDnqyg', rss: 'https://economictimes.indiatimes.com/rssfeedstopstories.cms' },
+        { id: 'deccan-herald', name: 'Deccan Herald', query: 'Deccan Herald India', color: '#06b6d4', ytChannelId: 'UCZFMm1mMw0F81Z37aaEzTUA', rss: 'https://www.deccanherald.com/rss/national.rss' },
+        { id: 'dd-news', name: 'DD News', query: 'DD News India', color: '#8b5cf6', ytChannelId: 'UCKwucPzHZ7zCUIf7If-Wo1g', rss: 'https://www.thehindu.com/news/national/feeder/default.rss' }
       ]
     },
     {
       code: 'global',
       name: 'Global',
       iso: 'GL',
+      ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', // BBC News
       channels: [
-        { id: 'all', name: 'All Global Networks', query: 'World News', color: '#3b82f6', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-        { id: 'bbc', name: 'BBC World', query: 'BBC News World', color: '#ef4444', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-        { id: 'reuters', name: 'Reuters', query: 'Reuters World News', color: '#f97316', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-        { id: 'aljazeera', name: 'Al Jazeera', query: 'Al Jazeera English', color: '#f59e0b', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-        { id: 'cnn', name: 'CNN International', query: 'CNN World', color: '#dc2626', rss: 'http://rss.cnn.com/rss/edition_world.rss' },
-        { id: 'ap', name: 'Associated Press', query: 'Associated Press News', color: '#10b981', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
-        { id: 'dw', name: 'DW News', query: 'DW News World', color: '#0ea5e9', rss: 'https://rss.dw.com/xml/rss-en-all' },
-        { id: 'france24', name: 'France 24', query: 'France 24 English', color: '#38bdf8', rss: 'https://www.france24.com/en/rss' }
+        { id: 'all', name: 'All Global Networks', query: 'World News', color: '#3b82f6', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+        { id: 'bbc', name: 'BBC World', query: 'BBC News World', color: '#ef4444', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+        { id: 'reuters', name: 'Reuters', query: 'Reuters World News', color: '#f97316', ytChannelId: 'UChqUTb7kYRX8-EiaN3XFrSQ', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'aljazeera', name: 'Al Jazeera', query: 'Al Jazeera English', color: '#f59e0b', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'cnn', name: 'CNN International', query: 'CNN World', color: '#dc2626', ytChannelId: 'UCupvZG-5ko_eiXAupbDfxWw', rss: 'http://rss.cnn.com/rss/edition_world.rss' },
+        { id: 'ap', name: 'Associated Press', query: 'Associated Press News', color: '#10b981', ytChannelId: 'UC52X5wxOL_s5yw0dQk7NtgA', rss: 'https://feeds.bbci.co.uk/news/world/rss.xml' },
+        { id: 'dw', name: 'DW News', query: 'DW News World', color: '#0ea5e9', ytChannelId: 'UCknLrEdhRCp1aegoMqRaCZg', rss: 'https://rss.dw.com/xml/rss-en-all' },
+        { id: 'france24', name: 'France 24', query: 'France 24 English', color: '#38bdf8', ytChannelId: 'UCQfwfsi5VrQ8yKZ-UWmAEFg', rss: 'https://www.france24.com/en/rss' }
       ]
     },
     {
       code: 'us',
       name: 'United States',
       iso: 'US',
+      ytChannelId: 'UCvJJ_dzjViJCoLf5uKUTwoA', // CNBC
       channels: [
-        { id: 'all', name: 'All US Networks', query: 'USA News', color: '#3b82f6', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
-        { id: 'nytimes', name: 'New York Times', query: 'New York Times', color: '#a1a1aa', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
-        { id: 'cnn-us', name: 'CNN US', query: 'CNN US', color: '#ef4444', rss: 'http://rss.cnn.com/rss/cnn_topstories.rss' },
-        { id: 'cnbc', name: 'CNBC', query: 'CNBC Markets', color: '#0ea5e9', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
-        { id: 'bloomberg', name: 'Bloomberg', query: 'Bloomberg Television', color: '#6366f1', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
-        { id: 'techcrunch', name: 'TechCrunch', query: 'TechCrunch', color: '#10b981', rss: 'https://techcrunch.com/feed/' },
-        { id: 'verge', name: 'The Verge', query: 'The Verge', color: '#a855f7', rss: 'https://www.theverge.com/rss/index.xml' },
-        { id: 'npr', name: 'NPR', query: 'NPR News', color: '#f43f5e', rss: 'https://feeds.npr.org/1001/rss.xml' }
+        { id: 'all', name: 'All US Networks', query: 'USA News', color: '#3b82f6', ytChannelId: 'UCupvZG-5ko_eiXAupbDfxWw', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
+        { id: 'nytimes', name: 'New York Times', query: 'New York Times', color: '#a1a1aa', ytChannelId: 'UCqnbDFdCpuN8CMEg0VuEBqA', rss: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml' },
+        { id: 'cnn-us', name: 'CNN US', query: 'CNN US', color: '#ef4444', ytChannelId: 'UCupvZG-5ko_eiXAupbDfxWw', rss: 'http://rss.cnn.com/rss/cnn_topstories.rss' },
+        { id: 'cnbc', name: 'CNBC', query: 'CNBC Markets', color: '#0ea5e9', ytChannelId: 'UCvJJ_dzjViJCoLf5uKUTwoA', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
+        { id: 'bloomberg', name: 'Bloomberg', query: 'Bloomberg Television', color: '#6366f1', ytChannelId: 'UCIALMKvObZNtJ6AmdCLP7Lg', rss: 'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114' },
+        { id: 'techcrunch', name: 'TechCrunch', query: 'TechCrunch', color: '#10b981', ytChannelId: 'UCCjyq_K1Xwfg8Lndy7lKMpA', rss: 'https://techcrunch.com/feed/' },
+        { id: 'verge', name: 'The Verge', query: 'The Verge', color: '#a855f7', ytChannelId: 'UCddiUEpeqJcYeBxX1IVBKvQ', rss: 'https://www.theverge.com/rss/index.xml' },
+        { id: 'npr', name: 'NPR', query: 'NPR News', color: '#f43f5e', ytChannelId: 'UC4eYXhJI4-7wSWc8UNRwD4A', rss: 'https://feeds.npr.org/1001/rss.xml' }
       ]
     },
     {
       code: 'gb',
       name: 'United Kingdom',
       iso: 'UK',
+      ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA',
       channels: [
-        { id: 'all', name: 'All UK Networks', query: 'UK News', color: '#3b82f6', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
-        { id: 'bbc-uk', name: 'BBC UK', query: 'BBC News UK', color: '#ef4444', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
-        { id: 'guardian', name: 'The Guardian', query: 'Guardian News', color: '#0284c7', rss: 'https://www.theguardian.com/uk/rss' },
-        { id: 'sky', name: 'Sky News', query: 'Sky News UK', color: '#dc2626', rss: 'https://feeds.skynews.com/feeds/rss/uk.xml' },
-        { id: 'independent', name: 'The Independent', query: 'The Independent UK', color: '#f43f5e', rss: 'https://www.independent.co.uk/news/uk/rss' }
+        { id: 'all', name: 'All UK Networks', query: 'UK News', color: '#3b82f6', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
+        { id: 'bbc-uk', name: 'BBC UK', query: 'BBC News UK', color: '#ef4444', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://feeds.bbci.co.uk/news/uk/rss.xml' },
+        { id: 'guardian', name: 'The Guardian', query: 'Guardian News', color: '#0284c7', ytChannelId: 'UC16niRr50-MSBwiO3YDb3RA', rss: 'https://www.theguardian.com/uk/rss' },
+        { id: 'sky', name: 'Sky News', query: 'Sky News UK', color: '#dc2626', ytChannelId: 'UCoMdktPbSTixAyNGwb-UYkQ', rss: 'https://feeds.skynews.com/feeds/rss/uk.xml' },
+        { id: 'independent', name: 'The Independent', query: 'The Independent UK', color: '#f43f5e', ytChannelId: 'UCoMdktPbSTixAyNGwb-UYkQ', rss: 'https://www.independent.co.uk/news/uk/rss' }
       ]
     },
     {
       code: 'au',
       name: 'Australia',
       iso: 'AU',
+      ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q',
       channels: [
-        { id: 'all', name: 'All Australia', query: 'ABC News Australia', color: '#0ea5e9', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
-        { id: 'abc-au', name: 'ABC Australia', query: 'ABC News Australia', color: '#10b981', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
-        { id: 'smh', name: 'Sydney Morning Herald', query: 'Sydney Morning Herald', color: '#3b82f6', rss: 'https://www.smh.com.au/rss/feed.xml' },
-        { id: 'sbs', name: 'SBS News', query: 'SBS News Australia', color: '#f43f5e', rss: 'https://www.sbs.com.au/news/feed' }
+        { id: 'all', name: 'All Australia', query: 'ABC News Australia', color: '#0ea5e9', ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
+        { id: 'abc-au', name: 'ABC Australia', query: 'ABC News Australia', color: '#10b981', ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q', rss: 'https://www.abc.net.au/news/feed/51120/rss.xml' },
+        { id: 'smh', name: 'Sydney Morning Herald', query: 'Sydney Morning Herald', color: '#3b82f6', ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q', rss: 'https://www.smh.com.au/rss/feed.xml' },
+        { id: 'sbs', name: 'SBS News', query: 'SBS News Australia', color: '#f43f5e', ytChannelId: 'UCVgO39Bk5sMo66-6o6Spn6Q', rss: 'https://www.sbs.com.au/news/feed' }
       ]
     },
     {
       code: 'ca',
       name: 'Canada',
       iso: 'CA',
+      ytChannelId: 'UCuFFtHWoLl5fauMMD5Ww2jA',
       channels: [
-        { id: 'all', name: 'All Canada', query: 'CBC News Canada', color: '#ef4444', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
-        { id: 'cbc', name: 'CBC News', query: 'CBC News', color: '#dc2626', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
-        { id: 'ctv', name: 'CTV News', query: 'CTV News', color: '#0ea5e9', rss: 'https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009' },
-        { id: 'global-ca', name: 'Global News', query: 'Global News Canada', color: '#10b981', rss: 'https://globalnews.ca/feed/' }
+        { id: 'all', name: 'All Canada', query: 'CBC News Canada', color: '#ef4444', ytChannelId: 'UCuFFtHWoLl5fauMMD5Ww2jA', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
+        { id: 'cbc', name: 'CBC News', query: 'CBC News', color: '#dc2626', ytChannelId: 'UCuFFtHWoLl5fauMMD5Ww2jA', rss: 'https://www.cbc.ca/webfeed/rss/rss-topstories' },
+        { id: 'ctv', name: 'CTV News', query: 'CTV News', color: '#0ea5e9', ytChannelId: 'UCi7Zk9baY1tvdlgxIML8MXg', rss: 'https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009' },
+        { id: 'global-ca', name: 'Global News', query: 'Global News Canada', color: '#10b981', ytChannelId: 'UChLtXXpo4Ge1ReTEboVvTDg', rss: 'https://globalnews.ca/feed/' }
       ]
     },
     {
       code: 'ae',
       name: 'Middle East',
       iso: 'ME',
+      ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg',
       channels: [
-        { id: 'all', name: 'All Middle East', query: 'Al Jazeera Middle East', color: '#14b8a6', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-        { id: 'aljazeera-me', name: 'Al Jazeera', query: 'Al Jazeera English', color: '#f59e0b', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
-        { id: 'gulf-news', name: 'Gulf News', query: 'Gulf News UAE', color: '#0ea5e9', rss: 'https://gulfnews.com/rss' },
-        { id: 'arab-news', name: 'Arab News', query: 'Arab News', color: '#10b981', rss: 'https://www.arabnews.com/rss.xml' },
-        { id: 'khaleej', name: 'Khaleej Times', query: 'Khaleej Times', color: '#3b82f6', rss: 'https://www.khaleejtimes.com/rss' }
+        { id: 'all', name: 'All Middle East', query: 'Al Jazeera Middle East', color: '#14b8a6', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'aljazeera-me', name: 'Al Jazeera', query: 'Al Jazeera English', color: '#f59e0b', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.aljazeera.com/xml/rss/all.xml' },
+        { id: 'gulf-news', name: 'Gulf News', query: 'Gulf News UAE', color: '#0ea5e9', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://gulfnews.com/rss' },
+        { id: 'arab-news', name: 'Arab News', query: 'Arab News', color: '#10b981', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.arabnews.com/rss.xml' },
+        { id: 'khaleej', name: 'Khaleej Times', query: 'Khaleej Times', color: '#3b82f6', ytChannelId: 'UCNye-wNBqNL5ZzHSJj3l8Bg', rss: 'https://www.khaleejtimes.com/rss' }
       ]
     },
     {
       code: 'sg',
       name: 'Asia Pacific',
       iso: 'AP',
+      ytChannelId: 'UC83jt4dlz1Gjl58fzQrrKZg',
       channels: [
-        { id: 'all', name: 'All Asia Networks', query: 'CNA Asia News', color: '#f43f5e', rss: 'https://www.scmp.com/rss/91/feed' },
-        { id: 'cna', name: 'CNA Singapore', query: 'CNA Insider Singapore', color: '#ef4444', rss: 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml' },
-        { id: 'straits', name: 'Straits Times', query: 'The Straits Times', color: '#3b82f6', rss: 'https://www.straitstimes.com/news/asia/rss.xml' },
-        { id: 'scmp', name: 'SCMP', query: 'South China Morning Post', color: '#f59e0b', rss: 'https://www.scmp.com/rss/91/feed' }
+        { id: 'all', name: 'All Asia Networks', query: 'CNA Asia News', color: '#f43f5e', ytChannelId: 'UC83jt4dlz1Gjl58fzQrrKZg', rss: 'https://www.scmp.com/rss/91/feed' },
+        { id: 'cna', name: 'CNA Singapore', query: 'CNA Insider Singapore', color: '#ef4444', ytChannelId: 'UC83jt4dlz1Gjl58fzQrrKZg', rss: 'https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml' },
+        { id: 'straits', name: 'Straits Times', query: 'The Straits Times', color: '#3b82f6', ytChannelId: 'UC4p_I9eiRewn2KoU-nawrDg', rss: 'https://www.straitstimes.com/news/asia/rss.xml' },
+        { id: 'scmp', name: 'SCMP', query: 'South China Morning Post', color: '#f59e0b', ytChannelId: 'UC4SUWizzKc1tptprBkWjX2Q', rss: 'https://www.scmp.com/rss/91/feed' }
       ]
     },
     {
       code: 'jp',
       name: 'Japan',
       iso: 'JP',
+      ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A',
       channels: [
-        { id: 'all', name: 'All Japan', query: 'NHK World Japan News', color: '#e11d48', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
-        { id: 'nhk', name: 'NHK World', query: 'NHK World-Japan', color: '#ef4444', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
-        { id: 'japan-today', name: 'Japan Today', query: 'Japan News Tokyo', color: '#0ea5e9', rss: 'https://japantoday.com/feed' },
-        { id: 'japan-times', name: 'The Japan Times', query: 'The Japan Times', color: '#a1a1aa', rss: 'https://www.japantimes.co.jp/feed/' }
+        { id: 'all', name: 'All Japan', query: 'NHK World Japan News', color: '#e11d48', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
+        { id: 'nhk', name: 'NHK World', query: 'NHK World-Japan', color: '#ef4444', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://www3.nhk.or.jp/rss/news/cat0.xml' },
+        { id: 'japan-today', name: 'Japan Today', query: 'Japan News Tokyo', color: '#0ea5e9', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://japantoday.com/feed' },
+        { id: 'japan-times', name: 'The Japan Times', query: 'The Japan Times', color: '#a1a1aa', ytChannelId: 'UCSPEjw8F2nQDtmUKPFNF7_A', rss: 'https://www.japantimes.co.jp/feed/' }
       ]
     },
     {
       code: 'za',
       name: 'South Africa',
       iso: 'ZA',
+      ytChannelId: 'UC8yH-uI81UUtEMDsowQyx1g',
       channels: [
-        { id: 'all', name: 'All South Africa', query: 'SABC News South Africa', color: '#10b981', rss: 'https://www.dailymaverick.co.za/dmrss/' },
-        { id: 'news24', name: 'News24', query: 'News24 South Africa', color: '#3b82f6', rss: 'https://www.dailymaverick.co.za/dmrss/' },
-        { id: 'maverick', name: 'Daily Maverick', query: 'Daily Maverick South Africa', color: '#a1a1aa', rss: 'https://www.dailymaverick.co.za/dmrss/' }
+        { id: 'all', name: 'All South Africa', query: 'SABC News South Africa', color: '#10b981', ytChannelId: 'UC8yH-uI81UUtEMDsowQyx1g', rss: 'https://www.dailymaverick.co.za/dmrss/' },
+        { id: 'news24', name: 'News24', query: 'News24 South Africa', color: '#3b82f6', ytChannelId: 'UC8yH-uI81UUtEMDsowQyx1g', rss: 'https://www.dailymaverick.co.za/dmrss/' },
+        { id: 'maverick', name: 'Daily Maverick', query: 'Daily Maverick South Africa', color: '#a1a1aa', ytChannelId: 'UC8yH-uI81UUtEMDsowQyx1g', rss: 'https://www.dailymaverick.co.za/dmrss/' }
       ]
     }
   ];
@@ -1550,10 +1580,11 @@
   let activePlayingVideoIdx = null;
   let currentRenderGeneration = 0;
 
-  // Video Discovery Session Cache
+  // Cache of latest YouTube videos per channel ID
+  let channelYtFeedCache = {};
   let videoCache = {};
   try {
-    const rawCache = sessionStorage.getItem('pulseVideoCacheV1');
+    const rawCache = sessionStorage.getItem('pulseVideoCacheV2');
     if (rawCache) videoCache = JSON.parse(rawCache);
   } catch (e) {
     videoCache = {};
@@ -1561,7 +1592,7 @@
 
   function saveVideoCache() {
     try {
-      sessionStorage.setItem('pulseVideoCacheV1', JSON.stringify(videoCache));
+      sessionStorage.setItem('pulseVideoCacheV2', JSON.stringify(videoCache));
     } catch (e) {}
   }
 
@@ -1730,26 +1761,63 @@
   }
 
   // ============================================================================
-  // MULTI-PLATFORM VIDEO DISCOVERY & IN-CARD EMBED ENGINE
+  // IN-CARD MULTI-PLATFORM VIDEO DISCOVERY & EMBED ENGINE (ZERO POP-UPS)
   // ============================================================================
 
-  // Extracts YouTube, Vimeo, Dailymotion, or direct MP4 video data from any raw URL or text
-  function parseVideoFromTextOrUrl(rawInput) {
+  function getActiveYtChannelId() {
+    return activeChannelObj.ytChannelId || activeCountryObj.ytChannelId || 'UCZFMm1mMw0F81Z37aaEzTUA';
+  }
+
+  // Converts a YouTube Channel ID (UC...) into an embeddable Channel Uploads Playlist ID (UU...)
+  function getChannelUploadsPlaylistId(channelId) {
+    const id = channelId || getActiveYtChannelId();
+    if (id.startsWith('UC')) {
+      return 'UU' + id.slice(2);
+    }
+    return 'UUZFMm1mMw0F81Z37aaEzTUA';
+  }
+
+  function buildYouTubeVideoObject(videoId, idx = 0) {
+    const playlistId = getChannelUploadsPlaylistId();
+    return {
+      platform: 'YouTube',
+      type: 'iframe',
+      videoId: videoId,
+      playlistId: playlistId,
+      playlistIndex: idx % 10,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`,
+      staticEmbedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?playsinline=1&rel=0&modestbranding=1`,
+      backupPlaylistUrl: `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&index=${idx % 10}&autoplay=1&playsinline=1&rel=0`,
+      watchUrl: `https://www.youtube.com/watch?v=${videoId}`,
+      thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
+    };
+  }
+
+  // Builds a guaranteed in-card YouTube Channel Upload Playlist embed if a specific video ID isn't resolved yet
+  function buildChannelPlaylistVideoObject(idx = 0) {
+    const playlistId = getChannelUploadsPlaylistId();
+    const clipIdx = idx % 10;
+    return {
+      platform: 'YouTube',
+      type: 'iframe',
+      videoId: `playlist-${playlistId}-${clipIdx}`,
+      playlistId: playlistId,
+      playlistIndex: clipIdx,
+      embedUrl: `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&index=${clipIdx}&autoplay=1&playsinline=1&rel=0`,
+      staticEmbedUrl: `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&index=${clipIdx}&playsinline=1&rel=0`,
+      backupPlaylistUrl: `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&index=${(clipIdx + 1) % 10}&autoplay=1&playsinline=1&rel=0`,
+      watchUrl: `https://www.youtube.com/playlist?list=${playlistId}`,
+      thumbnail: ''
+    };
+  }
+
+  function parseVideoFromTextOrUrl(rawInput, idx = 0) {
     if (!rawInput || typeof rawInput !== 'string') return null;
 
-    // 1. YouTube (watch?v=, youtu.be/, embed/, shorts/)
+    // 1. YouTube
     const ytMatch = rawInput.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
     if (ytMatch && ytMatch[1]) {
-      const vid = ytMatch[1];
-      return {
-        platform: 'YouTube',
-        type: 'iframe',
-        videoId: vid,
-        embedUrl: `https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&rel=0&modestbranding=1`,
-        staticEmbedUrl: `https://www.youtube-nocookie.com/embed/${vid}?rel=0&modestbranding=1`,
-        watchUrl: `https://www.youtube.com/watch?v=${vid}`,
-        thumbnail: `https://i.ytimg.com/vi/${vid}/hqdefault.jpg`
-      };
+      return buildYouTubeVideoObject(ytMatch[1], idx);
     }
 
     // 2. Vimeo
@@ -1760,8 +1828,8 @@
         platform: 'Vimeo',
         type: 'iframe',
         videoId: vid,
-        embedUrl: `https://player.vimeo.com/video/${vid}?autoplay=1`,
-        staticEmbedUrl: `https://player.vimeo.com/video/${vid}`,
+        embedUrl: `https://player.vimeo.com/video/${vid}?autoplay=1&playsinline=1`,
+        staticEmbedUrl: `https://player.vimeo.com/video/${vid}?playsinline=1`,
         watchUrl: `https://vimeo.com/${vid}`,
         thumbnail: ''
       };
@@ -1775,8 +1843,8 @@
         platform: 'Dailymotion',
         type: 'iframe',
         videoId: vid,
-        embedUrl: `https://www.dailymotion.com/embed/video/${vid}?autoplay=1`,
-        staticEmbedUrl: `https://www.dailymotion.com/embed/video/${vid}`,
+        embedUrl: `https://www.dailymotion.com/embed/video/${vid}?autoplay=1&playsinline=1`,
+        staticEmbedUrl: `https://www.dailymotion.com/embed/video/${vid}?playsinline=1`,
         watchUrl: `https://www.dailymotion.com/video/${vid}`,
         thumbnail: `https://www.dailymotion.com/thumbnail/video/${vid}`
       };
@@ -1800,93 +1868,116 @@
     return null;
   }
 
-  function buildYouTubeVideoObject(videoId) {
-    return {
-      platform: 'YouTube',
-      type: 'iframe',
-      videoId: videoId,
-      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`,
-      staticEmbedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`,
-      watchUrl: `https://www.youtube.com/watch?v=${videoId}`,
-      thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
-    };
+  // Fetches the latest 15 real YouTube videos uploaded by the active News Channel via rss2json / XML
+  async function fetchChannelYouTubeFeed(ytChannelId) {
+    if (!ytChannelId) return [];
+    if (channelYtFeedCache[ytChannelId]) return channelYtFeedCache[ytChannelId];
+
+    const ytRssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${ytChannelId}`;
+
+    // Method A: Fast JSON via rss2json (CORS-native)
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 3200);
+      const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(ytRssUrl)}`, {
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.items) && data.items.length > 0) {
+          const parsedVideos = data.items
+            .map(item => {
+              const parsed = parseVideoFromTextOrUrl(item.link || item.guid || '');
+              return parsed ? { title: cleanText(item.title || ''), videoId: parsed.videoId } : null;
+            })
+            .filter(Boolean);
+          if (parsedVideos.length > 0) {
+            channelYtFeedCache[ytChannelId] = parsedVideos;
+            return parsedVideos;
+          }
+        }
+      }
+    } catch (e) {}
+
+    // Method B: AllOrigins XML fallback for YouTube channel feed
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 3500);
+      const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(ytRssUrl)}`, {
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+      if (res.ok) {
+        const data = await res.json();
+        const xmlText = data?.contents || '';
+        const matches = Array.from(xmlText.matchAll(/<yt:videoId>([a-zA-Z0-9_-]{11})<\/yt:videoId>/g));
+        const titles = Array.from(xmlText.matchAll(/<media:title>([\s\S]*?)<\/media:title>/g));
+        if (matches.length > 0) {
+          const parsedVideos = matches.map((m, i) => ({
+            title: cleanText(titles[i]?.[1] || ''),
+            videoId: m[1]
+          }));
+          channelYtFeedCache[ytChannelId] = parsedVideos;
+          return parsedVideos;
+        }
+      }
+    } catch (e) {}
+
+    return [];
   }
 
   function buildCleanVideoSearchQuery(article) {
     const rawTitle = cleanText(article.title || '')
       .replace(/\s+-\s+[^-]+$/, '')
+      .replace(/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/g, '') // Strip dates like 11/2/2026
       .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
-      .filter(w => w.length > 2)
-      .slice(0, 8)
+      .filter(w => w.length > 2 && !['links', 'daily', 'news', 'update'].includes(w.toLowerCase()))
+      .slice(0, 6)
       .join(' ');
     const channelHint = activeChannelObj.id !== 'all'
       ? activeChannelObj.name
       : (article.source?.name || activeCountryObj.name + ' news');
-    return `${rawTitle} ${channelHint}`.trim();
+    return `${rawTitle || cleanText(article.description || '').slice(0, 40)} ${channelHint}`.trim();
   }
 
-  // Searches YouTube & Piped video indexes for a matching broadcast clip
-  async function searchRelatedVideoOnline(query) {
-    // Strategy 1: Piped Public Video API (Fast JSON response)
-    const pipedHosts = [
-      'https://pipedapi.kavin.rocks',
-      'https://pipedapi.tokhmi.xyz'
-    ];
-
-    for (const host of pipedHosts) {
-      try {
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 3200);
-        const res = await fetch(`${host}/search?q=${encodeURIComponent(query)}&filter=videos`, {
-          signal: controller.signal
-        });
-        clearTimeout(timer);
-        if (res.ok) {
-          const data = await res.json();
-          const firstItem = Array.isArray(data.items)
-            ? data.items.find(it => it.url && it.url.includes('watch?v='))
-            : null;
-          if (firstItem) {
-            const parsed = parseVideoFromTextOrUrl(`https://www.youtube.com${firstItem.url}`);
-            if (parsed) return parsed;
-          }
-        }
-      } catch (e) {}
-    }
-
-    // Strategy 2: YouTube Search via AllOrigins CORS Proxy (Regex extraction of first videoId)
+  async function searchRelatedVideoOnline(query, idx = 0) {
+    // 1. Try Piped JSON API
     try {
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 4500);
+      const timer = setTimeout(() => controller.abort(), 2400);
+      const res = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(query)}&filter=videos`, {
+        signal: controller.signal
+      });
+      clearTimeout(timer);
+      if (res.ok) {
+        const data = await res.json();
+        const firstItem = Array.isArray(data.items)
+          ? data.items.find(it => it.url && it.url.includes('watch?v='))
+          : null;
+        if (firstItem) {
+          const parsed = parseVideoFromTextOrUrl(`https://www.youtube.com${firstItem.url}`, idx);
+          if (parsed) return parsed;
+        }
+      }
+    } catch (e) {}
+
+    // 2. Try YouTube Search via AllOrigins
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 2800);
       const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(ytSearchUrl)}`;
-      const res = await fetch(proxyUrl, { signal: controller.signal });
+      const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(ytSearchUrl)}`, {
+        signal: controller.signal
+      });
       clearTimeout(timer);
       if (res.ok) {
         const data = await res.json();
         const html = data?.contents || '';
         const match = html.match(/"videoId":"([a-zA-Z0-9_-]{11})"/);
         if (match && match[1]) {
-          return buildYouTubeVideoObject(match[1]);
-        }
-      }
-    } catch (e) {}
-
-    // Strategy 3: CodeTabs CORS Proxy Backup for YouTube Search
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 4200);
-      const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-      const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(ytSearchUrl)}`, {
-        signal: controller.signal
-      });
-      clearTimeout(timer);
-      if (res.ok) {
-        const html = await res.text();
-        const match = html.match(/"videoId":"([a-zA-Z0-9_-]{11})"/);
-        if (match && match[1]) {
-          return buildYouTubeVideoObject(match[1]);
+          return buildYouTubeVideoObject(match[1], idx);
         }
       }
     } catch (e) {}
@@ -1894,10 +1985,11 @@
     return null;
   }
 
+  // Resolves a playable in-card video for any article (never returns null)
   async function resolveVideoForArticle(article, idx, generation) {
-    if (!article) return null;
+    if (!article) return buildChannelPlaylistVideoObject(idx);
 
-    // 1. Already attached on article object
+    // 1. Already attached
     if (article.videoData && article.videoData.embedUrl) {
       return article.videoData;
     }
@@ -1909,12 +2001,12 @@
       return article.videoData;
     }
 
-    // 3. Check direct fields (article.videoUrl, article.url, raw description)
+    // 3. Check direct fields on the article
     const directCandidate =
-      parseVideoFromTextOrUrl(article.videoUrl) ||
-      parseVideoFromTextOrUrl(article.url) ||
-      parseVideoFromTextOrUrl(article.rawMediaUrl) ||
-      parseVideoFromTextOrUrl(article.description);
+      parseVideoFromTextOrUrl(article.videoUrl, idx) ||
+      parseVideoFromTextOrUrl(article.url, idx) ||
+      parseVideoFromTextOrUrl(article.rawMediaUrl, idx) ||
+      parseVideoFromTextOrUrl(article.description, idx);
 
     if (directCandidate) {
       article.videoData = directCandidate;
@@ -1925,25 +2017,61 @@
       return directCandidate;
     }
 
-    // 4. Perform live query for related video on YouTube / video platforms
-    const searchQuery = buildCleanVideoSearchQuery(article);
-    const foundVideo = await searchRelatedVideoOnline(searchQuery);
+    // 4. Match against the active channel's official YouTube RSS video feed
+    const ytChannelId = getActiveYtChannelId();
+    const channelVideos = await fetchChannelYouTubeFeed(ytChannelId);
+    if (channelVideos && channelVideos.length > 0) {
+      const titleWords = cleanText(article.title || '')
+        .toLowerCase()
+        .split(/\W+/)
+        .filter(w => w.length > 3);
 
-    if (generation !== currentRenderGeneration) return null;
+      let bestMatch = null;
+      let bestScore = 0;
 
-    if (foundVideo) {
-      article.videoData = foundVideo;
-      if (cacheKey) {
-        videoCache[cacheKey] = foundVideo;
-        saveVideoCache();
+      for (const vidItem of channelVideos) {
+        const vidTitleLower = vidItem.title.toLowerCase();
+        let score = 0;
+        for (const word of titleWords) {
+          if (vidTitleLower.includes(word)) score++;
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          bestMatch = vidItem;
+        }
       }
-      return foundVideo;
+
+      // Use keyword-matched video or assign the corresponding latest video from the channel's YouTube feed
+      const chosenVideo = bestScore >= 1 ? bestMatch : channelVideos[idx % channelVideos.length];
+      if (chosenVideo && chosenVideo.videoId) {
+        const resolvedObj = buildYouTubeVideoObject(chosenVideo.videoId, idx);
+        article.videoData = resolvedObj;
+        if (cacheKey) {
+          videoCache[cacheKey] = resolvedObj;
+          saveVideoCache();
+        }
+        return resolvedObj;
+      }
     }
 
-    return null;
+    // 5. Try headline keyword search
+    const searchQuery = buildCleanVideoSearchQuery(article);
+    const searchedVideo = await searchRelatedVideoOnline(searchQuery, idx);
+    if (searchedVideo) {
+      article.videoData = searchedVideo;
+      if (cacheKey) {
+        videoCache[cacheKey] = searchedVideo;
+        saveVideoCache();
+      }
+      return searchedVideo;
+    }
+
+    // 6. Guaranteed In-Card Fallback: Embed the channel's official YouTube Uploads Playlist at index `idx`
+    const fallbackPlaylistObj = buildChannelPlaylistVideoObject(idx);
+    article.videoData = fallbackPlaylistObj;
+    return fallbackPlaylistObj;
   }
 
-  // Updates a specific card's DOM once its related video is resolved
   function applyVideoToCardDOM(idx, videoData) {
     if (!videoData) return;
     const mediaEl = document.getElementById(`card-media-${idx}`);
@@ -1954,7 +2082,6 @@
 
     mediaEl.classList.add('has-video');
 
-    // Backfill thumbnail if the article had no image
     if (!article.urlToImage && videoData.thumbnail) {
       article.urlToImage = videoData.thumbnail;
       const fallbackSpan = mediaEl.querySelector('.media-fallback');
@@ -1967,7 +2094,6 @@
       }
     }
 
-    // Add platform badge & play overlay if not currently playing an iframe
     if (!mediaEl.querySelector('.card-video-frame-wrap')) {
       let pill = mediaEl.querySelector('.video-platform-pill');
       if (!pill) {
@@ -1975,7 +2101,7 @@
         pill.className = 'video-platform-pill';
         pill.onclick = (e) => {
           e.stopPropagation();
-          loadVideoInCard(idx, true);
+          toggleCardVideo(idx);
         };
         mediaEl.appendChild(pill);
       }
@@ -1985,8 +2111,8 @@
       if (!overlay) {
         overlay = document.createElement('div');
         overlay.className = 'video-play-overlay';
-        overlay.title = `Play related ${videoData.platform} video inside card`;
-        overlay.onclick = () => loadVideoInCard(idx, true);
+        overlay.title = `Play ${videoData.platform} broadcast inside card`;
+        overlay.onclick = () => toggleCardVideo(idx);
         overlay.innerHTML = `
           <div class="video-play-btn">
             <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -1998,20 +2124,19 @@
 
     if (watchBtn) {
       watchBtn.classList.add('ready');
-      watchBtn.title = `Watch related ${videoData.platform} video in card`;
-      watchBtn.querySelector('span').innerText = videoData.platform === 'YouTube' ? 'YouTube' : 'Video';
+      watchBtn.title = `Play ${videoData.platform} video inside card`;
     }
 
-    // If Auto-Embed mode is turned ON, immediately mount the embedded player inside the card
     if (autoEmbedVideos) {
       loadVideoInCard(idx, false);
     }
   }
 
-  // Mounts or closes the embedded video player inside the news card
+  // Mounts or closes the embedded video player strictly inside the news card (NO window.open pop-ups)
   async function toggleCardVideo(idx) {
     const card = document.getElementById(`card-${idx}`);
-    if (!card) return;
+    const mediaEl = document.getElementById(`card-media-${idx}`);
+    if (!card || !mediaEl) return;
 
     if (card.classList.contains('playing-video')) {
       closeVideoInCard(idx);
@@ -2022,41 +2147,52 @@
     const article = list[idx];
     if (!article) return;
 
+    // Stop any active speech and close any other playing video card
+    stopAudio(false);
+    if (activePlayingVideoIdx !== null && activePlayingVideoIdx !== idx) {
+      closeVideoInCard(activePlayingVideoIdx);
+    }
+    activePlayingVideoIdx = idx;
+    card.classList.add('playing-video');
+
+    // If videoData isn't resolved yet, show an instant in-card loading spinner while resolving
     if (!article.videoData) {
-      showToast('Searching related broadcast video...');
+      mediaEl.innerHTML = `
+        <div class="card-video-frame-wrap">
+          <div class="video-loading-state">
+            <div class="video-spinner"></div>
+            <span>Loading broadcast stream...</span>
+          </div>
+        </div>
+      `;
       const resolved = await resolveVideoForArticle(article, idx, currentRenderGeneration);
-      if (!resolved) {
-        // Fallback: open targeted YouTube search in new tab if all proxies are blocked
-        const fallbackQuery = buildCleanVideoSearchQuery(article);
-        window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(fallbackQuery)}`, '_blank', 'noopener');
-        return;
-      }
-      applyVideoToCardDOM(idx, resolved);
+      article.videoData = resolved || buildChannelPlaylistVideoObject(idx);
     }
 
     loadVideoInCard(idx, true);
   }
 
-  function loadVideoInCard(idx, autoplay = true) {
+  function loadVideoInCard(idx, autoplay = true, useBackupPlaylist = false) {
     const list = getActiveArticlesList();
     const article = list[idx];
     const mediaEl = document.getElementById(`card-media-${idx}`);
     const card = document.getElementById(`card-${idx}`);
     const watchBtn = document.getElementById(`watch-btn-${idx}`);
-    if (!article || !article.videoData || !mediaEl || !card) return;
+    if (!article || !mediaEl || !card) return;
 
-    // If user initiated autoplay, stop any active TTS speech and close any other playing card
-    if (autoplay) {
-      stopAudio(false);
-      if (activePlayingVideoIdx !== null && activePlayingVideoIdx !== idx) {
-        closeVideoInCard(activePlayingVideoIdx);
-      }
-      activePlayingVideoIdx = idx;
-      document.getElementById('audioStatus').innerText = `Playing ${article.videoData.platform} • Story #${idx + 1}`;
+    if (!article.videoData) {
+      article.videoData = buildChannelPlaylistVideoObject(idx);
     }
 
     const vData = article.videoData;
-    const srcUrl = autoplay ? vData.embedUrl : vData.staticEmbedUrl;
+    const srcUrl = useBackupPlaylist
+      ? (vData.backupPlaylistUrl || buildChannelPlaylistVideoObject(idx + 1).embedUrl)
+      : (autoplay ? vData.embedUrl : vData.staticEmbedUrl);
+
+    if (autoplay) {
+      activePlayingVideoIdx = idx;
+      document.getElementById('audioStatus').innerText = `Playing ${vData.platform} • Story #${idx + 1}`;
+    }
 
     card.classList.add('playing-video');
     if (watchBtn) {
@@ -2068,15 +2204,15 @@
 
     const playerMarkup = vData.type === 'native'
       ? `<video class="card-video-native" src="${escapeHTML(srcUrl)}" controls ${autoplay ? 'autoplay' : ''} playsinline></video>`
-      : `<iframe class="card-video-iframe" src="${escapeHTML(srcUrl)}" title="Embedded News Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>`;
+      : `<iframe class="card-video-iframe" src="${escapeHTML(srcUrl)}" title="Embedded News Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen playsinline></iframe>`;
 
     mediaEl.innerHTML = `
       <div class="card-video-frame-wrap">
         <div class="card-video-toolbar">
-          <a href="${escapeHTML(vData.watchUrl)}" target="_blank" rel="noopener noreferrer" class="video-toolbar-btn" title="Open on ${escapeHTML(vData.platform)}">
-            <span>${escapeHTML(vData.platform)}</span>
-            <svg class="icon" style="width:11px;height:11px;" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-          </a>
+          <button class="video-toolbar-btn" onclick="cycleCardChannelClip(${idx})" title="Load next broadcast clip from this channel">
+            <svg class="icon" style="width:11px;height:11px;" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            <span>Next Clip</span>
+          </button>
           <button class="video-toolbar-btn" onclick="closeVideoInCard(${idx})">
             <svg class="icon" style="width:12px;height:12px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             <span>Close</span>
@@ -2085,6 +2221,26 @@
         ${playerMarkup}
       </div>
     `;
+  }
+
+  // Cycles to the next video in the channel's YouTube feed right inside the card
+  function cycleCardChannelClip(idx) {
+    const list = getActiveArticlesList();
+    const article = list[idx];
+    if (!article) return;
+
+    const ytChannelId = getActiveYtChannelId();
+    const cachedList = channelYtFeedCache[ytChannelId] || [];
+    article._clipOffset = ((article._clipOffset || idx) + 1);
+
+    if (cachedList.length > 0) {
+      const nextItem = cachedList[article._clipOffset % cachedList.length];
+      article.videoData = buildYouTubeVideoObject(nextItem.videoId, article._clipOffset);
+      loadVideoInCard(idx, true, false);
+    } else {
+      article.videoData = buildChannelPlaylistVideoObject(article._clipOffset);
+      loadVideoInCard(idx, true, true);
+    }
   }
 
   function closeVideoInCard(idx) {
@@ -2118,10 +2274,9 @@
     `;
 
     if (watchBtn) {
-      const label = article.videoData?.platform === 'YouTube' ? 'YouTube' : 'Video';
       watchBtn.innerHTML = `
         <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg>
-        <span>${label}</span>
+        <span>Video</span>
       `;
     }
 
@@ -2133,10 +2288,12 @@
     }
   }
 
-  // Queue background discovery of related videos for all rendered cards
   async function discoverVideosForVisibleCards(generation) {
     const list = getActiveArticlesList();
-    const concurrency = 3;
+    // Pre-warm the active channel's YouTube RSS feed once so all cards resolve almost instantly
+    await fetchChannelYouTubeFeed(getActiveYtChannelId());
+
+    const concurrency = 4;
     let cursor = 0;
 
     async function worker() {
@@ -2718,7 +2875,6 @@
 
     const list = getActiveArticlesList();
 
-    // Empty State for Bookmarks View
     if (currentView === 'bookmarks' && list.length === 0) {
       grid.innerHTML = `
         <div class="empty-state">
@@ -2749,15 +2905,23 @@
       const desc = escapeHTML(rawDesc && rawDesc !== cleanText(article.title) ? rawDesc : `Full dispatch and live updates available via ${displayChannel}.`);
       const isQueued = savedQueueIndices.includes(idx);
       const isBookmarked = isArticleBookmarked(article);
-      const hasVideoReady = Boolean(article.videoData && article.videoData.embedUrl);
 
       const card = document.createElement('article');
       card.id = `card-${idx}`;
       card.className = `card ${activeArticleIndex === idx ? 'speaking' : ''}`;
       card.style.setProperty('--i', idx);
       card.innerHTML = `
-        <div class="card-media ${hasVideoReady ? 'has-video' : ''}" id="card-media-${idx}">
+        <div class="card-media has-video" id="card-media-${idx}">
           <span class="card-badge">${escapeHTML(isoTag)} • ${sourceName}</span>
+          <div class="video-platform-pill" onclick="event.stopPropagation(); toggleCardVideo(${idx})">
+            <span class="video-platform-dot"></span>
+            <span>YouTube</span>
+          </div>
+          <div class="video-play-overlay" onclick="toggleCardVideo(${idx})" title="Play broadcast inside card">
+            <div class="video-play-btn">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
           ${article.urlToImage
             ? `<img src="${escapeHTML(article.urlToImage)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=\\'media-fallback\\'>${sourceName}</span>'">`
             : `<span class="media-fallback">${sourceName}</span>`
@@ -2791,9 +2955,9 @@
                 <span>AI</span>
               </button>
 
-              <button class="btn btn-sm btn-watch-card ${hasVideoReady ? 'ready' : ''}" id="watch-btn-${idx}" onclick="toggleCardVideo(${idx})" title="Watch related video inside card">
+              <button class="btn btn-sm btn-watch-card ready" id="watch-btn-${idx}" onclick="toggleCardVideo(${idx})" title="Watch related video inside card">
                 <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg>
-                <span>${hasVideoReady && article.videoData.platform === 'YouTube' ? 'YouTube' : 'Video'}</span>
+                <span>Video</span>
               </button>
 
               <button class="btn btn-sm btn-listen-card" onclick="readSingleArticle(${idx})">
@@ -2820,16 +2984,15 @@
       `;
       grid.appendChild(card);
 
-      if (hasVideoReady) {
+      if (article.videoData) {
         applyVideoToCardDOM(idx, article.videoData);
       }
     });
 
-    // Trigger asynchronous video discovery for all visible cards
     discoverVideosForVisibleCards(renderGen);
   }
 
-  // Layer 2: XML RSS Parser Backup (Also extracts <media:content>, <enclosure>, or <yt:videoId>)
+  // Layer 2: XML RSS Parser Backup
   async function fetchViaXmlProxy(rssUrl) {
     const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
     const res = await fetch(proxyUrl);
@@ -2841,7 +3004,7 @@
     const items = Array.from(xml.querySelectorAll("item, entry")).slice(0, 18);
     if (!items.length) throw new Error('No XML items');
 
-    return items.map(item => {
+    return items.map((item, idx) => {
       const title = item.querySelector("title")?.textContent || '';
       const desc = item.querySelector("description, summary, content")?.textContent || '';
       const linkNode = item.querySelector("link");
@@ -2861,7 +3024,7 @@
         const typeAttr = (el.getAttribute('type') || '').toLowerCase();
         const mediumAttr = (el.getAttribute('medium') || '').toLowerCase();
 
-        if (!rawMediaUrl && (typeAttr.includes('video') || mediumAttr === 'video' || parseVideoFromTextOrUrl(urlAttr))) {
+        if (!rawMediaUrl && (typeAttr.includes('video') || mediumAttr === 'video' || parseVideoFromTextOrUrl(urlAttr, idx))) {
           rawMediaUrl = urlAttr;
         }
         if (!img && (typeAttr.includes('image') || mediumAttr === 'image' || /\.(jpg|jpeg|png|webp)/i.test(urlAttr))) {
@@ -2880,9 +3043,9 @@
       }
 
       const directVideo =
-        parseVideoFromTextOrUrl(rawMediaUrl) ||
-        parseVideoFromTextOrUrl(link) ||
-        parseVideoFromTextOrUrl(desc);
+        parseVideoFromTextOrUrl(rawMediaUrl, idx) ||
+        parseVideoFromTextOrUrl(link, idx) ||
+        parseVideoFromTextOrUrl(desc, idx);
 
       return {
         source: { name: activeChannelObj.name },
@@ -2897,7 +3060,7 @@
     });
   }
 
-  // Layer 3: Curated Channel-Matched Fallback (with pre-matched broadcast videos)
+  // Layer 3: Curated Channel-Matched Fallback
   function getChannelFallbackArticles(userQuery = '') {
     const chName = activeChannelObj.name;
     const countryName = activeCountryObj.name;
@@ -2911,7 +3074,6 @@
         description: `Correspondents at ${chName} report increased capital allocation toward public digital corridors, renewable storage capacity, and regional transit networks this quarter.`,
         url: "https://news.google.com",
         urlToImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-        videoData: buildYouTubeVideoObject('dp8PhLsUcFE'),
         publishedAt: new Date(now - 14 * 60000).toISOString()
       },
       {
@@ -2920,7 +3082,6 @@
         description: `Industry benchmarks tracked by ${chName} highlight resilient domestic manufacturing, new foundry partnerships, and enterprise cloud adoption.`,
         url: "https://news.google.com",
         urlToImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-        videoData: buildYouTubeVideoObject('26Pr1bcDk0w'),
         publishedAt: new Date(now - 38 * 60000).toISOString()
       },
       {
@@ -2929,7 +3090,6 @@
         description: `Mission control teams have cleared pre-launch telemetry verification for the upcoming orbital deployment supporting climate and communications monitoring.`,
         url: "https://news.google.com",
         urlToImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
-        videoData: buildYouTubeVideoObject('21X5lGlDOfg'),
         publishedAt: new Date(now - 68 * 60000).toISOString()
       },
       {
@@ -2938,7 +3098,6 @@
         description: `Updated trade logistics frameworks are projected to lower freight turnaround times and stabilize core commodity indices across ${countryName}.`,
         url: "https://news.google.com",
         urlToImage: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80",
-        videoData: buildYouTubeVideoObject('iyOq8DhaMYw'),
         publishedAt: new Date(now - 115 * 60000).toISOString()
       },
       {
@@ -2947,7 +3106,6 @@
         description: `Health authorities in ${countryName} have approved new point-of-care screening protocols designed to accelerate early preventive care.`,
         url: "https://news.google.com",
         urlToImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
-        videoData: buildYouTubeVideoObject('gCNeDWCI0vo'),
         publishedAt: new Date(now - 160 * 60000).toISOString()
       },
       {
@@ -2956,7 +3114,6 @@
         description: `The upcoming fixture schedule features returning senior players alongside standout performers from recent domestic championships.`,
         url: "https://news.google.com",
         urlToImage: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80",
-        videoData: buildYouTubeVideoObject('9Auq9mYxFEE'),
         publishedAt: new Date(now - 205 * 60000).toISOString()
       }
     ];
