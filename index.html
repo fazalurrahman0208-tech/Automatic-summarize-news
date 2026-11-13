@@ -812,7 +812,21 @@
       pointer-events: none;
     }
 
-    /* Video Platform Pill & Play Overlay on Card Media */
+    .inline-iso-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.64rem;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    /* Video Platform Pill & Play Overlay on Card Media (Shown ONLY when verified video exists) */
     .video-platform-pill {
       position: absolute;
       top: 10px;
@@ -951,29 +965,6 @@
       background: #000;
     }
 
-    .video-loading-state {
-      color: #e4e4e7;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .video-spinner {
-      width: 22px;
-      height: 22px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-top-color: #fb7185;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
     .card-body {
       padding: 16px;
       display: flex;
@@ -989,6 +980,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.68rem;
       color: var(--text-tertiary);
+      gap: 8px;
     }
 
     .source-name {
@@ -1001,6 +993,7 @@
     .time-badge-live {
       color: var(--success);
       font-weight: 600;
+      flex-shrink: 0;
     }
 
     .card-title {
@@ -1242,7 +1235,7 @@
           Pulse News
           <span class="status-pill"><span class="status-dot"></span> LIVE WIRE</span>
         </h1>
-        <p>Real-Time Current Day Wire • Historical Archive • AI & Video Synthesis</p>
+        <p>Real-Time Current Day Wire • Historical Archive • Verified Video & AI Synthesis</p>
       </div>
     </div>
 
@@ -1276,7 +1269,7 @@
       </div>
 
       <div class="studio-controls">
-        <button class="btn btn-video-toggle" id="autoEmbedToggleBtn" onclick="toggleAutoEmbedVideos()" title="Automatically load embedded video players inside every card">
+        <button class="btn btn-video-toggle" id="autoEmbedToggleBtn" onclick="toggleAutoEmbedVideos()" title="Automatically load embedded video players for stories with a verified video">
           <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg>
           <span id="autoEmbedToggleText">Auto-Embed: Off</span>
         </button>
@@ -1616,22 +1609,45 @@
     autoEmbedVideos = localStorage.getItem('pulseAutoEmbedVideos') === 'true';
   } catch (e) {}
 
+  // Purge legacy unverified video cache (pulseVideoCacheV3) and load strictly verified v4 cache
   try {
-    const rawCache = sessionStorage.getItem('pulseVideoCacheV3');
-    if (rawCache) videoCache = JSON.parse(rawCache) || {};
+    sessionStorage.removeItem('pulseVideoCacheV3');
+    const rawCache = sessionStorage.getItem('pulseVerifiedVideoCacheV4');
+    if (rawCache) {
+      const parsed = JSON.parse(rawCache);
+      if (parsed && typeof parsed === 'object') {
+        videoCache = parsed;
+      }
+    }
   } catch (e) {
     videoCache = {};
   }
 
   function saveVideoCache() {
     try {
-      sessionStorage.setItem('pulseVideoCacheV3', JSON.stringify(videoCache));
+      sessionStorage.setItem('pulseVerifiedVideoCacheV4', JSON.stringify(videoCache));
     } catch (e) {}
+  }
+
+  function isVerifiedVideoObject(videoData) {
+    if (!videoData || typeof videoData !== 'object') return false;
+    if (videoData.verified !== true) return false;
+    if (!videoData.videoId || String(videoData.videoId).startsWith('playlist-')) return false;
+    if (!videoData.embedUrl || String(videoData.embedUrl).includes('videoseries?list=')) return false;
+    return true;
   }
 
   try {
     const rawSaved = localStorage.getItem('pulseSavedBookmarks');
-    if (rawSaved) bookmarkedArticles = JSON.parse(rawSaved) || [];
+    if (rawSaved) {
+      const parsedBookmarks = JSON.parse(rawSaved) || [];
+      bookmarkedArticles = parsedBookmarks.map(item => {
+        if (item && !isVerifiedVideoObject(item.videoData)) {
+          item.videoData = null;
+        }
+        return item;
+      });
+    }
   } catch (e) {
     bookmarkedArticles = [];
   }
@@ -1650,7 +1666,7 @@
       localStorage.setItem('pulseAutoEmbedVideos', String(autoEmbedVideos));
     } catch (e) {}
     syncAutoEmbedButtonUI();
-    showToast(autoEmbedVideos ? 'Auto-Embed enabled for news cards' : 'Click-to-play video mode active');
+    showToast(autoEmbedVideos ? 'Auto-Embed enabled for verified video stories' : 'Click-to-play video mode active');
     renderArticles();
   }
 
@@ -1686,6 +1702,17 @@
 
   function getArticleKey(article) {
     return cleanText(article?.title || '').toLowerCase();
+  }
+
+  // Canonical unique identity per article to prevent cross-article contamination
+  function getArticleCanonicalId(article) {
+    if (!article) return 'invalid-article';
+    if (article._canonicalId) return article._canonicalId;
+    const normTitle = cleanText(article.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const normSource = cleanText(article.source?.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const normUrl = String(article.url || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(-40);
+    article._canonicalId = `${normSource || 'src'}__${normTitle.slice(0, 80)}__${normUrl || 'nourl'}`;
+    return article._canonicalId;
   }
 
   function isArticleBookmarked(article) {
@@ -1767,7 +1794,7 @@
         url: art.url || '#',
         urlToImage: art.urlToImage || '',
         publishedAt: art.publishedAt || new Date().toISOString(),
-        videoData: art.videoData || null
+        videoData: isVerifiedVideoObject(art.videoData) ? art.videoData : null
       });
       persistBookmarks();
       showToast('Saved to Bookmarks');
@@ -1824,1419 +1851,39 @@
   }
 
   // ============================================================================
-  // IN-CARD MULTI-PLATFORM VIDEO DISCOVERY & EMBED ENGINE (ZERO POP-UPS)
+  // STRICT CONTEXT-AWARE VIDEO MATCHING & VERIFICATION ENGINE
   // ============================================================================
 
-  function getActiveYtChannelId() {
-    return activeChannelObj?.ytChannelId || activeCountryObj?.ytChannelId || 'UCZFMm1mMw0F81Z37aaEzTUA';
-  }
-
-  function getChannelUploadsPlaylistId(channelId) {
-    const id = channelId || getActiveYtChannelId();
-    if (id.startsWith('UC')) {
-      return 'UU' + id.slice(2);
-    }
-    return 'UUZFMm1mMw0F81Z37aaEzTUA';
-  }
-
-  function buildYouTubeVideoObject(videoId, idx = 0) {
-    const playlistId = getChannelUploadsPlaylistId();
-    return {
-      platform: 'YouTube',
-      type: 'iframe',
-      videoId: videoId,
-      playlistId: playlistId,
-      playlistIndex: idx % 10,
-      embedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`,
-      staticEmbedUrl: `https://www.youtube-nocookie.com/embed/${videoId}?playsinline=1&rel=0&modestbranding=1`,
-      backupPlaylistUrl: `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&index=${idx % 10}&autoplay=1&playsinline=1&rel=0`,
-      watchUrl: `https://www.youtube.com/watch?v=${videoId}`,
-      thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
-    };
-  }
-
-  function buildChannelPlaylistVideoObject(idx = 0) {
-    const playlistId = getChannelUploadsPlaylistId();
-    const clipIdx = idx % 10;
-    return {
-      platform: 'YouTube',
-      type: 'iframe',
-      videoId: `playlist-${playlistId}-${clipIdx}`,
-      playlistId: playlistId,
-      playlistIndex: clipIdx,
-      embedUrl: `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&index=${clipIdx}&autoplay=1&playsinline=1&rel=0`,
-      staticEmbedUrl: `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&index=${clipIdx}&playsinline=1&rel=0`,
-      backupPlaylistUrl: `https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&index=${(clipIdx + 1) % 10}&autoplay=1&playsinline=1&rel=0`,
-      watchUrl: `https://www.youtube.com/playlist?list=${playlistId}`,
-      thumbnail: ''
-    };
-  }
-
-  function parseVideoFromTextOrUrl(rawInput, idx = 0) {
-    if (!rawInput || typeof rawInput !== 'string') return null;
-
-    const ytMatch = rawInput.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i);
-    if (ytMatch && ytMatch[1]) {
-      return buildYouTubeVideoObject(ytMatch[1], idx);
-    }
-
-    const vimeoMatch = rawInput.match(/vimeo\.com\/(?:video\/)?(\d{6,11})/i);
-    if (vimeoMatch && vimeoMatch[1]) {
-      const vid = vimeoMatch[1];
-      return {
-        platform: 'Vimeo',
-        type: 'iframe',
-        videoId: vid,
-        embedUrl: `https://player.vimeo.com/video/${vid}?autoplay=1&playsinline=1`,
-        staticEmbedUrl: `https://player.vimeo.com/video/${vid}?playsinline=1`,
-        watchUrl: `https://vimeo.com/${vid}`,
-        thumbnail: ''
-      };
-    }
-
-    const dmMatch = rawInput.match(/(?:dailymotion\.com\/(?:video|embed\/video)\/|dai\.ly\/)([a-zA-Z0-9]+)/i);
-    if (dmMatch && dmMatch[1]) {
-      const vid = dmMatch[1];
-      return {
-        platform: 'Dailymotion',
-        type: 'iframe',
-        videoId: vid,
-        embedUrl: `https://www.dailymotion.com/embed/video/${vid}?autoplay=1&playsinline=1`,
-        staticEmbedUrl: `https://www.dailymotion.com/embed/video/${vid}?playsinline=1`,
-        watchUrl: `https://www.dailymotion.com/video/${vid}`,
-        thumbnail: `https://www.dailymotion.com/thumbnail/video/${vid}`
-      };
-    }
-
-    const mp4Match = rawInput.match(/(https?:\/\/[^\s"'<>]+\.(?:mp4|webm)(?:\?[^\s"'<>]*)?)/i);
-    if (mp4Match && mp4Match[1]) {
-      const url = mp4Match[1];
-      return {
-        platform: 'Stream',
-        type: 'native',
-        videoId: url,
-        embedUrl: url,
-        staticEmbedUrl: url,
-        watchUrl: url,
-        thumbnail: ''
-      };
-    }
-
-    return null;
-  }
-
-  async function fetchChannelYouTubeFeed(ytChannelId) {
-    if (!ytChannelId) return [];
-    if (channelYtFeedCache[ytChannelId]) return channelYtFeedCache[ytChannelId];
-
-    const ytRssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${ytChannelId}`;
-
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 3000);
-      const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(ytRssUrl)}`, {
-        signal: controller.signal
-      });
-      clearTimeout(timer);
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data.items) && data.items.length > 0) {
-          const parsedVideos = data.items
-            .map(item => {
-              const parsed = parseVideoFromTextOrUrl(item.link || item.guid || '');
-              return parsed ? { title: cleanText(item.title || ''), videoId: parsed.videoId } : null;
-            })
-            .filter(Boolean);
-          if (parsedVideos.length > 0) {
-            channelYtFeedCache[ytChannelId] = parsedVideos;
-            return parsedVideos;
-          }
-        }
-      }
-    } catch (e) {}
-
-    return [];
-  }
-
-  async function resolveVideoForArticle(article, idx, generation) {
-    if (!article) return buildChannelPlaylistVideoObject(idx);
-
-    if (article.videoData && article.videoData.embedUrl) {
-      return article.videoData;
-    }
-
-    const cacheKey = getArticleKey(article);
-    if (cacheKey && videoCache[cacheKey]) {
-      article.videoData = videoCache[cacheKey];
-      return article.videoData;
-    }
-
-    const directCandidate =
-      parseVideoFromTextOrUrl(article.videoUrl, idx) ||
-      parseVideoFromTextOrUrl(article.url, idx) ||
-      parseVideoFromTextOrUrl(article.rawMediaUrl, idx) ||
-      parseVideoFromTextOrUrl(article.description, idx);
-
-    if (directCandidate) {
-      article.videoData = directCandidate;
-      if (cacheKey) {
-        videoCache[cacheKey] = directCandidate;
-        saveVideoCache();
-      }
-      return directCandidate;
-    }
-
-    const ytChannelId = getActiveYtChannelId();
-    const channelVideos = await fetchChannelYouTubeFeed(ytChannelId);
-    if (channelVideos && channelVideos.length > 0) {
-      const titleWords = cleanText(article.title || '')
-        .toLowerCase()
-        .split(/\W+/)
-        .filter(w => w.length > 3);
-
-      let bestMatch = null;
-      let bestScore = 0;
-
-      for (const vidItem of channelVideos) {
-        const vidTitleLower = vidItem.title.toLowerCase();
-        let score = 0;
-        for (const word of titleWords) {
-          if (vidTitleLower.includes(word)) score++;
-        }
-        if (score > bestScore) {
-          bestScore = score;
-          bestMatch = vidItem;
-        }
-      }
-
-      const chosenVideo = bestScore >= 1 ? bestMatch : channelVideos[idx % channelVideos.length];
-      if (chosenVideo && chosenVideo.videoId) {
-        const resolvedObj = buildYouTubeVideoObject(chosenVideo.videoId, idx);
-        article.videoData = resolvedObj;
-        if (cacheKey) {
-          videoCache[cacheKey] = resolvedObj;
-          saveVideoCache();
-        }
-        return resolvedObj;
-      }
-    }
-
-    const fallbackPlaylistObj = buildChannelPlaylistVideoObject(idx);
-    article.videoData = fallbackPlaylistObj;
-    return fallbackPlaylistObj;
-  }
-
-  function applyVideoToCardDOM(idx, videoData) {
-    if (!videoData) return;
-    const mediaEl = document.getElementById(`card-media-${idx}`);
-    const watchBtn = document.getElementById(`watch-btn-${idx}`);
-    const list = getActiveArticlesList();
-    const article = list[idx];
-    if (!mediaEl || !article) return;
-
-    if (!article.urlToImage && videoData.thumbnail) {
-      article.urlToImage = videoData.thumbnail;
-      const fallbackSpan = mediaEl.querySelector('.media-fallback');
-      if (fallbackSpan) {
-        const img = document.createElement('img');
-        img.src = videoData.thumbnail;
-        img.alt = '';
-        img.loading = 'lazy';
-        fallbackSpan.replaceWith(img);
-      }
-    }
-
-    if (watchBtn) {
-      watchBtn.classList.add('ready');
-    }
-
-    if (autoEmbedVideos && !mediaEl.querySelector('.card-video-frame-wrap')) {
-      loadVideoInCard(idx, false);
-    }
-  }
-
-  async function toggleCardVideo(idx) {
-    const card = document.getElementById(`card-${idx}`);
-    const mediaEl = document.getElementById(`card-media-${idx}`);
-    if (!card || !mediaEl) return;
-
-    if (card.classList.contains('playing-video')) {
-      closeVideoInCard(idx);
-      return;
-    }
-
-    const list = getActiveArticlesList();
-    const article = list[idx];
-    if (!article) return;
-
-    stopAudio(false);
-    if (activePlayingVideoIdx !== null && activePlayingVideoIdx !== idx) {
-      closeVideoInCard(activePlayingVideoIdx);
-    }
-    activePlayingVideoIdx = idx;
-    card.classList.add('playing-video');
-
-    if (!article.videoData) {
-      mediaEl.innerHTML = `
-        <div class="card-video-frame-wrap">
-          <div class="video-loading-state">
-            <div class="video-spinner"></div>
-            <span>Loading broadcast stream...</span>
-          </div>
-        </div>
-      `;
-      const resolved = await resolveVideoForArticle(article, idx, currentRenderGeneration);
-      article.videoData = resolved || buildChannelPlaylistVideoObject(idx);
-    }
-
-    loadVideoInCard(idx, true);
-  }
-
-  function loadVideoInCard(idx, autoplay = true, useBackupPlaylist = false) {
-    const list = getActiveArticlesList();
-    const article = list[idx];
-    const mediaEl = document.getElementById(`card-media-${idx}`);
-    const card = document.getElementById(`card-${idx}`);
-    const watchBtn = document.getElementById(`watch-btn-${idx}`);
-    if (!article || !mediaEl || !card) return;
-
-    if (!article.videoData) {
-      article.videoData = buildChannelPlaylistVideoObject(idx);
-    }
-
-    const vData = article.videoData;
-    const srcUrl = useBackupPlaylist
-      ? (vData.backupPlaylistUrl || buildChannelPlaylistVideoObject(idx + 1).embedUrl)
-      : (autoplay ? vData.embedUrl : vData.staticEmbedUrl);
-
-    if (autoplay) {
-      activePlayingVideoIdx = idx;
-      const statusEl = document.getElementById('audioStatus');
-      if (statusEl) statusEl.innerText = `Playing ${vData.platform} • Story #${idx + 1}`;
-    }
-
-    card.classList.add('playing-video');
-    if (watchBtn) {
-      watchBtn.innerHTML = `
-        <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        <span>Close</span>
-      `;
-    }
-
-    const playerMarkup = vData.type === 'native'
-      ? `<video class="card-video-native" src="${escapeHTML(srcUrl)}" controls ${autoplay ? 'autoplay' : ''} playsinline></video>`
-      : `<iframe class="card-video-iframe" src="${escapeHTML(srcUrl)}" title="Embedded News Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen playsinline></iframe>`;
-
-    mediaEl.innerHTML = `
-      <div class="card-video-frame-wrap">
-        <div class="card-video-toolbar">
-          <button class="video-toolbar-btn" onclick="cycleCardChannelClip(${idx})" title="Load next broadcast clip from this channel">
-            <svg class="icon" style="width:11px;height:11px;" viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-            <span>Next Clip</span>
-          </button>
-          <button class="video-toolbar-btn" onclick="closeVideoInCard(${idx})">
-            <svg class="icon" style="width:12px;height:12px;" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            <span>Close</span>
-          </button>
-        </div>
-        ${playerMarkup}
-      </div>
-    `;
-  }
-
-  function cycleCardChannelClip(idx) {
-    const list = getActiveArticlesList();
-    const article = list[idx];
-    if (!article) return;
-
-    const ytChannelId = getActiveYtChannelId();
-    const cachedList = channelYtFeedCache[ytChannelId] || [];
-    article._clipOffset = ((article._clipOffset || idx) + 1);
-
-    if (cachedList.length > 0) {
-      const nextItem = cachedList[article._clipOffset % cachedList.length];
-      article.videoData = buildYouTubeVideoObject(nextItem.videoId, article._clipOffset);
-      loadVideoInCard(idx, true, false);
-    } else {
-      article.videoData = buildChannelPlaylistVideoObject(article._clipOffset);
-      loadVideoInCard(idx, true, true);
-    }
-  }
-
-  function closeVideoInCard(idx) {
-    const list = getActiveArticlesList();
-    const article = list[idx];
-    const mediaEl = document.getElementById(`card-media-${idx}`);
-    const card = document.getElementById(`card-${idx}`);
-    const watchBtn = document.getElementById(`watch-btn-${idx}`);
-    if (!article || !mediaEl || !card) return;
-
-    card.classList.remove('playing-video');
-    if (activePlayingVideoIdx === idx) {
-      activePlayingVideoIdx = null;
-      const statusEl = document.getElementById('audioStatus');
-      if (statusEl) statusEl.innerText = 'Audio & Video Studio Ready';
-    }
-
-    const displayChannel = currentView === 'bookmarks'
-      ? (article.source?.name || 'Saved Dispatch')
-      : (activeChannelObj.id !== 'all' ? activeChannelObj.name : (article.source?.name || activeCountryObj.name + ' Desk'));
-    const isoTag = currentView === 'bookmarks'
-      ? (article.countryIso || 'SAVED')
-      : activeCountryObj.iso;
-    const sourceName = escapeHTML(displayChannel);
-
-    mediaEl.innerHTML = `
-      <span class="card-badge">${escapeHTML(isoTag)} • ${sourceName}</span>
-      <div class="video-platform-pill" onclick="event.stopPropagation(); toggleCardVideo(${idx})">
-        <span class="video-platform-dot"></span>
-        <span>YouTube</span>
-      </div>
-      <div class="video-play-overlay" onclick="toggleCardVideo(${idx})" title="Play broadcast inside card">
-        <div class="video-play-btn">
-          <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        </div>
-      </div>
-      ${article.urlToImage
-        ? `<img src="${escapeHTML(article.urlToImage)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=\\'media-fallback\\'>${sourceName}</span>'">`
-        : `<span class="media-fallback">${sourceName}</span>`
-      }
-    `;
-
-    if (watchBtn) {
-      watchBtn.innerHTML = `
-        <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg>
-        <span>Video</span>
-      `;
-    }
-  }
-
-  async function discoverVideosForVisibleCards(generation) {
-    try {
-      const list = getActiveArticlesList();
-      await fetchChannelYouTubeFeed(getActiveYtChannelId());
-
-      const concurrency = 4;
-      let cursor = 0;
-
-      async function worker() {
-        while (cursor < list.length && generation === currentRenderGeneration) {
-          const idx = cursor++;
-          const art = list[idx];
-          const videoData = await resolveVideoForArticle(art, idx, generation);
-          if (generation === currentRenderGeneration && videoData) {
-            applyVideoToCardDOM(idx, videoData);
-          }
-        }
-      }
-
-      const workers = Array.from({ length: Math.min(concurrency, list.length) }, () => worker());
-      await Promise.all(workers);
-    } catch (e) {}
-  }
-
-  // ============================================================================
-  // SPEECH SYNTHESIS & THEME MANAGEMENT
-  // ============================================================================
-  const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
-  let englishVoices = [];
-  let selectedVoice = null;
-  let audioQueue = [];
-  let currentQueuePos = -1;
-  let activeArticleIndex = null;
-  let isCancelled = false;
-
-  const SUN_SVG = `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
-  const MOON_SVG = `<svg class="icon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
-
-  function syncThemeIcon() {
-    const btn = document.getElementById('themeToggle');
-    if (!btn) return;
-    const isDark = document.body.classList.contains('dark');
-    btn.innerHTML = isDark ? SUN_SVG : MOON_SVG;
-  }
-
-  try {
-    if (localStorage.getItem('newsTheme') === 'light') {
-      document.body.classList.remove('dark');
-    }
-  } catch (e) {}
-  syncThemeIcon();
-
-  function toggleTheme() {
-    document.body.classList.toggle('dark');
-    const isDark = document.body.classList.contains('dark');
-    try {
-      localStorage.setItem('newsTheme', isDark ? 'dark' : 'light');
-    } catch (e) {}
-    syncThemeIcon();
-  }
-
-  function toggleStudioSettings() {
-    const drawer = document.getElementById('studioDrawer');
-    if (drawer) drawer.classList.toggle('open');
-  }
-
-  const speedSelect = document.getElementById('speedSelect');
-  if (speedSelect) {
-    try {
-      const savedSpeed = localStorage.getItem('newsVoiceSpeed');
-      if (savedSpeed) speedSelect.value = savedSpeed;
-      speedSelect.onchange = () => localStorage.setItem('newsVoiceSpeed', speedSelect.value);
-    } catch (e) {}
-  }
-
-  function loadVoices() {
-    if (!synth) return;
-    try {
-      const allVoices = synth.getVoices() || [];
-      englishVoices = allVoices.filter(v => v.lang && v.lang.startsWith('en'));
-      if (englishVoices.length === 0) return;
-
-      const selectEl = document.getElementById('voiceSelect');
-      if (!selectEl) return;
-      selectEl.innerHTML = '';
-
-      const qualityKeywords = ['en-IN', 'en_IN', 'India', 'Google', 'Natural', 'Online', 'Siri', 'Samantha'];
-      englishVoices.sort((a, b) => {
-        const aScore = qualityKeywords.some(k => a.name.includes(k) || a.lang.includes(k)) ? 1 : 0;
-        const bScore = qualityKeywords.some(k => b.name.includes(k) || b.lang.includes(k)) ? 1 : 0;
-        return bScore - aScore;
-      });
-
-      const savedVoiceName = localStorage.getItem('newsVoiceName');
-      let defaultIndex = 0;
-
-      englishVoices.forEach((voice, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = `${voice.name} (${voice.lang})`;
-        selectEl.appendChild(option);
-        if (savedVoiceName && voice.name === savedVoiceName) {
-          defaultIndex = index;
-        }
-      });
-
-      selectedVoice = englishVoices[defaultIndex];
-      selectEl.value = defaultIndex;
-
-      selectEl.onchange = (e) => {
-        selectedVoice = englishVoices[e.target.value];
-        localStorage.setItem('newsVoiceName', selectedVoice.name);
-      };
-    } catch (e) {}
-  }
-
-  loadVoices();
-  if (synth && synth.onvoiceschanged !== undefined) {
-    synth.onvoiceschanged = loadVoices;
-  }
-
-  function renderCountryStrip() {
-    const strip = document.getElementById('countryStrip');
-    if (!strip) return;
-    strip.innerHTML = '';
-
-    COUNTRY_DIRECTORY.forEach(country => {
-      const btn = document.createElement('button');
-      btn.className = `pill pill-country ${country.code === activeCountryObj.code ? 'active' : ''}`;
-      btn.innerHTML = `<span>${country.name}</span>`;
-      btn.onclick = () => {
-        activeCountryObj = country;
-        activeChannelObj = country.channels[0];
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) searchInput.value = '';
-        const aiDrawer = document.getElementById('aiBriefingDrawer');
-        if (aiDrawer) aiDrawer.classList.remove('open');
-        renderCountryStrip();
-        renderChannelStrip();
-        updateSelectionLabel();
-        fetchNews();
-      };
-      strip.appendChild(btn);
-    });
-  }
-
-  function renderChannelStrip() {
-    const strip = document.getElementById('channelStrip');
-    if (!strip) return;
-    strip.innerHTML = '';
-
-    activeCountryObj.channels.forEach(channel => {
-      const btn = document.createElement('button');
-      btn.className = `pill ${channel.id === activeChannelObj.id ? 'active' : ''}`;
-      btn.innerHTML = `
-        <span class="channel-indicator" style="background:${channel.color || '#3b82f6'}"></span>
-        <span>${channel.name}</span>
-      `;
-      btn.onclick = () => {
-        activeChannelObj = channel;
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) searchInput.value = '';
-        const aiDrawer = document.getElementById('aiBriefingDrawer');
-        if (aiDrawer) aiDrawer.classList.remove('open');
-        renderChannelStrip();
-        updateSelectionLabel();
-        fetchNews();
-      };
-      strip.appendChild(btn);
-    });
-  }
-
-  function updateSelectionLabel() {
-    const labelEl = document.getElementById('currentSelectionLabel');
-    if (!labelEl) return;
-    labelEl.innerHTML =
-      `<span>REGION</span> / <strong>${escapeHTML(activeCountryObj.name)} • ${escapeHTML(activeChannelObj.name)}</strong>`;
-  }
-
-  function escapeHTML(str) {
-    if (!str) return '';
-    return String(str).replace(/[&<>"']/g, m => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[m]));
-  }
-
-  function cleanText(txt) {
-    if (!txt) return '';
-    return String(txt)
-      .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1')
-      .replace(/<[^>]*>/g, ' ')
-      .replace(/&nbsp;/gi, ' ')
-      .replace(/&amp;/gi, '&')
-      .replace(/&quot;/gi, '"')
-      .replace(/&#39;/gi, "'")
-      .replace(/https?:\/\/\S+/gi, '')
-      .replace(/\[\+\d+\s+chars\]/gi, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-  }
-
-  function formatRelativeTime(dateString) {
-    if (!dateString) return 'LIVE';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'LIVE';
-    const diffMins = Math.floor((Date.now() - date.getTime()) / 60000);
-    if (diffMins < 60) return `${Math.max(1, diffMins)}M AGO`;
-    const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}H AGO`;
-    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }).toUpperCase();
-  }
-
-  // AI Summarizer Engine
-  function buildLocalArticleAISummary(art) {
-    const title = cleanText(art.title).replace(/\s+-\s+[^-]+$/, '');
-    const desc = cleanText(art.description || '');
-    const source = art.source?.name || activeChannelObj.name;
-
-    const sentences = desc.split(/(?<=[.!?])\s+/).filter(s => s.length > 20);
-    const point1 = sentences[0] || `Coverage from ${source} examining ${title.toLowerCase()}.`;
-    const point2 = sentences[1] || `Developing implications across ${activeCountryObj.name}'s ${activeCategory} landscape.`;
-
-    return {
-      tldr: title,
-      bullets: [
-        point1,
-        point2,
-        `Source: ${source}`
-      ],
-      speech: `Summary for ${title}. ${point1} ${point2}`
-    };
-  }
-
-  async function toggleArticleAISummary(idx) {
-    const list = getActiveArticlesList();
-    const accordion = document.getElementById(`ai-acc-${idx}`);
-    const contentEl = document.getElementById(`ai-content-${idx}`);
-    const art = list[idx];
-    if (!accordion || !art || !contentEl) return;
-
-    if (accordion.classList.contains('open') && art._aiReady) {
-      accordion.classList.remove('open');
-      return;
-    }
-
-    accordion.classList.add('open');
-    if (art._aiReady && contentEl.innerHTML.trim() !== '') return;
-
-    contentEl.innerHTML = `<span style="color:var(--text-tertiary);">Synthesizing key takeaways...</span>`;
-
-    const title = cleanText(art.title);
-    const desc = cleanText(art.description || '');
-    const fallback = buildLocalArticleAISummary(art);
-
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 4500);
-
-      const prompt = `Summarize this news article in 2 concise bullet points (under 40 words total). Plain text only, no markdown:\nTitle: ${title}\nDetails: ${desc}`;
-      const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, {
-        signal: controller.signal
-      });
-      clearTimeout(timer);
-
-      if (res.ok) {
-        const aiText = cleanText(await res.text());
-        if (aiText && aiText.length > 25) {
-          const lines = aiText.split(/(?:\r?\n|•|- )+/).map(s => s.trim()).filter(s => s.length > 12).slice(0, 3);
-          const bulletsHTML = (lines.length ? lines : [aiText]).map(l => `<li>${escapeHTML(l)}</li>`).join('');
-          contentEl.innerHTML = `
-            <div style="color:var(--text-primary);font-weight:500;">${escapeHTML(fallback.tldr)}</div>
-            <ul>${bulletsHTML}</ul>
-          `;
-          art._aiSpeech = `AI Summary: ${aiText}`;
-          art._aiReady = true;
-          return;
-        }
-      }
-    } catch (e) {}
-
-    contentEl.innerHTML = `
-      <div style="color:var(--text-primary);font-weight:500;">${escapeHTML(fallback.tldr)}</div>
-      <ul>${fallback.bullets.map(b => `<li>${escapeHTML(b)}</li>`).join('')}</ul>
-    `;
-    art._aiSpeech = fallback.speech;
-    art._aiReady = true;
-  }
-
-  function speakArticleAISummary(idx) {
-    const list = getActiveArticlesList();
-    const art = list[idx];
-    if (!art) return;
-    const speechText = art._aiSpeech || buildLocalArticleAISummary(art).speech;
-    playQueue([{
-      text: speechText,
-      status: `AI Summary • Story #${idx + 1}`,
-      articleIndex: idx
-    }]);
-  }
-
-  async function generateChannelAISummary() {
-    const list = getActiveArticlesList();
-    if (!list.length) {
-      showToast('No articles available to summarize');
-      return;
-    }
-
-    const drawer = document.getElementById('aiBriefingDrawer');
-    const titleEl = document.getElementById('aiBriefingTitle');
-    const contentEl = document.getElementById('aiBriefingContent');
-    if (!drawer || !titleEl || !contentEl) return;
-
-    const contextLabel = currentView === 'bookmarks' ? 'Saved Bookmarks' : activeChannelObj.name;
-    drawer.classList.add('open');
-    titleEl.innerText = `AI Executive Brief — ${contextLabel}`;
-    contentEl.innerHTML = `<span style="color:var(--text-tertiary);">Synthesizing top stories from ${escapeHTML(contextLabel)}...</span>`;
-
-    const top5 = list.slice(0, 5);
-    const headlinesList = top5.map((a, i) => `${i + 1}. ${cleanText(a.title)}: ${cleanText(a.description)}`).join('\n');
-
-    const fallbackOverview = `Executive synthesis of the top ${top5.length} stories from ${contextLabel}:`;
-    const fallbackBullets = top5.map(a => {
-      const t = cleanText(a.title).replace(/\s+-\s+[^-]+$/, '');
-      const d = cleanText(a.description || '').split(/(?<=[.!?])\s+/)[0] || '';
-      return `<strong style="color:var(--text-primary);">${escapeHTML(t)}:</strong> ${escapeHTML(d)}`;
-    });
-
-    lastChannelAISummarySpeech = `Executive Briefing for ${contextLabel}. ` +
-      top5.map((a, i) => `Story ${i + 1}: ${cleanText(a.title)}.`).join(' ');
-
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 5000);
-      const prompt = `Write a 2-sentence executive news briefing summarizing these headlines from ${contextLabel}. Plain text only:\n${headlinesList}`;
-      const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(prompt)}`, {
-        signal: controller.signal
-      });
-      clearTimeout(timer);
-
-      if (res.ok) {
-        const aiIntro = cleanText(await res.text());
-        if (aiIntro && aiIntro.length > 30) {
-          contentEl.innerHTML = `
-            <p>${escapeHTML(aiIntro)}</p>
-            <ul>${fallbackBullets.map(b => `<li>${b}</li>`).join('')}</ul>
-          `;
-          lastChannelAISummarySpeech = `Executive Briefing for ${contextLabel}. ${aiIntro} ` +
-            top5.map((a, i) => `Highlight ${i + 1}: ${cleanText(a.title)}.`).join(' ');
-          return;
-        }
-      }
-    } catch (e) {}
-
-    contentEl.innerHTML = `
-      <p>${escapeHTML(fallbackOverview)}</p>
-      <ul>${fallbackBullets.map(b => `<li>${b}</li>`).join('')}</ul>
-    `;
-  }
-
-  function speakChannelAISummary() {
-    if (!lastChannelAISummarySpeech) return;
-    playQueue([{
-      text: lastChannelAISummarySpeech,
-      status: `AI Brief • ${currentView === 'bookmarks' ? 'Bookmarks' : activeChannelObj.name}`,
-      articleIndex: null
-    }]);
-  }
-
-  // Audio Studio Controls
-  const PLAY_ICON = `<svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
-  const PAUSE_ICON = `<svg class="icon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
-  const STOP_SM_ICON = `<svg class="icon" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>`;
-  const LISTEN_SM_ICON = `<svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
-
-  function updateCardHighlight(articleIdx) {
-    activeArticleIndex = articleIdx;
-    document.querySelectorAll('.card').forEach((card, idx) => {
-      const btn = card.querySelector('.btn-listen-card');
-      if (idx === articleIdx) {
-        card.classList.add('speaking');
-        if (btn) btn.innerHTML = `${STOP_SM_ICON}<span>Stop</span>`;
-        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      } else {
-        card.classList.remove('speaking');
-        if (btn) btn.innerHTML = `${LISTEN_SM_ICON}<span>Listen</span>`;
-      }
-    });
-  }
-
-  function setControlsState(isPlaying, hasNext = false) {
-    const pauseBtn = document.getElementById('pauseBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const wf = document.getElementById('waveform');
-    if (pauseBtn) pauseBtn.disabled = !isPlaying;
-    if (nextBtn) nextBtn.disabled = !hasNext;
-    if (wf && pauseBtn) {
-      if (isPlaying) {
-        wf.classList.add('playing');
-        pauseBtn.innerHTML = PAUSE_ICON;
-      } else {
-        wf.classList.remove('playing');
-        pauseBtn.innerHTML = PAUSE_ICON;
-      }
-    }
-  }
-
-  function playQueue(items) {
-    if (!synth) {
-      showToast("Speech synthesis is not supported on this browser.");
-      return;
-    }
-    if (activePlayingVideoIdx !== null) {
-      closeVideoInCard(activePlayingVideoIdx);
-    }
-    stopAudio(false);
-    isCancelled = false;
-    audioQueue = items;
-    currentQueuePos = 0;
-    playCurrentQueueItem();
-  }
-
-  function playCurrentQueueItem() {
-    if (!synth || isCancelled || currentQueuePos < 0 || currentQueuePos >= audioQueue.length) {
-      stopAudio(true);
-      return;
-    }
-
-    const item = audioQueue[currentQueuePos];
-    const utterance = new SpeechSynthesisUtterance(item.text);
-
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-      utterance.lang = selectedVoice.lang;
-    } else {
-      utterance.lang = activeCountryObj.code === 'in' ? 'en-IN' : 'en-US';
-    }
-
-    utterance.rate = parseFloat(speedSelect?.value) || 1.0;
-    utterance.pitch = 1.0;
-
-    utterance.onstart = () => {
-      const statusEl = document.getElementById('audioStatus');
-      if (statusEl) statusEl.innerText = item.status || "Broadcasting...";
-      updateCardHighlight(item.articleIndex);
-      setControlsState(true, currentQueuePos < audioQueue.length - 1);
-    };
-
-    utterance.onend = () => {
-      if (isCancelled) return;
-      currentQueuePos++;
-      if (currentQueuePos < audioQueue.length) {
-        playCurrentQueueItem();
-      } else {
-        stopAudio(true);
-      }
-    };
-
-    utterance.onerror = () => {
-      if (!isCancelled) stopAudio(true);
-    };
-
-    synth.speak(utterance);
-  }
-
-  function stopAudio(resetStatus = true) {
-    isCancelled = true;
-    audioQueue = [];
-    currentQueuePos = -1;
-    try {
-      if (synth) synth.cancel();
-    } catch (e) {}
-    updateCardHighlight(null);
-    setControlsState(false, false);
-    if (resetStatus) {
-      const statusEl = document.getElementById('audioStatus');
-      if (statusEl) statusEl.innerText = "Audio & Video Studio Ready";
-    }
-  }
-
-  function togglePause() {
-    if (!synth) return;
-    const pauseBtn = document.getElementById('pauseBtn');
-    const wf = document.getElementById('waveform');
-    const statusEl = document.getElementById('audioStatus');
-    if (synth.paused) {
-      synth.resume();
-      if (pauseBtn) pauseBtn.innerHTML = PAUSE_ICON;
-      if (wf) wf.classList.add('playing');
-      if (statusEl) statusEl.innerText = "Playback Resumed";
-    } else if (synth.speaking) {
-      synth.pause();
-      if (pauseBtn) pauseBtn.innerHTML = PLAY_ICON;
-      if (wf) wf.classList.remove('playing');
-      if (statusEl) statusEl.innerText = "Playback Paused";
-    }
-  }
-
-  function skipNext() {
-    if (synth && currentQueuePos < audioQueue.length - 1) {
-      isCancelled = true;
-      synth.cancel();
-      isCancelled = false;
-      currentQueuePos++;
-      playCurrentQueueItem();
-    }
-  }
-
-  function readAllTopNews() {
-    const list = getActiveArticlesList();
-    if (!list.length) {
-      showToast('No articles available to play');
-      return;
-    }
-
-    const label = currentView === 'bookmarks' ? 'Saved Bookmarks' : activeChannelObj.name;
-    const subset = list.slice(0, 5);
-    const queue = [{
-      text: `Starting audio briefing from ${label}.`,
-      status: `Starting ${label} Brief`,
-      articleIndex: null
-    }];
-
-    subset.forEach((art, idx) => {
-      const summary = buildLocalArticleAISummary(art);
-      queue.push({
-        text: `Story ${idx + 1}: ${summary.speech}`,
-        status: `(${idx + 1}/${subset.length}) ${summary.tldr}`,
-        articleIndex: idx
-      });
-    });
-
-    queue.push({
-      text: "End of briefing.",
-      status: "Briefing Complete",
-      articleIndex: null
-    });
-
-    playQueue(queue);
-  }
-
-  function readSingleArticle(index) {
-    if (activeArticleIndex === index) {
-      stopAudio();
-      return;
-    }
-    const list = getActiveArticlesList();
-    const art = list[index];
-    if (!art) return;
-    const title = cleanText(art.title);
-    const desc = cleanText(art.description);
-    playQueue([{
-      text: `${title}. ${desc}`,
-      status: title,
-      articleIndex: index
-    }]);
-  }
-
-  function toggleQueueArticle(index) {
-    const pos = savedQueueIndices.indexOf(index);
-    if (pos === -1) {
-      savedQueueIndices.push(index);
-      showToast('Added to playback queue');
-    } else {
-      savedQueueIndices.splice(pos, 1);
-      showToast('Removed from playback queue');
-    }
-
-    const btn = document.getElementById('queuePlayBtn');
-    const txt = document.getElementById('queueCountText');
-    if (txt) txt.innerText = savedQueueIndices.length;
-    if (btn) btn.disabled = savedQueueIndices.length === 0;
-    renderArticles();
-  }
-
-  function playSavedQueue() {
-    if (!savedQueueIndices.length) return;
-    const list = getActiveArticlesList();
-    const queue = [{
-      text: `Playing ${savedQueueIndices.length} queued articles.`,
-      status: "Playing Audio Queue",
-      articleIndex: null
-    }];
-
-    savedQueueIndices.forEach((artIdx, i) => {
-      const art = list[artIdx];
-      if (!art) return;
-      queue.push({
-        text: `${cleanText(art.title)}. ${cleanText(art.description)}`,
-        status: `Queue (${i + 1}/${savedQueueIndices.length}) • ${cleanText(art.title)}`,
-        articleIndex: artIdx
-      });
-    });
-
-    playQueue(queue);
-  }
-
-  function showSkeletons() {
-    const grid = document.getElementById('newsGrid');
-    if (!grid) return;
-    grid.innerHTML = Array.from({ length: 6 }).map(() => `
-      <div class="card">
-        <div class="card-media skeleton"></div>
-        <div class="card-body">
-          <div class="skeleton" style="height: 12px; width: 35%; border-radius: 4px; margin-bottom: 12px;"></div>
-          <div class="skeleton" style="height: 18px; width: 92%; border-radius: 4px; margin-bottom: 8px;"></div>
-          <div class="skeleton" style="height: 18px; width: 70%; border-radius: 4px; margin-bottom: 16px;"></div>
-          <div class="skeleton" style="height: 44px; width: 100%; border-radius: 4px;"></div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function renderArticles() {
-    const grid = document.getElementById('newsGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    activePlayingVideoIdx = null;
-    const renderGen = ++currentRenderGeneration;
-
-    updateTimelineCounters();
-    const list = getActiveArticlesList();
-
-    if (currentView === 'bookmarks' && list.length === 0) {
-      grid.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon-wrap">
-            <svg class="icon" style="width:22px;height:22px;" viewBox="0 0 24 24"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-          </div>
-          <h3>No saved bookmarks yet</h3>
-          <p>Click the <strong>Save</strong> button on any news card in the live feed to build your personal reading, video, and audio list.</p>
-          <button class="btn btn-primary" onclick="switchView('feed')">Explore Live News</button>
-        </div>
-      `;
-      return;
-    }
-
-    if (list.length === 0) {
-      grid.innerHTML = `
-        <div class="empty-state">
-          <h3>No stories in this timeline view</h3>
-          <p>Switch to <strong>All (Live + Archive)</strong> to view all dispatches for this channel.</p>
-          <button class="btn btn-primary" onclick="selectTimeline('all')">Show All Stories</button>
-        </div>
-      `;
-      return;
-    }
-
-    list.forEach((article, idx) => {
-      const displayChannel = currentView === 'bookmarks'
-        ? (article.source?.name || 'Saved Dispatch')
-        : (activeChannelObj.id !== 'all' ? activeChannelObj.name : (article.source?.name || activeCountryObj.name + ' Desk'));
-
-      const isoTag = currentView === 'bookmarks'
-        ? (article.countryIso || 'SAVED')
-        : activeCountryObj.iso;
-
-      const sourceName = escapeHTML(displayChannel);
-      const dateStr = formatRelativeTime(article.publishedAt);
-      const isToday = isArticleToday(article);
-      const title = escapeHTML(cleanText(article.title));
-      const rawDesc = cleanText(article.description);
-      const desc = escapeHTML(rawDesc && rawDesc !== cleanText(article.title) ? rawDesc : `Full dispatch and live updates available via ${displayChannel}.`);
-      const isQueued = savedQueueIndices.includes(idx);
-      const isBookmarked = isArticleBookmarked(article);
-
-      const card = document.createElement('article');
-      card.id = `card-${idx}`;
-      card.className = `card ${activeArticleIndex === idx ? 'speaking' : ''}`;
-      card.style.setProperty('--i', idx);
-      card.innerHTML = `
-        <div class="card-media has-video" id="card-media-${idx}">
-          <span class="card-badge">${escapeHTML(isoTag)} • ${sourceName}</span>
-          <div class="video-platform-pill" onclick="event.stopPropagation(); toggleCardVideo(${idx})">
-            <span class="video-platform-dot"></span>
-            <span>YouTube</span>
-          </div>
-          <div class="video-play-overlay" onclick="toggleCardVideo(${idx})" title="Play broadcast inside card">
-            <div class="video-play-btn">
-              <svg class="icon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            </div>
-          </div>
-          ${article.urlToImage
-            ? `<img src="${escapeHTML(article.urlToImage)}" alt="" loading="lazy" onerror="this.outerHTML='<span class=\\'media-fallback\\'>${sourceName}</span>'">`
-            : `<span class="media-fallback">${sourceName}</span>`
-          }
-        </div>
-        <div class="card-body">
-          <div class="card-meta">
-            <span class="source-name">${sourceName}</span>
-            <span class="${isToday ? 'time-badge-live' : ''}">${isToday ? '● ' : ''}${dateStr}</span>
-          </div>
-          <h2 class="card-title">${title}</h2>
-          <p class="card-desc">${desc}</p>
-
-          <!-- Smooth CSS Grid Accordion for AI Summary -->
-          <div class="card-ai-accordion" id="ai-acc-${idx}">
-            <div class="card-ai-inner">
-              <div class="card-ai-box">
-                <div class="card-ai-top">
-                  <span>AI Synthesis</span>
-                  <button class="btn btn-sm" style="padding:2px 7px;font-size:0.65rem;" onclick="speakArticleAISummary(${idx})">Speak</button>
-                </div>
-                <div id="ai-content-${idx}"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card-footer">
-            <div class="card-actions">
-              <button class="btn btn-sm btn-brand" onclick="toggleArticleAISummary(${idx})">
-                <svg class="icon" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-                <span>AI</span>
-              </button>
-
-              <button class="btn btn-sm btn-watch-card ready" id="watch-btn-${idx}" onclick="toggleCardVideo(${idx})" title="Watch related video inside card">
-                <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 9 15 12 10 15 10 9"/></svg>
-                <span>Video</span>
-              </button>
-
-              <button class="btn btn-sm btn-listen-card" onclick="readSingleArticle(${idx})">
-                ${activeArticleIndex === idx ? `${STOP_SM_ICON}<span>Stop</span>` : `${LISTEN_SM_ICON}<span>Listen</span>`}
-              </button>
-
-              <button class="btn btn-sm btn-save-card ${isBookmarked ? 'saved' : ''}" id="save-btn-${idx}" onclick="toggleBookmarkArticle(${idx})" title="Save to Bookmarks">
-                ${getBookmarkButtonInner(isBookmarked)}
-              </button>
-
-              <button class="btn btn-sm btn-icon-only btn-queue-card ${isQueued ? 'queued' : ''}" onclick="toggleQueueArticle(${idx})" title="Add to Audio Queue">
-                ${isQueued
-                  ? `<svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`
-                  : `<svg class="icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`
-                }
-              </button>
-            </div>
-            <a href="${escapeHTML(article.url || '#')}" class="external-link" target="_blank" rel="noopener noreferrer">
-              <span>Read</span>
-              <svg class="icon" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            </a>
-          </div>
-        </div>
-      `;
-      grid.appendChild(card);
-
-      if (article.videoData) {
-        applyVideoToCardDOM(idx, article.videoData);
-      }
-    });
-
-    discoverVideosForVisibleCards(renderGen);
-  }
-
-  // Layer 2A: Fast JSON RSS via rss2json
-  async function fetchViaRss2Json(rssUrl) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 3500);
-    const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`, {
-      signal: controller.signal
-    });
-    clearTimeout(timer);
-    if (!res.ok) throw new Error('rss2json error');
-    const data = await res.json();
-    if (!Array.isArray(data.items) || data.items.length === 0) throw new Error('Empty rss2json items');
-
-    return data.items.map((item, idx) => {
-      const directVideo = parseVideoFromTextOrUrl(item.link || item.description || '', idx);
-      let img = item.thumbnail || item.enclosure?.link || '';
-      if (!img && item.description) {
-        const match = item.description.match(/<img[^>]+src=["']([^"'>]+)["']/i);
-        if (match) img = match[1];
-      }
-      return {
-        source: { name: activeChannelObj.name },
-        title: cleanText(item.title),
-        description: cleanText(item.description || item.content),
-        url: item.link || '#',
-        urlToImage: img || (directVideo?.thumbnail || ''),
-        videoData: directVideo || null,
-        publishedAt: item.pubDate || new Date().toISOString()
-      };
-    });
-  }
-
-  // Layer 2B: XML RSS Parser Backup via AllOrigins
-  async function fetchViaXmlProxy(rssUrl) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 4000);
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
-    const res = await fetch(proxyUrl, { signal: controller.signal });
-    clearTimeout(timer);
-    const data = await res.json();
-    if (!data.contents) throw new Error('Empty proxy response');
-
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(data.contents, "text/xml");
-    const items = Array.from(xml.querySelectorAll("item, entry")).slice(0, 18);
-    if (!items.length) throw new Error('No XML items');
-
-    return items.map((item, idx) => {
-      const title = item.querySelector("title")?.textContent || '';
-      const desc = item.querySelector("description, summary, content")?.textContent || '';
-      const linkNode = item.querySelector("link");
-      const link = linkNode?.getAttribute("href") || linkNode?.textContent || '#';
-      const pubDate = item.querySelector("pubDate, published, updated")?.textContent || new Date().toISOString();
-
-      let img = '';
-      let rawMediaUrl = '';
-
-      const mediaElements = Array.from(item.getElementsByTagNameNS('*', 'content')).concat(
-        Array.from(item.getElementsByTagNameNS('*', 'thumbnail')),
-        Array.from(item.querySelectorAll('enclosure'))
-      );
-
-      for (const el of mediaElements) {
-        const urlAttr = el.getAttribute('url') || '';
-        const typeAttr = (el.getAttribute('type') || '').toLowerCase();
-        const mediumAttr = (el.getAttribute('medium') || '').toLowerCase();
-
-        if (!rawMediaUrl && (typeAttr.includes('video') || mediumAttr === 'video' || parseVideoFromTextOrUrl(urlAttr, idx))) {
-          rawMediaUrl = urlAttr;
-        }
-        if (!img && (typeAttr.includes('image') || mediumAttr === 'image' || /\.(jpg|jpeg|png|webp)/i.test(urlAttr))) {
-          img = urlAttr;
-        }
-      }
-
-      if (!img) {
-        const match = desc.match(/<img[^>]+src=["']([^"'>]+)["']/i);
-        if (match) img = match[1];
-      }
-
-      const directVideo =
-        parseVideoFromTextOrUrl(rawMediaUrl, idx) ||
-        parseVideoFromTextOrUrl(link, idx) ||
-        parseVideoFromTextOrUrl(desc, idx);
-
-      return {
-        source: { name: activeChannelObj.name },
-        title: cleanText(title),
-        description: cleanText(desc),
-        url: link,
-        urlToImage: img || (directVideo?.thumbnail || ''),
-        rawMediaUrl: rawMediaUrl,
-        videoData: directVideo || null,
-        publishedAt: pubDate
-      };
-    });
-  }
-
-  // Layer 3: Curated Live + Historical Archive Fallback
-  function getChannelFallbackArticles(userQuery = '') {
-    const chName = activeChannelObj.name;
-    const countryName = activeCountryObj.name;
-    const topicLabel = userQuery || (activeCategory === 'general' ? 'National' : activeCategory);
-    const now = Date.now();
-    const hourMs = 3600 * 1000;
-
-    return [
-      {
-        source: { name: chName },
-        title: `${chName}: Digital Infrastructure and Clean Energy Grid Expansion Accelerates Across ${countryName}`,
-        description: `Correspondents at ${chName} report increased capital allocation toward public digital corridors, renewable storage capacity, and regional transit networks this quarter.`,
-        url: "https://news.google.com",
-        urlToImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 0.4 * hourMs).toISOString()
-      },
-      {
-        source: { name: chName },
-        title: `${countryName} ${topicLabel} Dispatch: Semiconductor & Enterprise AI Sectors Post Strong Output`,
-        description: `Industry benchmarks tracked by ${chName} highlight resilient domestic manufacturing, new foundry partnerships, and enterprise cloud adoption.`,
-        url: "https://news.google.com",
-        urlToImage: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 1.2 * hourMs).toISOString()
-      },
-      {
-        source: { name: chName },
-        title: `Aerospace & Research: Next-Generation Earth Observation Payload Completes Final Integration`,
-        description: `Mission control teams have cleared pre-launch telemetry verification for the upcoming orbital deployment supporting climate and communications monitoring.`,
-        url: "https://news.google.com",
-        urlToImage: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 3.5 * hourMs).toISOString()
-      },
-      {
-        source: { name: chName },
-        title: `${chName} Markets Desk: Central Bank Maintains Steady Policy Rate Amid Supply Chain Recovery`,
-        description: `Updated trade logistics frameworks are projected to lower freight turnaround times and stabilize core commodity indices across ${countryName}.`,
-        url: "https://news.google.com",
-        urlToImage: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 6.0 * hourMs).toISOString()
-      },
-      {
-        source: { name: chName },
-        title: `Archive Dispatch: Automated Diagnostic Telemetry Expands Across Regional Hospitals`,
-        description: `Health authorities in ${countryName} have approved new point-of-care screening protocols designed to accelerate early preventive care.`,
-        url: "https://news.google.com",
-        urlToImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 32 * hourMs).toISOString()
-      },
-      {
-        source: { name: chName },
-        title: `${chName} Historical Review: National Selection Committee Confirms Squad Ahead of International Series`,
-        description: `The upcoming fixture schedule features returning senior players alongside standout performers from recent domestic championships.`,
-        url: "https://news.google.com",
-        urlToImage: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80",
-        publishedAt: new Date(now - 54 * hourMs).toISOString()
-      }
-    ];
-  }
-
-  async function fetchNews(userQuery = '') {
-    if (currentView === 'bookmarks') {
-      switchView('feed');
-    }
-    stopAudio();
-    showSkeletons();
-    savedQueueIndices = [];
-    const qTxt = document.getElementById('queueCountText');
-    const qBtn = document.getElementById('queuePlayBtn');
-    if (qTxt) qTxt.innerText = '0';
-    if (qBtn) qBtn.disabled = true;
-
-    const topicPart = activeCategory !== 'general' ? activeCategory : '';
-    const combinedQuery = [userQuery, activeChannelObj.query, topicPart].filter(Boolean).join(' ').trim();
-
-    // Layer 1: Vercel /api/news backend
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 4000);
-      const apiUrl = `/api/news?category=${encodeURIComponent(activeCategory)}&q=${encodeURIComponent(combinedQuery)}`;
-      const response = await fetch(apiUrl, { signal: controller.signal });
-      clearTimeout(timer);
-      const data = await response.json();
-
-      if (data.status === 'ok' && Array.isArray(data.articles) && data.articles.length > 0) {
-        const valid = data.articles.filter(a => a.title && !a.title.includes('[Removed]'));
-        if (valid.length > 0) {
-          fetchedArticles = valid;
-          renderArticles();
-          return;
-        }
-      }
-    } catch (e) {}
-
-    // Layer 2A: Fast rss2json feed
-    if (activeChannelObj.rss && !userQuery) {
-      try {
-        const r2jArticles = await fetchViaRss2Json(activeChannelObj.rss);
-        if (r2jArticles && r2jArticles.length > 0) {
-          fetchedArticles = r2jArticles;
-          renderArticles();
-          return;
-        }
-      } catch (e) {}
-
-      // Layer 2B: XML Proxy Backup
-      try {
-        const xmlArticles = await fetchViaXmlProxy(activeChannelObj.rss);
-        if (xmlArticles && xmlArticles.length > 0) {
-          fetchedArticles = xmlArticles;
-          renderArticles();
-          return;
-        }
-      } catch (e) {}
-    }
-
-    // Layer 3: Guaranteed Live + Archive Fallback
-    fetchedArticles = getChannelFallbackArticles(userQuery);
-    renderArticles();
-  }
-
-  function selectTimeline(timeKey) {
-    activeTimeline = timeKey;
-    document.querySelectorAll('#timelineGroup button').forEach(b => {
-      b.classList.toggle('active', b.dataset.time === timeKey);
-    });
-    renderArticles();
-  }
-
-  const catGroupEl = document.getElementById('categoryGroup');
-  if (catGroupEl) {
-    catGroupEl.addEventListener('click', (e) => {
-      const btn = e.target.closest('button');
-      if (btn && btn.dataset.cat) {
-        document.querySelectorAll('#categoryGroup button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeCategory = btn.dataset.cat;
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) searchInput.value = '';
-        const aiDrawer = document.getElementById('aiBriefingDrawer');
-        if (aiDrawer) aiDrawer.classList.remove('open');
-        fetchNews();
-      }
-    });
-  }
-
-  const timeGroupEl = document.getElementById('timelineGroup');
-  if (timeGroupEl) {
-    timeGroupEl.addEventListener('click', (e) => {
-      const btn = e.target.closest('button');
-      if (btn && btn.dataset.time) {
-        selectTimeline(btn.dataset.time);
-      }
-    });
-  }
-
-  function triggerSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const query = searchInput ? searchInput.value.trim() : '';
-    if (query) fetchNews(query);
-  }
-
-  const searchInputEl = document.getElementById('searchInput');
-  if (searchInputEl) {
-    searchInputEl.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') triggerSearch();
-    });
-  }
-
-  // Safe Boot Sequence
-  (function initPulseApp() {
-    try { syncAutoEmbedButtonUI(); } catch (e) {}
-    try { updateBookmarkNavUI(); } catch (e) {}
-    try { renderCountryStrip(); } catch (e) {}
-    try { renderChannelStrip(); } catch (e) {}
-    try { updateSelectionLabel(); } catch (e) {}
-    try { fetchNews(); } catch (e) {}
-  })();
-</script>
-</body>
-</html>
+  const STOP_WORDS = new Set([
+    'a', 'an', 'and', 'are', 'as', 'at', 'be', 'been', 'being', 'but', 'by',
+    'can', 'could', 'did', 'do', 'does', 'doing', 'done', 'down', 'during',
+    'each', 'even', 'ever', 'every', 'for', 'from', 'further', 'get', 'gets',
+    'getting', 'got', 'had', 'has', 'have', 'having', 'he', 'her', 'here',
+    'hers', 'herself', 'him', 'himself', 'his', 'how', 'however', 'if', 'in',
+    'into', 'is', 'it', 'its', 'itself', 'just', 'keep', 'keeps', 'kept',
+    'know', 'known', 'knows', 'let', 'like', 'likely', 'made', 'make', 'makes',
+    'making', 'many', 'may', 'me', 'might', 'more', 'most', 'much', 'must',
+    'my', 'myself', 'near', 'nearly', 'need', 'needs', 'neither', 'never',
+    'next', 'no', 'nor', 'not', 'now', 'of', 'off', 'often', 'on', 'once',
+    'one', 'only', 'onto', 'or', 'other', 'others', 'ought', 'our', 'ours',
+    'ourselves', 'out', 'over', 'own', 'part', 'per', 'perhaps', 'put',
+    'puts', 'quite', 'rather', 'really', 'right', 'said', 'same', 'saw',
+    'say', 'saying', 'says', 'see', 'seeing', 'seem', 'seemed', 'seeming',
+    'seems', 'seen', 'sees', 'several', 'shall', 'she', 'should', 'show',
+    'showed', 'showing', 'shown', 'shows', 'since', 'so', 'some', 'somebody',
+    'someone', 'something', 'sometimes', 'somewhere', 'still', 'such', 'take',
+    'taken', 'takes', 'taking', 'tell', 'tells', 'than', 'that', 'the', 'their',
+    'theirs', 'them', 'themselves', 'then', 'there', 'therefore', 'these',
+    'they', 'thing', 'things', 'think', 'thinks', 'this', 'those', 'though',
+    'through', 'throughout', 'thus', 'to', 'together', 'too', 'took', 'toward',
+    'towards', 'tried', 'tries', 'try', 'trying', 'turn', 'turned', 'turning',
+    'turns', 'two', 'under', 'until', 'up', 'upon', 'us', 'use', 'used',
+    'uses', 'using', 'usually', 'very', 'via', 'want', 'wanted', 'wants',
+    'was', 'way', 'ways', 'we', 'well', 'went', 'were', 'what', 'whatever',
+    'when', 'whenever', 'where', 'wherever', 'whether', 'which', 'while',
+    'whither', 'who', 'whoever', 'whole', 'whom', 'whose', 'why', 'will',
+    'with', 'within', 'without', 'would', 'yet', 'you', 'your', 'yours',
+    'yourself', 'yourselves', 'about', 'above', 'across', 'after', 'afterwards',
+    'again', 'against', 'all', 'almost', 'alone', 'along', 'already', 'also',
+    'although', 'always', 'amid', 'amidst', 'among', 'amongst', 'amount',
+    'another', 'any', 'anybody', 'anyone', 'anything', 'any
